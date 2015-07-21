@@ -1,4 +1,10 @@
-﻿namespace Microsoft.VisualStudio.Sdk.TestFramework.Tests
+﻿/********************************************************
+*                                                        *
+*   © Copyright (C) Microsoft. All rights reserved.      *
+*                                                        *
+*********************************************************/
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework.Tests
 {
     using System;
     using System.Collections.Generic;
