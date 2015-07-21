@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|AnyCPU">
+      <Configuration>Debug</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|AnyCPU">
+      <Configuration>Release</Configuration>
+      <Platform>AnyCPU</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>48d9efc4-de79-4564-93bf-ed98863da684</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NuProjPath>..\..\packages\NuProj.0.10.0-beta-gd6d4e1ff23\tools\</NuProjPath>
+  </PropertyGroup>
+  <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
+  <PropertyGroup Label="Configuration">
+    <Id>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Id>
+    <Version>1.0.0</Version>
+    <Title>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Title>
+    <Authors>andarno</Authors>
+    <Owners>andarno</Owners>
+    <Summary>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Summary>
+    <Description>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Description>
+    <ReleaseNotes>
+    </ReleaseNotes>
+    <ProjectUrl>
+    </ProjectUrl>
+    <LicenseUrl>
+    </LicenseUrl>
+    <Copyright>Copyright © andarno</Copyright>
+    <Tags>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Tags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="content\MockedVS.cs" />
+  </ItemGroup>
+  <Import Project="$(NuProjPath)\NuProj.targets" />
+</Project>
