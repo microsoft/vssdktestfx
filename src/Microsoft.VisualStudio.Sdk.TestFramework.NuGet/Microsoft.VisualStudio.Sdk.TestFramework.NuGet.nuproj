@@ -19,7 +19,7 @@
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Id>
-    <Version>1.0.0</Version>
+    <Version>14.0.0-pre</Version>
     <Title>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Title>
     <Authors>andarno</Authors>
     <Owners>andarno</Owners>
