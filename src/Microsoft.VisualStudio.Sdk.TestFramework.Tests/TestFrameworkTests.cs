@@ -21,8 +21,11 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework.Tests
     [Collection(MockedVS.Collection)]
     public class TestFrameworkTests
     {
-        public TestFrameworkTests(GlobalServiceProvider sp)
+        private readonly MefHosting mef;
+
+        public TestFrameworkTests(GlobalServiceProvider sp, MefHosting mef)
         {
+            this.mef = mef;
             sp.Reset();
         }
 
@@ -44,6 +47,13 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework.Tests
 
             ThreadHelper.ThrowIfNotOnUIThread();
             Assert.Throws<COMException>(() => ThreadHelper.ThrowIfOnUIThread());
+        }
+
+        [Fact]
+        public async Task TestAssemblyIsInMefCatalog()
+        {
+            var ep = await this.mef.CreateExportProviderAsync();
+            Assert.NotNull(ep.GetExportedValue<SomeMefExport>());
         }
     }
 }

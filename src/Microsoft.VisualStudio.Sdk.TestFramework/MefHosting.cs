@@ -15,6 +15,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     using System.Text;
     using System.Threading.Tasks;
     using Composition;
+    using Threading;
 
     /// <summary>
     /// Provides VS MEF hosting facilities for unit tests.
@@ -29,13 +30,85 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             new AttributedPartDiscoveryV1(Resolver.DefaultInstance));
 
         /// <summary>
+        /// The names of the assemblies to include in the catalog.
+        /// </summary>
+        private readonly ImmutableArray<string> catalogAssemblyNames;
+
+        /// <summary>
+        /// The lazily-created export provider factory.
+        /// </summary>
+        private AsyncLazy<IExportProviderFactory> exportProviderFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MefHosting"/> class
+        /// where all assemblies in the test project's output directory are
+        /// included in the MEF catalog.
+        /// </summary>
+        public MefHosting()
+            : this(GetDefaultAssemblyNames())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MefHosting"/> class.
+        /// </summary>
+        /// <param name="assemblyNames">The names of the assemblies to include in the MEF catalog.</param>
+        public MefHosting(IEnumerable<string> assemblyNames)
+        {
+            Requires.NotNull(assemblyNames, nameof(assemblyNames));
+
+            this.catalogAssemblyNames = ImmutableArray.CreateRange(assemblyNames);
+            this.exportProviderFactory = new AsyncLazy<IExportProviderFactory>(
+                this.CreateExportProviderFactoryAsync);
+        }
+
+        /// <summary>
+        /// Creates a new MEF container, initialized with all the assemblies
+        /// specified in the constructor.
+        /// </summary>
+        /// <returns>A task whose result is the <see cref="ExportProvider"/>.</returns>
+        public async Task<ExportProvider> CreateExportProviderAsync()
+        {
+            var exportProviderFactory = await this.exportProviderFactory.GetValueAsync();
+            return exportProviderFactory.CreateExportProvider();
+        }
+
+        /// <summary>
+        /// Gets a reasonable guess at which assemblies to include in the MEF catalog.
+        /// </summary>
+        /// <returns>The list of assembly names.</returns>
+        private static IEnumerable<string> GetDefaultAssemblyNames()
+        {
+            foreach (string file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll"))
+            {
+                string assemblyFullName = null;
+                try
+                {
+                    var assemblyName = AssemblyName.GetAssemblyName(file);
+                    if (assemblyName != null)
+                    {
+                        assemblyFullName = assemblyName.FullName;
+                    }
+                }
+                catch (Exception)
+                {
+                }
+
+                if (assemblyFullName != null)
+                {
+                    yield return assemblyFullName;
+                }
+            }
+        }
+
+        /// <summary>
         /// Creates a factory for <see cref="ExportProvider"/> containers with a
         /// backing catalog that contains all the parts being tested.
         /// </summary>
         /// <returns>A task whose result is the <see cref="IExportProviderFactory"/>.</returns>
-        public async Task<IExportProviderFactory> CreateExportProviderFactoryAsync(IEnumerable<string> assemblyNames)
+        private async Task<IExportProviderFactory> CreateExportProviderFactoryAsync()
         {
-            ComposableCatalog catalog = await this.CreateProductCatalogAsync(assemblyNames);
+            ComposableCatalog catalog = await this.CreateProductCatalogAsync();
             var configuration = CompositionConfiguration.Create(catalog);
             var exportProviderFactory = configuration.CreateExportProviderFactory();
             return exportProviderFactory;
@@ -45,9 +118,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// Creates a catalog containing the MEF parts we want to test.
         /// </summary>
         /// <returns>A task whose result is the <see cref="ComposableCatalog"/>.</returns>
-        private async Task<ComposableCatalog> CreateProductCatalogAsync(IEnumerable<string> assemblyNames)
+        private async Task<ComposableCatalog> CreateProductCatalogAsync()
         {
-            var assemblies = assemblyNames.Select(Assembly.Load);
+            var assemblies = this.catalogAssemblyNames.Select(Assembly.Load);
             var discoveredParts = await this.discoverer.CreatePartsAsync(assemblies);
             var catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
                 .AddParts(discoveredParts)
