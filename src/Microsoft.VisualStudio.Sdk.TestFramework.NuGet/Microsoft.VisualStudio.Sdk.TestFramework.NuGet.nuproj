@@ -23,7 +23,7 @@
   <PropertyGroup Label="Configuration">
     <Id>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Id>
     <Title>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Title>
-    <Authors>andarno</Authors>
+    <Authors>Andrew Arnott</Authors>
     <Owners>andarno</Owners>
     <Summary>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Summary>
     <Description>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Description>
@@ -33,8 +33,9 @@
     </ProjectUrl>
     <LicenseUrl>
     </LicenseUrl>
-    <Copyright>Copyright © andarno</Copyright>
+    <Copyright>Copyright © Microsoft</Copyright>
     <Tags>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Tags>
+    <EmbedSourceFiles>true</EmbedSourceFiles>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
