@@ -17,11 +17,11 @@
   </PropertyGroup>
   <PropertyGroup>
     <NuProjPath>..\..\packages\NuProj.0.10.0-beta-gd6d4e1ff23\tools\</NuProjPath>
+    <VersionDependsOn>$(VersionDependsOn);GetNuPkgVersion</VersionDependsOn>
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
     <Id>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Id>
-    <Version>14.0.0-pre</Version>
     <Title>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Title>
     <Authors>andarno</Authors>
     <Owners>andarno</Owners>
@@ -43,6 +43,11 @@
     <Content Include="content\MockedVS.cs" />
   </ItemGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
+  <Target Name="GetNuPkgVersion" DependsOnTargets="GetBuildVersion">
+    <PropertyGroup>
+      <Version>$(NuGetPackageVersion)</Version>
+    </PropertyGroup>
+  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
@@ -51,7 +56,9 @@
     <Error Condition="!Exists('..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets'))" />
     <Error Condition="!Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.props'))" />
     <Error Condition="!Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets'))" />
+    <Error Condition="!Exists('..\..\packages\Nerdbank.GitVersioning.1.0.15178-beta\build\NerdBank.GitVersioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Nerdbank.GitVersioning.1.0.15178-beta\build\NerdBank.GitVersioning.targets'))" />
   </Target>
   <Import Project="..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets" Condition="Exists('..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets')" />
   <Import Project="..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets" Condition="Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets')" />
+  <Import Project="..\..\packages\Nerdbank.GitVersioning.1.0.15178-beta\build\NerdBank.GitVersioning.targets" Condition="Exists('..\..\packages\Nerdbank.GitVersioning.1.0.15178-beta\build\NerdBank.GitVersioning.targets')" />
 </Project>
