@@ -21,12 +21,12 @@
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
   <PropertyGroup Label="Configuration">
-    <Id>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Id>
-    <Title>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Title>
+    <Id>Microsoft.VisualStudio.Sdk.TestFramework</Id>
+    <Title>Visual Studio SDK Test Framework</Title>
     <Authors>Andrew Arnott</Authors>
     <Owners>andarno</Owners>
-    <Summary>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Summary>
-    <Description>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Description>
+    <Summary>A test library to help in writing unit and integration tests for Visual Studio extensions.</Summary>
+    <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.</Description>
     <ReleaseNotes>
     </ReleaseNotes>
     <ProjectUrl>
@@ -34,7 +34,7 @@
     <LicenseUrl>
     </LicenseUrl>
     <Copyright>Copyright © Microsoft</Copyright>
-    <Tags>Microsoft.VisualStudio.Sdk.TestFramework.NuGet</Tags>
+    <Tags>VisualStudio sdk testing mocks</Tags>
     <EmbedSourceFiles>true</EmbedSourceFiles>
   </PropertyGroup>
   <ItemGroup>
