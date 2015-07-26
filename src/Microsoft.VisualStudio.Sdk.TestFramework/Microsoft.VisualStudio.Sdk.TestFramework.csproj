@@ -186,6 +186,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildServiceProvider.cs" />
     <Compile Include="GlobalServiceProvider.cs" />
     <Compile Include="MefHosting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
