@@ -55,4 +55,47 @@ public class TestFrameworkTests
         var ep = await this.mef.CreateExportProviderAsync();
         Assert.NotNull(ep.GetExportedValue<SomeMefExport>());
     }
+
+    [Fact]
+    public async Task ThreadHelper_Invoke()
+    {
+        if (ThreadHelper.CheckAccess())
+        {
+            // Get off the "main thread" so we can switch back.
+            await TaskScheduler.Default;
+            Assert.False(ThreadHelper.CheckAccess());
+        }
+
+        bool delegateExecuted = false;
+        ThreadHelper.Generic.Invoke(delegate
+        {
+            Assert.True(ThreadHelper.CheckAccess());
+            ThreadHelper.ThrowIfNotOnUIThread();
+            delegateExecuted = true;
+        });
+        Assert.True(delegateExecuted);
+    }
+
+    [Fact]
+    public async Task ThreadHelper_BeginInvoke()
+    {
+        var delegateExecuted = new AsyncManualResetEvent();
+        ThreadHelper.Generic.BeginInvoke(delegate
+        {
+            delegateExecuted.Set();
+        });
+        await delegateExecuted.WaitAsync();
+    }
+
+    [Fact]
+    public async Task ThreadHelper_InvokeAsync()
+    {
+        bool delegateExecuted = false;
+        var t = ThreadHelper.Generic.InvokeAsync(delegate
+        {
+            delegateExecuted = true;
+        });
+        await t;
+        Assert.True(delegateExecuted);
+    }
 }

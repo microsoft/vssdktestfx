@@ -21,6 +21,10 @@
     <CodeAnalysisRuleSet>Microsoft.VisualStudio.Sdk.TestFramework.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime">
+      <HintPath>..\..\lib\Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
