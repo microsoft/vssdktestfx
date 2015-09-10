@@ -41,6 +41,9 @@
     <ProjectReference Include="..\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\README.md">
+      <Link>README.txt</Link>
+    </Content>
     <Content Include="content\MockedVS.cs" />
   </ItemGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
