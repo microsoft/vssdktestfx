@@ -3,6 +3,7 @@
     "net46": { }
   },
   "dependencies": {
+    "MicroBuild.Core": "0.2.0",
     "MicroBuild.VisualStudio": {
       "version": "1.0.104-rc-ge804ea9873",
       "suppressParent": "none"
