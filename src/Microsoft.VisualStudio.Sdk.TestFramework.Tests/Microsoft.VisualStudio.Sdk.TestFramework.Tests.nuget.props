@@ -8,5 +8,6 @@
     <Import Project="$(NuGetPackageRoot)\MicroBuild.Nonshipping\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.NonShipping.props" Condition="Exists('$(NuGetPackageRoot)\MicroBuild.Nonshipping\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.NonShipping.props')" />
     <Import Project="$(NuGetPackageRoot)\MicroBuild.VisualStudio\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.VisualStudio.props" Condition="Exists('$(NuGetPackageRoot)\MicroBuild.VisualStudio\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.VisualStudio.props')" />
     <Import Project="$(NuGetPackageRoot)\xunit.core\2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.core.props" Condition="Exists('$(NuGetPackageRoot)\xunit.core\2.1.0\build\portable-net45+win8+wp8+wpa81\xunit.core.props')" />
+    <Import Project="$(NuGetPackageRoot)\xunit.runner.visualstudio\2.1.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('$(NuGetPackageRoot)\xunit.runner.visualstudio\2.1.0\build\net20\xunit.runner.visualstudio.props')" />
   </ImportGroup>
 </Project>
