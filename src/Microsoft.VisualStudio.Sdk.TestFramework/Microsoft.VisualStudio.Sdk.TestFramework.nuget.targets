@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(NuGetPackageRoot)' == ''">
+    <NuGetPackageRoot>$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+  </PropertyGroup>
+  <ImportGroup>
+    <Import Project="$(NuGetPackageRoot)\MicroBuild\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.targets" Condition="Exists('$(NuGetPackageRoot)\MicroBuild\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.targets')" />
+    <Import Project="$(NuGetPackageRoot)\MicroBuild.VisualStudio\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.VisualStudio.targets" Condition="Exists('$(NuGetPackageRoot)\MicroBuild.VisualStudio\1.0.104-rc-ge804ea9873\build\dotnet\MicroBuild.VisualStudio.targets')" />
+    <Import Project="$(NuGetPackageRoot)\Nerdbank.GitVersioning\1.3.13\build\dotnet\Nerdbank.GitVersioning.targets" Condition="Exists('$(NuGetPackageRoot)\Nerdbank.GitVersioning\1.3.13\build\dotnet\Nerdbank.GitVersioning.targets')" />
+  </ImportGroup>
+</Project>

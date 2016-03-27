@@ -117,6 +117,28 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.mainThreadInitialized.WaitAsync().Wait();
             }
 
+            /// <inheritdoc />
+            int OLE.Interop.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
+            {
+                object service;
+                if (!this.services.TryGetValue(guidService, out service))
+                {
+                    ppvObject = IntPtr.Zero;
+                    return VSConstants.E_INVALIDARG;
+                }
+
+                IntPtr pUnk = IntPtr.Zero;
+                try
+                {
+                    pUnk = Marshal.GetIUnknownForObject(service);
+                    return Marshal.QueryInterface(pUnk, ref riid, out ppvObject);
+                }
+                finally
+                {
+                    Marshal.Release(pUnk);
+                }
+            }
+
             /// <summary>
             /// Removes any services added via <see cref="AddService"/>.
             /// </summary>
@@ -149,28 +171,6 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.mainThreadInitialized?.WaitAsync().Wait();
                 this.mainMessagePumpFrame.Continue = false;
                 this.mainThread.Join();
-            }
-
-            /// <inheritdoc />
-            int OLE.Interop.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
-            {
-                object service;
-                if (!this.services.TryGetValue(guidService, out service))
-                {
-                    ppvObject = IntPtr.Zero;
-                    return VSConstants.E_INVALIDARG;
-                }
-
-                IntPtr pUnk = IntPtr.Zero;
-                try
-                {
-                    pUnk = Marshal.GetIUnknownForObject(service);
-                    return Marshal.QueryInterface(pUnk, ref riid, out ppvObject);
-                }
-                finally
-                {
-                    Marshal.Release(pUnk);
-                }
             }
 
             /// <summary>

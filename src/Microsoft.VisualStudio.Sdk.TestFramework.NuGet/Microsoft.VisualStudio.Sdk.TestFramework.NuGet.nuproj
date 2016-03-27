@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.props" Condition="Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.props')" />
-  <Import Project="..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.props" Condition="Exists('..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|AnyCPU">
       <Configuration>Debug</Configuration>
@@ -16,7 +14,8 @@
     <ProjectGuid>48d9efc4-de79-4564-93bf-ed98863da684</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup>
-    <NuProjPath>..\..\packages\NuProj.0.10.0-beta-gd6d4e1ff23\tools\</NuProjPath>
+    <NuSpecTemplate>Microsoft.VisualStudio.Sdk.TestFramework.nuspec</NuSpecTemplate>
+    <NuProjPath>$(UserProfile)\.nuget\packages\NuProj\0.10.40-beta-g6df38a957a\tools\</NuProjPath>
     <VersionDependsOn>$(VersionDependsOn);GetNuPkgVersion</VersionDependsOn>
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
@@ -46,23 +45,15 @@
     </Content>
     <Content Include="content\MockedVS.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+    <None Include="Microsoft.VisualStudio.Sdk.TestFramework.nuspec" />
+  </ItemGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
   <Target Name="GetNuPkgVersion" DependsOnTargets="GetBuildVersion">
     <PropertyGroup>
       <Version>$(NuGetPackageVersion)</Version>
+      <NuSpecProperties>$(NuGetProperties);CommitId=$(GitCommitIdShort)</NuSpecProperties>
     </PropertyGroup>
   </Target>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.props'))" />
-    <Error Condition="!Exists('..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets'))" />
-    <Error Condition="!Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.props'))" />
-    <Error Condition="!Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets'))" />
-    <Error Condition="!Exists('..\..\packages\Nerdbank.GitVersioning.1.1.2-rc\build\NerdBank.GitVersioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Nerdbank.GitVersioning.1.1.2-rc\build\NerdBank.GitVersioning.targets'))" />
-  </Target>
-  <Import Project="..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets" Condition="Exists('..\..\packages\MicroBuild.1.0.0-alpha-g503c0b7cda\build\MicroBuild.targets')" />
-  <Import Project="..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets" Condition="Exists('..\..\packages\MicroBuild.VisualStudio.1.0.0-alpha-g503c0b7cda\build\MicroBuild.VisualStudio.targets')" />
-  <Import Project="..\..\packages\Nerdbank.GitVersioning.1.1.2-rc\build\NerdBank.GitVersioning.targets" Condition="Exists('..\..\packages\Nerdbank.GitVersioning.1.1.2-rc\build\NerdBank.GitVersioning.targets')" />
 </Project>

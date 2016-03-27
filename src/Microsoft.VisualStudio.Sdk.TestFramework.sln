@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23303.0
+VisualStudioVersion = 14.0.25114.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualStudio.Sdk.TestFramework", "Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj", "{A62E3D92-0B5C-4D53-9269-EAC253BBCDEE}"
 EndProject
@@ -11,10 +11,11 @@ Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "Microsoft.VisualStudio.Sdk.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{824473EA-BB16-47EE-96CA-CD854BF62276}"
 	ProjectSection(SolutionItems) = preProject
+		..\EnlistmentInfo.props = ..\EnlistmentInfo.props
 		..\EnlistmentInfo.targets = ..\EnlistmentInfo.targets
 		..\nuget.config = ..\nuget.config
 		..\README.md = ..\README.md
-		..\version.txt = ..\version.txt
+		..\version.json = ..\version.json
 	EndProjectSection
 EndProject
 Global

@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata>
+    <id>Microsoft.VisualStudio.Sdk.TestFramework</id>
+    <version>$version$</version>
+    <authors>aarnott</authors>
+    <owners></owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>to be overwritten by project file</description>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+    <tags></tags>
+    <dependencies>
+      <dependency id="Microsoft.VisualStudio.Composition" version="14.0.50715-pre" />
+      <dependency id="Microsoft.VisualStudio.Shell.14.0" version="14.0.23205" />
+      <dependency id="Microsoft.VisualStudio.Shell.Interop.12.0" version="12.0.30110" />
+      <dependency id="Moq" version="4.2.1510.2205" />
+    </dependencies>
+  </metadata>
+</package>
