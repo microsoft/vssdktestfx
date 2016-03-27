@@ -3,6 +3,11 @@
     "net451": { }
   },
   "dependencies": {
+    "MicroBuild.Core": "0.2.0",
+    "MicroBuild.VisualStudio": {
+      "version": "1.0.104-rc-ge804ea9873",
+      "suppressParent": "none"
+    },
     "Nerdbank.GitVersioning": {
       "version": "1.3.13",
       "suppressParent": "none"
