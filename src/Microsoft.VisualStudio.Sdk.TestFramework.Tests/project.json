@@ -3,7 +3,7 @@
     "net46": { }
   },
   "dependencies": {
-    "MicroBuild.Nonshipping": "1.0.104-rc-ge804ea9873",
+    "MicroBuild.Nonshipping": "1.0.120-rc",
     "xunit": "2.1.0",
     "xunit.runner.visualstudio": "2.1.0"
   },
