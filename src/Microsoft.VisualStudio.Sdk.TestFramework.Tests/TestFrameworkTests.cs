@@ -55,4 +55,83 @@ public class TestFrameworkTests
         var ep = await this.mef.CreateExportProviderAsync();
         Assert.NotNull(ep.GetExportedValue<SomeMefExport>());
     }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ThreadHelper_Invoke(bool fromMainThread)
+    {
+        if (ThreadHelper.CheckAccess() && !fromMainThread)
+        {
+            // Get off the "main thread" so we can switch back.
+            await TaskScheduler.Default;
+            Assert.False(ThreadHelper.CheckAccess());
+        }
+        else if (fromMainThread && !ThreadHelper.CheckAccess())
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            Assert.True(ThreadHelper.CheckAccess());
+        }
+
+        bool delegateExecuted = false;
+        ThreadHelper.Generic.Invoke(delegate
+        {
+            Assert.True(ThreadHelper.CheckAccess());
+            ThreadHelper.ThrowIfNotOnUIThread();
+            delegateExecuted = true;
+        });
+        Assert.True(delegateExecuted);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ThreadHelper_Invoke_PropagatesExceptions(bool fromMainThread)
+    {
+        if (ThreadHelper.CheckAccess() && !fromMainThread)
+        {
+            // Get off the "main thread" so we can switch back.
+            await TaskScheduler.Default;
+            Assert.False(ThreadHelper.CheckAccess());
+        }
+        else if (fromMainThread && !ThreadHelper.CheckAccess())
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            Assert.True(ThreadHelper.CheckAccess());
+        }
+
+        // Verify that exceptions are propagated.
+        Assert.Throws<ApplicationException>(() =>
+        {
+            ThreadHelper.Generic.Invoke(delegate
+            {
+                Assert.True(ThreadHelper.CheckAccess());
+                ThreadHelper.ThrowIfNotOnUIThread();
+                throw new ApplicationException();
+            });
+        });
+    }
+
+    [Fact]
+    public async Task ThreadHelper_BeginInvoke()
+    {
+        var delegateExecuted = new AsyncManualResetEvent();
+        ThreadHelper.Generic.BeginInvoke(delegate
+        {
+            delegateExecuted.Set();
+        });
+        await delegateExecuted.WaitAsync();
+    }
+
+    [Fact]
+    public async Task ThreadHelper_InvokeAsync()
+    {
+        bool delegateExecuted = false;
+        var t = ThreadHelper.Generic.InvokeAsync(delegate
+        {
+            delegateExecuted = true;
+        });
+        await t;
+        Assert.True(delegateExecuted);
+    }
 }

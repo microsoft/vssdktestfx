@@ -16,11 +16,17 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CodeAnalysisRuleSet>Microsoft.VisualStudio.Sdk.TestFramework.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Microsoft.VisualStudio.Sdk.TestFramework.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <CodeAnalysisRuleSet>Microsoft.VisualStudio.Sdk.TestFramework.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>..\..\bin\Release\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime">
+      <HintPath>..\..\lib\Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
