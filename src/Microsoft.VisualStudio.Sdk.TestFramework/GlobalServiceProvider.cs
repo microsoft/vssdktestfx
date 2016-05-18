@@ -17,6 +17,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Threading;
+    using Internal.VisualStudio.Shell.Interop;
     using Moq;
     using Shell;
     using Shell.Interop;
@@ -188,6 +189,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.services = ImmutableDictionary.Create<Guid, object>();
                 this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
                 this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock().Object);
+                this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
                 this.baseServices = this.services;
 
                 // We can only call this once for the AppDomain.
@@ -215,6 +217,43 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 taskSchedulerService2.Setup(ts => ts.GetAsyncTaskContext())
                     .Returns(this.joinableTaskContext);
                 return taskSchedulerService;
+            }
+
+            private class VsUIThreadInvoker : IVsInvokerPrivate
+            {
+                private readonly JoinableTaskContext joinableTaskContext;
+
+                /// <summary>
+                /// Initializes a new instance of the <see cref="VsUIThreadInvoker"/> class.
+                /// </summary>
+                /// <param name="joinableTaskContext">The joinable task context to use to get to the UI thread.</param>
+                internal VsUIThreadInvoker(JoinableTaskContext joinableTaskContext)
+                {
+                    Requires.NotNull(joinableTaskContext, nameof(joinableTaskContext));
+
+                    this.joinableTaskContext = joinableTaskContext;
+                }
+
+                /// <summary>
+                /// Executes the provided delegate on the UI thread, while blocking the calling thread.
+                /// </summary>
+                /// <param name="pInvokable">The interface with the delegate to invoke.</param>
+                /// <returns>The HRESULT of the delegate or the attempt to execute it.</returns>
+                public int Invoke(IVsInvokablePrivate pInvokable)
+                {
+                    try
+                    {
+                        return this.joinableTaskContext.Factory.Run(async delegate
+                        {
+                            await this.joinableTaskContext.Factory.SwitchToMainThreadAsync();
+                            return pInvokable.Invoke();
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        return Marshal.GetHRForException(ex);
+                    }
+                }
             }
         }
     }
