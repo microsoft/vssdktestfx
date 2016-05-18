@@ -12,8 +12,8 @@
       "version": "1.4.19",
       "suppressParent": "none"
     },
-    "Microsoft.VisualStudio.Composition": "14.0.50715-pre",
-    "Microsoft.VisualStudio.Shell.14.0": "14.0.23205",
+    "Microsoft.VisualStudio.Composition": "15.0.16-pre",
+    "Microsoft.VisualStudio.Shell.15.0": "15.0.25123-Dev15Preview",
     "Microsoft.VisualStudio.Shell.Interop.12.0": "12.0.30110",
     "Moq": "4.2.1510.2205",
     "NuProj.Common": "0.10.48-beta-gea4a31bbc5",

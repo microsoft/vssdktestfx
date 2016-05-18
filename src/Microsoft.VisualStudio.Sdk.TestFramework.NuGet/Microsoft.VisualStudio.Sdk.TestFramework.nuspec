@@ -11,8 +11,8 @@
     <copyright></copyright>
     <tags></tags>
     <dependencies>
-      <dependency id="Microsoft.VisualStudio.Composition" version="14.0.50715-pre" />
-      <dependency id="Microsoft.VisualStudio.Shell.14.0" version="14.0.23205" />
+      <dependency id="Microsoft.VisualStudio.Composition" version="15.0.16-pre" />
+      <dependency id="Microsoft.VisualStudio.Shell.15.0" version="15.0.25123-Dev15Preview" />
       <dependency id="Microsoft.VisualStudio.Shell.Interop.12.0" version="12.0.30110" />
       <dependency id="Moq" version="4.2.1510.2205" />
     </dependencies>
