@@ -56,14 +56,21 @@ public class TestFrameworkTests
         Assert.NotNull(ep.GetExportedValue<SomeMefExport>());
     }
 
-    [Fact]
-    public async Task ThreadHelper_Invoke()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ThreadHelper_Invoke(bool fromMainThread)
     {
-        if (ThreadHelper.CheckAccess())
+        if (ThreadHelper.CheckAccess() && !fromMainThread)
         {
             // Get off the "main thread" so we can switch back.
             await TaskScheduler.Default;
             Assert.False(ThreadHelper.CheckAccess());
+        }
+        else if (fromMainThread && !ThreadHelper.CheckAccess())
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            Assert.True(ThreadHelper.CheckAccess());
         }
 
         bool delegateExecuted = false;
@@ -74,6 +81,35 @@ public class TestFrameworkTests
             delegateExecuted = true;
         });
         Assert.True(delegateExecuted);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ThreadHelper_Invoke_PropagatesExceptions(bool fromMainThread)
+    {
+        if (ThreadHelper.CheckAccess() && !fromMainThread)
+        {
+            // Get off the "main thread" so we can switch back.
+            await TaskScheduler.Default;
+            Assert.False(ThreadHelper.CheckAccess());
+        }
+        else if (fromMainThread && !ThreadHelper.CheckAccess())
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            Assert.True(ThreadHelper.CheckAccess());
+        }
+
+        // Verify that exceptions are propagated.
+        Assert.Throws<ApplicationException>(() =>
+        {
+            ThreadHelper.Generic.Invoke(delegate
+            {
+                Assert.True(ThreadHelper.CheckAccess());
+                ThreadHelper.ThrowIfNotOnUIThread();
+                throw new ApplicationException();
+            });
+        });
     }
 
     [Fact]
