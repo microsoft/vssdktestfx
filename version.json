@@ -3,7 +3,8 @@
   "version": "14.0-preview",
   "publicReleaseRefSpec": [
     "^refs/heads/master$", // we release out of master
-    "^refs/tags/v\\d\\.\\d" // we also release tags starting with vN.N
+    "^refs/heads/v\\d+", // we release out of vXX branches
+    "^refs/tags/v\\d+\\.\\d+" // we also release tags starting with vN.N
   ],
   "cloudBuild": {
     "buildNumber": {
