@@ -20,9 +20,13 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CodeAnalysisRuleSet>Microsoft.VisualStudio.Sdk.TestFramework.Tests.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Microsoft.VisualStudio.Sdk.TestFramework.Tests.XML</DocumentationFile>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <CodeAnalysisRuleSet>Microsoft.VisualStudio.Sdk.TestFramework.Tests.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>..\..\bin\Release\Microsoft.VisualStudio.Sdk.TestFramework.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Tests.XML</DocumentationFile>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
