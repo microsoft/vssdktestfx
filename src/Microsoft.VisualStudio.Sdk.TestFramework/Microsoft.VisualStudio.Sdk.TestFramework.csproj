@@ -46,4 +46,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\NuProj.0.10.0-beta-gd6d4e1ff23\tools\Microsoft.Common.NuProj.targets" Condition=" Exists('..\..\packages\NuProj.0.10.0-beta-gd6d4e1ff23\tools\Microsoft.Common.NuProj.targets') " />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties project_1json__JSONSchema="http://json.schemastore.org/project" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
