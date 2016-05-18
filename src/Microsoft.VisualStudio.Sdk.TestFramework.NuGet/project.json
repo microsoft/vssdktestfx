@@ -5,14 +5,14 @@
   "dependencies": {
     "MicroBuild.Core": "0.2.0",
     "MicroBuild.VisualStudio": {
-      "version": "1.0.104-rc-ge804ea9873",
+      "version": "1.0.120-rc",
       "suppressParent": "none"
     },
     "Nerdbank.GitVersioning": {
-      "version": "1.3.13",
+      "version": "1.4.19",
       "suppressParent": "none"
     },
-    "NuProj": "0.10.40-beta-g6df38a957a"
+    "NuProj": "0.10.48-beta-gea4a31bbc5"
   },
   "runtimes": {
     "win": { }
