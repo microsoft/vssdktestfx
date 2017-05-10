@@ -134,4 +134,16 @@ public class TestFrameworkTests
         await t;
         Assert.True(delegateExecuted);
     }
+
+    [Fact]
+    public async Task VsTaskScheduler_UISchedulersWork()
+    {
+        await ThreadHelper.JoinableTaskFactory.RunAsync(
+            VsTaskRunContext.UIThreadIdlePriority,
+            async delegate
+            {
+                await Task.Yield();
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            });
+    }
 }
