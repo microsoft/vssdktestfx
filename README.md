@@ -1,5 +1,24 @@
 # Visual Studio SDK Test Framework
 
+## Referencing 
+
+### For tests that build outside the VS repo:
+
+To reference this test framework outside the VS repo, 
+you will need to add this as a package source in your [nuget.config file](https://docs.microsoft.com/en-us/nuget/schema/nuget-config-file#packagesources):
+
+    https://mseng.pkgs.visualstudio.com/DefaultCollection/_packaging/VSIDEProj-realSigned-release/nuget/v3/index.json
+
+Then install its NuGet package:
+
+    Install-Package Microsoft.VisualStudio.Sdk.TestFramework -Pre
+
+### For tests that build within the VS repo:
+
+Add this reference to your project:
+
+    <Reference Include="$(ExternalAPIsPath)\vsplatform\VSSDKTestFx\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
+
 ## Xunit instructions
 
 Add this class to your project (if a MockedVS.cs file was not added to your project automatically):
