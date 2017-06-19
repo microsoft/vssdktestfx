@@ -1,5 +1,10 @@
 # Visual Studio SDK Test Framework
 
+The VS SDK Test Framework is a library for your unit tests that exercise VS code to use
+so that certain core VS functionality works outside the VS process so your unit tests can function.
+For example, `ThreadHelper` and obtaining global services from the static `ServiceProvider`
+tend to fail in unit tests without this library installed.
+
 ## Referencing 
 
 ### For tests that build outside the VS repo:
@@ -29,7 +34,9 @@ Add this reference to your project:
 Add a binding redirect to your unit test project for Microsoft.VisualStudio.Threading.dll using the
 `MicrosoftVisualStudioThreadingVersion` T4 macro as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
 
-## Xunit instructions
+## Unit test source code changes
+
+### Xunit instructions
 
 Add this class to your project (if a MockedVS.cs file was not added to your project automatically):
 
@@ -59,7 +66,7 @@ add a parameter and statement to your constructor:
         }
     }
 
-## MSTest instructions
+### MSTest instructions
 
 Add these members to *one* of your test classes:
 
@@ -80,3 +87,18 @@ Then in *each* of your test classes, Reset() the static service provider created
     }
 
 For a sample of applying this pattern to an MSTest project within the VS repo, check out [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/57056?_a=files&path=%2Fsrc%2Fenv%2Fshell%2FConnected%2Ftests).
+
+## Main Thread considerations
+
+This library will create a mocked up UI thread, such that `ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync()`
+can switch to it. Your unit tests do *not* start on this mocked up UI thread. If your product code contains checks
+that it is invoked on the UI thread (e.g. `ThreadHelper.ThrowIfNotOnUIThread()`) your test method should look like this:
+
+```csharp
+[TestMethod] // or [Fact]
+public async Task VerifyWeDoSomethingGood()
+{
+    await ThreadHelper.SwitchToMainThreadAsync();
+    MyVSPackage.DoSomethingAwesome();
+}
+```
