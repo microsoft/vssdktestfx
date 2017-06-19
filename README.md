@@ -13,11 +13,21 @@ Then install its NuGet package:
 
     Install-Package Microsoft.VisualStudio.Sdk.TestFramework -Pre
 
+Make sure your unit test project generates the required binding redirects by adding these two properties to your project file:
+
+```xml
+  <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+```
+
 ### For tests that build within the VS repo:
 
 Add this reference to your project:
 
     <Reference Include="$(ExternalAPIsPath)\vsplatform\VSSDKTestFx\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
+
+Add a binding redirect to your unit test project for Microsoft.VisualStudio.Threading.dll using the
+`MicrosoftVisualStudioThreadingVersion` T4 macro as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
 
 ## Xunit instructions
 
