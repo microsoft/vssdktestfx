@@ -68,3 +68,5 @@ Then in *each* of your test classes, Reset() the static service provider created
     {
         SharedClass.mockServiceProvider.Reset();
     }
+
+For a sample of applying this pattern to an MSTest project within the VS repo, check out [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/57056?_a=files&path=%2Fsrc%2Fenv%2Fshell%2FConnected%2Ftests).
