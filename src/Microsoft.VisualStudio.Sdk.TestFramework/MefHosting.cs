@@ -81,6 +81,12 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         {
             foreach (string file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll"))
             {
+                if (file.EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Skip satellite assemblies if we come across any.
+                    continue;
+                }
+
                 string assemblyFullName = null;
                 try
                 {
