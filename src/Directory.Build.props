@@ -6,5 +6,7 @@
 
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)StrongName.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+    <DelaySign>false</DelaySign>
+    <MicroBuild_DoNotStrongNameSign>true</MicroBuild_DoNotStrongNameSign>
   </PropertyGroup>
 </Project>

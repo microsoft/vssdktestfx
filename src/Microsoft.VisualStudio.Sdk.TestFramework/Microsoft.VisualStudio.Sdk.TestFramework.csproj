@@ -12,9 +12,6 @@
     <RepositoryUrl>https://mseng.visualstudio.com/DefaultCollection/VSIDEProj/_git/VSIDEProj.VSSDKTestFx</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>VisualStudio sdk testing mocks</PackageTags>
-
-    <MicroBuild_DoNotStrongNameSign>true</MicroBuild_DoNotStrongNameSign>
-    <DelaySign>false</DelaySign>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="content\MockedVS.cs" />
