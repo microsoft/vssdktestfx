@@ -31,8 +31,35 @@ Add this reference to your project:
 
     <Reference Include="$(ExternalAPIsPath)\vsplatform\VSSDKTestFx\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
 
-Add a binding redirect to your unit test project for Microsoft.VisualStudio.Threading.dll using the
-`MicrosoftVisualStudioThreadingVersion` T4 macro as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
+Add the following binding redirects to your test project, via an app.config.tt file as shown below.
+If you do not already have an app.config.tt file (or perhaps it is called just app.config),
+you can create your T4 macro-enabled file as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
+
+```xml
+<?xml version="1.0" ?>
+<#@template hostspecific="true"#>
+<#@ include file="BrandNames.tt" #>
+<#@ include file="..\..\..\ProductData\AssemblyVersions.tt" #>
+<configuration> 
+    <runtime>
+        <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+            <dependentAssembly>
+                <assemblyIdentity name="Microsoft.VisualStudio.Threading" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+                <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioThreadingVersion #>" newVersion="<#= MicrosoftVisualStudioThreadingVersion #>"/>
+            </dependentAssembly>
+
+            <dependentAssembly>
+                <assemblyIdentity name="System.Collections.Immutable" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+                <bindingRedirect oldVersion="0.0.0.0-<#= SystemCollectionsImmutableVersion #>"  newVersion="<#= SystemCollectionsImmutableVersion #>"/>
+            </dependentAssembly>
+            <dependentAssembly>
+                <assemblyIdentity name="Moq" publicKeyToken="69f491c39445e920" culture="neutral" />
+                <bindingRedirect oldVersion="0.0.0.0-4.2.1510.2205"  newVersion="4.2.1510.2205" />
+            </dependentAssembly>
+        </assemblyBinding>
+    </runtime> 
+</configuration>
+```
 
 ## Unit test source code changes
 
