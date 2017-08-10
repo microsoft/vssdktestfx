@@ -188,7 +188,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 
                 this.services = ImmutableDictionary.Create<Guid, object>();
                 this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
-                this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock().Object);
+                this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
                 this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
                 this.baseServices = this.services;
 
@@ -208,50 +208,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 return mock;
             }
 
-            private Mock<IVsTaskSchedulerService> CreateVsTaskSchedulerServiceMock()
+            private IVsTaskSchedulerService CreateVsTaskSchedulerServiceMock()
             {
-                var taskSchedulerService = new Mock<IVsTaskSchedulerService>();
-                var taskSchedulerService2 = taskSchedulerService.As<IVsTaskSchedulerService2>();
-                taskSchedulerService2.Setup(ts => ts.GetTaskScheduler(It.IsIn<uint>((uint)VsTaskRunContext.BackgroundThread, (uint)VsTaskRunContext.BackgroundThreadLowIOPriority)))
-                    .Returns(TaskScheduler.Default);
-                taskSchedulerService2.Setup(ts => ts.GetTaskScheduler(It.IsIn<uint>((uint)VsTaskRunContext.UIThreadBackgroundPriority, (uint)VsTaskRunContext.UIThreadIdlePriority, (uint)VsTaskRunContext.UIThreadNormalPriority, (uint)VsTaskRunContext.UIThreadSend)))
-                    .Returns(new VsUITaskScheduler(this.joinableTaskContext.Factory));
-                taskSchedulerService2.Setup(ts => ts.GetAsyncTaskContext())
-                    .Returns(this.joinableTaskContext);
-                return taskSchedulerService;
-            }
-
-            private class VsUITaskScheduler : TaskScheduler
-            {
-                private readonly JoinableTaskFactory jtf;
-
-                internal VsUITaskScheduler(JoinableTaskFactory jtf)
-                {
-                    Requires.NotNull(jtf, nameof(jtf));
-                    this.jtf = jtf;
-                }
-
-                protected override IEnumerable<System.Threading.Tasks.Task> GetScheduledTasks()
-                {
-                    throw new NotImplementedException();
-                }
-
-                protected override void QueueTask(System.Threading.Tasks.Task task)
-                {
-                    using (this.jtf.Context.SuppressRelevance())
-                    {
-                        this.jtf.RunAsync(async delegate
-                        {
-                            await this.jtf.SwitchToMainThreadAsync();
-                            this.TryExecuteTask(task);
-                        });
-                    }
-                }
-
-                protected override bool TryExecuteTaskInline(System.Threading.Tasks.Task task, bool taskWasPreviouslyQueued)
-                {
-                    throw new NotImplementedException();
-                }
+                return new MockTaskSchedulerService(this.joinableTaskContext);
             }
 
             private class VsUIThreadInvoker : IVsInvokerPrivate
