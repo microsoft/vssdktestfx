@@ -35,6 +35,8 @@ Add the following binding redirects to your test project, via an app.config.tt f
 If you do not already have an app.config.tt file (or perhaps it is called just app.config),
 you can create your T4 macro-enabled file as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
 
+You may need to adjust the version values in the `Moq` binding redirect to match the available version.
+
 ```xml
 <?xml version="1.0" ?>
 <#@template hostspecific="true"#>
@@ -47,7 +49,10 @@ you can create your T4 macro-enabled file as demonstrated by [this pull request]
                 <assemblyIdentity name="Microsoft.VisualStudio.Threading" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
                 <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioThreadingVersion #>" newVersion="<#= MicrosoftVisualStudioThreadingVersion #>"/>
             </dependentAssembly>
-
+            <dependentAssembly>
+                <assemblyIdentity name="Microsoft.VisualStudio.Validation" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+                <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioValidationVersion #>" newVersion="<#= MicrosoftVisualStudioValidationVersion #>"/>
+            </dependentAssembly>
             <dependentAssembly>
                 <assemblyIdentity name="System.Collections.Immutable" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
                 <bindingRedirect oldVersion="0.0.0.0-<#= SystemCollectionsImmutableVersion #>"  newVersion="<#= SystemCollectionsImmutableVersion #>"/>
