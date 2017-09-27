@@ -27,9 +27,10 @@ Make sure your unit test project generates the required binding redirects by add
 
 ### For tests that build within the VS repo:
 
-Add this reference to your project:
+Add these references to your project:
 
-    <Reference Include="$(ExternalAPIsPath)\vsplatform\VSSDKTestFx\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
+    <Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
+    <Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
 
 Add the following binding redirects to your test project, via an app.config.tt file as shown below.
 If you do not already have an app.config.tt file (or perhaps it is called just app.config),
