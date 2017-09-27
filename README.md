@@ -43,27 +43,35 @@ You may need to adjust the version values in the `Moq` binding redirect to match
 <#@template hostspecific="true"#>
 <#@ include file="BrandNames.tt" #>
 <#@ include file="..\..\..\ProductData\AssemblyVersions.tt" #>
-<configuration> 
-    <runtime>
-        <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
-            <dependentAssembly>
-                <assemblyIdentity name="Microsoft.VisualStudio.Threading" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-                <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioThreadingVersion #>" newVersion="<#= MicrosoftVisualStudioThreadingVersion #>"/>
-            </dependentAssembly>
-            <dependentAssembly>
-                <assemblyIdentity name="Microsoft.VisualStudio.Validation" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-                <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioValidationVersion #>" newVersion="<#= MicrosoftVisualStudioValidationVersion #>"/>
-            </dependentAssembly>
-            <dependentAssembly>
-                <assemblyIdentity name="System.Collections.Immutable" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
-                <bindingRedirect oldVersion="0.0.0.0-<#= SystemCollectionsImmutableVersion #>"  newVersion="<#= SystemCollectionsImmutableVersion #>"/>
-            </dependentAssembly>
-            <dependentAssembly>
-                <assemblyIdentity name="Moq" publicKeyToken="69f491c39445e920" culture="neutral" />
-                <bindingRedirect oldVersion="0.0.0.0-4.2.1510.2205"  newVersion="4.2.1510.2205" />
-            </dependentAssembly>
-        </assemblyBinding>
-    </runtime> 
+<configuration>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Composition.Configuration" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioCompositionVersion #>" newVersion="<#= MicrosoftVisualStudioCompositionVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Composition" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioCompositionVersion #>" newVersion="<#= MicrosoftVisualStudioCompositionVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Threading" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioThreadingVersion #>" newVersion="<#= MicrosoftVisualStudioThreadingVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Validation" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioValidationVersion #>" newVersion="<#= MicrosoftVisualStudioValidationVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="System.Collections.Immutable" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-<#= SystemCollectionsImmutableVersion #>"  newVersion="<#= SystemCollectionsImmutableVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Moq" publicKeyToken="69f491c39445e920" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-4.2.9999.999" newVersion="4.2.1502.911" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
 </configuration>
 ```
 
