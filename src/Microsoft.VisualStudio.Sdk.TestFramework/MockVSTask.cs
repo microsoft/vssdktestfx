@@ -132,7 +132,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 
         public object GetResult()
         {
-            return this.task.Result;
+            return this.task.GetAwaiter().GetResult();
         }
 
         public void Start()
