@@ -50,13 +50,13 @@
         /// <inheritdoc />
         public IVsTaskCompletionSource CreateTaskCompletionSourceEx(uint options, object asyncState)
         {
-            return new MockVSTaskCompletionSource(asyncState);
+            return new MockVSTaskCompletionSource(this, asyncState);
         }
 
         /// <inheritdoc />
         public IVsTask CreateTaskEx(uint context, uint options, IVsTaskBody pTaskBody, object pAsyncState)
         {
-            return new MockVSTask(pTaskBody, pAsyncState);
+            return new MockVSTask(this, context, pTaskBody, pAsyncState);
         }
 
         /// <inheritdoc />

@@ -11,7 +11,9 @@
     /// </summary>
     internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents
     {
+        private readonly IVsTaskSchedulerService2 vsTaskSchedulerService2;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private readonly uint context;
         private readonly Task<object> task;
         private readonly object asyncState;
         private string description;
@@ -19,19 +21,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTask"/> class.
         /// </summary>
-        /// <param name="task">The task to wrap.</param>
-        public MockVSTask(Task<object> task)
-            : this(task, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MockVSTask"/> class.
-        /// </summary>
+        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/></param>
+        /// <param name="context">The scheduling option for this task.</param>
         /// <param name="task">The task to execute.</param>
         /// <param name="asyncState">The async state object to store.</param>
-        public MockVSTask(Task<object> task, object asyncState)
+        public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, Task<object> task, object asyncState = null)
         {
+            this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new ArgumentNullException(nameof(vsTaskSchedulerService2));
+            this.context = context;
             this.task = task ?? throw new ArgumentNullException(nameof(task));
             this.asyncState = asyncState;
         }
@@ -39,19 +36,14 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTask"/> class.
         /// </summary>
-        /// <param name="taskBody">The body to execute.</param>
-        public MockVSTask(IVsTaskBody taskBody)
-            : this(taskBody, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MockVSTask"/> class.
-        /// </summary>
+        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/></param>
+        /// <param name="context">The scheduling option for this task.</param>
         /// <param name="taskBody">The body to execute.</param>
         /// <param name="asyncState">The async state object to store.</param>
-        public MockVSTask(IVsTaskBody taskBody, object asyncState)
+        public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, IVsTaskBody taskBody, object asyncState = null)
         {
+            this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new ArgumentNullException(nameof(vsTaskSchedulerService2));
+            this.context = context;
             this.task = new Task<object>(
                 () =>
                 {
@@ -137,7 +129,7 @@
         /// <inheritdoc />
         public IVsTask ContinueWith(uint context, IVsTaskBody pTaskBody)
         {
-            return this.ContinueWithEx(0, 0, pTaskBody, pAsyncState: null);
+            return this.ContinueWithEx(context, 0, pTaskBody, pAsyncState: null);
         }
 
         /// <inheritdoc />
@@ -146,13 +138,17 @@
             // NOTE: We ignore options (and context), if any tests are testing code that relies on either this
             // would need to be modified to properly support them.
             return new MockVSTask(
+                this.vsTaskSchedulerService2,
+                context,
                 this.task.ContinueWith(
                     t =>
                     {
                         pTaskBody.DoWork(this, 0, new IVsTask[0], out object result);
                         return result;
                     },
-                    this.cancellationTokenSource.Token),
+                    this.cancellationTokenSource.Token,
+                    TaskContinuationOptions.None,
+                    (TaskScheduler)this.vsTaskSchedulerService2.GetTaskScheduler(context)),
                 pAsyncState);
         }
 
@@ -165,7 +161,7 @@
         /// <inheritdoc />
         public void Start()
         {
-            this.task.Start();
+            this.task.Start((TaskScheduler)this.vsTaskSchedulerService2.GetTaskScheduler(this.context));
         }
 
         /// <inheritdoc />
