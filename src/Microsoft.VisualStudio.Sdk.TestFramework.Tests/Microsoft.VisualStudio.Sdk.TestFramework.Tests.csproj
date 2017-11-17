@@ -6,6 +6,7 @@
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Microsoft.VisualStudio.Sdk.TestFramework\content\MockedVS.cs">
