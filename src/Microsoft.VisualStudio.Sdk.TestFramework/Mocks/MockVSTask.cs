@@ -16,7 +16,6 @@
         private readonly uint context;
         private readonly Task<object> task;
         private readonly object asyncState;
-        private string description;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTask"/> class.
@@ -68,48 +67,19 @@
         public object AsyncState => this.asyncState;
 
         /// <inheritdoc />
-        public string Description
-        {
-            get
-            {
-                return this.description;
-            }
-
-            set
-            {
-                this.description = value;
-            }
-        }
+        public string Description { get; set; }
 
         /// <inheritdoc />
         public bool IsCanceled => this.task.IsCanceled;
 
         /// <inheritdoc />
-        public bool IsCompleted
-        {
-            get
-            {
-                return this.task.IsCompleted;
-            }
-        }
+        public bool IsCompleted => this.task.IsCompleted;
 
         /// <inheritdoc />
-        public bool IsFaulted
-        {
-            get
-            {
-                return this.task.IsFaulted;
-            }
-        }
+        public bool IsFaulted => this.task.IsFaulted;
 
         /// <inheritdoc />
-        public CancellationToken CancellationToken
-        {
-            get
-            {
-                return this.cancellationTokenSource.Token;
-            }
-        }
+        public CancellationToken CancellationToken => this.cancellationTokenSource.Token;
 
         /// <inheritdoc />
         public void AbortIfCanceled()
@@ -121,10 +91,7 @@
         }
 
         /// <inheritdoc />
-        public void Cancel()
-        {
-            this.cancellationTokenSource.Cancel();
-        }
+        public void Cancel() => this.cancellationTokenSource.Cancel();
 
         /// <inheritdoc />
         public IVsTask ContinueWith(uint context, IVsTaskBody pTaskBody)
@@ -153,10 +120,7 @@
         }
 
         /// <inheritdoc />
-        public object GetResult()
-        {
-            return this.task.GetAwaiter().GetResult();
-        }
+        public object GetResult() => this.task.GetAwaiter().GetResult();
 
         /// <inheritdoc />
         public void Start()
@@ -165,10 +129,7 @@
         }
 
         /// <inheritdoc />
-        public void Wait()
-        {
-            this.WaitEx(-1, (uint)__VSTASKWAITOPTIONS.VSTWO_None);
-        }
+        public void Wait() => this.WaitEx(-1, (uint)__VSTASKWAITOPTIONS.VSTWO_None);
 
         /// <inheritdoc />
         public bool WaitEx(int millisecondsTimeout, uint options)

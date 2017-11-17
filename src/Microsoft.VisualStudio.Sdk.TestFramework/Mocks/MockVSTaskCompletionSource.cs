@@ -26,13 +26,7 @@
         }
 
         /// <inheritdoc />
-        public IVsTask Task
-        {
-            get
-            {
-                return this.UnderlyingTask;
-            }
-        }
+        public IVsTask Task => this.UnderlyingTask;
 
         /// <summary>
         /// Gets the mocked VSTask.
@@ -60,21 +54,12 @@
         }
 
         /// <inheritdoc />
-        public void SetCanceled()
-        {
-            this.UnderlyingTask.Cancel();
-        }
+        public void SetCanceled() => this.UnderlyingTask.Cancel();
 
         /// <inheritdoc />
-        public void SetFaulted(int hr)
-        {
-            this.taskCompletionSource.SetException(Marshal.GetExceptionForHR(hr));
-        }
+        public void SetFaulted(int hr) => this.taskCompletionSource.SetException(Marshal.GetExceptionForHR(hr));
 
         /// <inheritdoc />
-        public void SetResult(object result)
-        {
-            this.taskCompletionSource.SetResult(result);
-        }
+        public void SetResult(object result) => this.taskCompletionSource.SetResult(result);
     }
 }

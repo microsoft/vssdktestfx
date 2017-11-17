@@ -42,10 +42,7 @@
         }
 
         /// <inheritdoc />
-        public IVsTaskCompletionSource CreateTaskCompletionSource()
-        {
-            return this.CreateTaskCompletionSourceEx(0, null);
-        }
+        public IVsTaskCompletionSource CreateTaskCompletionSource() => this.CreateTaskCompletionSourceEx(0, null);
 
         /// <inheritdoc />
         public IVsTaskCompletionSource CreateTaskCompletionSourceEx(uint options, object asyncState)
@@ -60,10 +57,7 @@
         }
 
         /// <inheritdoc />
-        public object GetAsyncTaskContext()
-        {
-            return this.joinableTaskContext;
-        }
+        public object GetAsyncTaskContext() => this.joinableTaskContext;
 
         /// <inheritdoc />
         public object GetTaskScheduler([ComAliasName("VsShell.VSTASKRUNCONTEXT")]uint context)
