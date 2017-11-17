@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Sdk.TestFramework.Tests;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
 using Task = System.Threading.Tasks.Task;
@@ -145,5 +146,29 @@ public class TestFrameworkTests
                 await Task.Yield();
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             });
+    }
+
+    [Fact]
+    public async Task RunAsyncAsVsTask()
+    {
+        bool result = (bool)await ThreadHelper.JoinableTaskFactory.RunAsyncAsVsTask(
+            VsTaskRunContext.UIThreadNormalPriority,
+            async ct =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                Assert.True(ThreadHelper.CheckAccess());
+                return true;
+            });
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task ExplicitVsTaskCreation()
+    {
+        IVsTask vsTask = VsTaskLibraryHelper.CreateAndStartTask(
+            VsTaskLibraryHelper.ServiceInstance,
+            VsTaskRunContext.UIThreadNormalPriority,
+            VsTaskLibraryHelper.CreateTaskBody(() => Assert.True(ThreadHelper.CheckAccess())));
+        await vsTask;
     }
 }
