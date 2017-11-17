@@ -121,8 +121,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             /// <inheritdoc />
             int OLE.Interop.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
             {
-                object service;
-                if (!this.services.TryGetValue(guidService, out service))
+                if (!this.services.TryGetValue(guidService, out object service))
                 {
                     ppvObject = IntPtr.Zero;
                     return VSConstants.E_INVALIDARG;
