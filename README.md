@@ -5,14 +5,14 @@ so that certain core VS functionality works outside the VS process so your unit 
 For example, `ThreadHelper` and obtaining global services from the static `ServiceProvider`
 tend to fail in unit tests without this library installed.
 
-## Referencing 
+## Referencing
 
 ### For tests that build outside the VS repo:
 
-To reference this test framework outside the VS repo, 
+To reference this test framework outside the VS repo,
 you will need to add this as a package source in your [nuget.config file](https://docs.microsoft.com/en-us/nuget/schema/nuget-config-file#packagesources):
 
-    https://mseng.pkgs.visualstudio.com/DefaultCollection/_packaging/VSIDEProj-realSigned-release/nuget/v3/index.json
+    https://devdiv.pkgs.visualstudio.com/_packaging/VSIDE-RealSigned-release/nuget/v3/index.json
 
 Then install its NuGet package:
 
