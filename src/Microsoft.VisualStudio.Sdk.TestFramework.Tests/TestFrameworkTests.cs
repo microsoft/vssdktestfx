@@ -17,6 +17,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Threading;
 using Xunit;
+using OleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
 [Collection(MockedVS.Collection)]
@@ -28,6 +29,13 @@ public class TestFrameworkTests
     {
         this.mef = mef;
         sp.Reset();
+    }
+
+    [Fact]
+    public void OleServiceProviderIsService()
+    {
+        object sp = ServiceProvider.GlobalProvider.GetService(typeof(OleServiceProvider));
+        Assert.IsAssignableFrom<OleServiceProvider>(sp);
     }
 
     [Fact]

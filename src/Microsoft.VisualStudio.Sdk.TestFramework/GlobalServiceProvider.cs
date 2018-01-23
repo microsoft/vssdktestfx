@@ -26,6 +26,11 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     /// <summary>
     /// Provides the "global service provider" for Visual Studio components.
     /// </summary>
+    /// <remarks>
+    /// This type manages the adding of services to the global service provider.
+    /// The service provider itself is exposed to test and product code via the
+    /// <see cref="ServiceProvider.GlobalProvider" /> static property.
+    /// </remarks>
     public class GlobalServiceProvider : IDisposable
     {
         /// <summary>
@@ -186,6 +191,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.mainMessagePumpFrame = new DispatcherFrame();
 
                 this.services = ImmutableDictionary.Create<Guid, object>();
+                this.AddService(typeof(OLE.Interop.IServiceProvider), this);
                 this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
                 this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
                 this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
