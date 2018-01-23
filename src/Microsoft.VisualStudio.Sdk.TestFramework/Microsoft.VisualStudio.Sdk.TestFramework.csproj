@@ -28,6 +28,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MicroBuild" Version="2.0.52" PrivateAssets="all" />
