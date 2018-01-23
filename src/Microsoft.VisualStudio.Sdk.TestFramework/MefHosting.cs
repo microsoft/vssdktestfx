@@ -130,8 +130,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             var discoveredParts = await this.discoverer.CreatePartsAsync(assemblies);
             var catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
                 .AddParts(discoveredParts)
-                .WithCompositionService()
-                .WithDesktopSupport();
+                .WithCompositionService();
             return catalog;
         }
     }
