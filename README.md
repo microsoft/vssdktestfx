@@ -21,16 +21,19 @@ Then install its NuGet package:
 Make sure your unit test project generates the required binding redirects by adding these two properties to your project file:
 
 ```xml
-  <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 ```
 
 ### For tests that build within the VS repo:
 
 Add these references to your project:
 
-    <Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
-    <Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
+```xml
+<Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
+<Reference Include="$(PkgSystem_Collections_Immutable)\lib\netstandard1.0\System.Collections.Immutable.dll" />
+<Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
+```    
 
 Add the following binding redirects to your test project, via an app.config.tt file as shown below.
 If you do not already have an app.config.tt file (or perhaps it is called just app.config),
@@ -81,51 +84,63 @@ You may need to adjust the version values in the `Moq` binding redirect to match
 
 Add this class to your project (if a MockedVS.cs file was not added to your project automatically):
 
-    using Xunit;
+```csharp
+using Xunit;
 
+/// <summary>
+/// Defines the "MockedVS" xunit test collection.
+/// </summary>
+[CollectionDefinition(Collection)]
+public class MockedVS : ICollectionFixture<GlobalServiceProvider>, ICollectionFixture<MefHosting>
+{
     /// <summary>
-    /// Defines the "MockedVS" xunit test collection.
+    /// The name of the xunit test collection.
     /// </summary>
-    [CollectionDefinition(Collection)]
-    public class MockedVS : ICollectionFixture<GlobalServiceProvider>, ICollectionFixture<MefHosting>
-    {
-        /// <summary>
-        /// The name of the xunit test collection.
-        /// </summary>
-        public const string Collection = "MockedVS";
-    }
+    public const string Collection = "MockedVS";
+}
+```
 
-Then for *each of your test classes, apply the `Collection` attribute and
+Then for *each* of your test classes, apply the `Collection` attribute and
 add a parameter and statement to your constructor:
 
-    [Collection(MockedVS.Collection)]
-    public class YourTestClass
+```csharp
+[Collection(MockedVS.Collection)]
+public class YourTestClass
+{
+    public TestFrameworkTests(GlobalServiceProvider sp)
     {
-        public TestFrameworkTests(GlobalServiceProvider sp)
-        {
-            sp.Reset();
-        }
+        sp.Reset();
     }
+}
+```
 
 ### MSTest instructions
 
 Add these members to *one* of your test classes:
 
-    internal static GlobalServiceProvider mockServiceProvider;
+```csharp
+[TestClass]
+public class SharedClass
+{
+    internal static GlobalServiceProvider MockServiceProvider { get; private set; }
 
     [AssemblyInitialize]
     public static void AssemblyInit(TestContext context)
     {
-        mockServiceProvider = new GlobalServiceProvider();
+        MockServiceProvider = new GlobalServiceProvider();
     }
+}
+```
 
 Then in *each* of your test classes, Reset() the static service provider created earlier:
 
-    [TestInitialize]
-    public void TestInit()
-    {
-        SharedClass.mockServiceProvider.Reset();
-    }
+```csharp
+[TestInitialize]
+public void TestInit()
+{
+    SharedClass.MockServiceProvider.Reset();
+}
+```
 
 For a sample of applying this pattern to an MSTest project within the VS repo, check out [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/57056?_a=files&path=%2Fsrc%2Fenv%2Fshell%2FConnected%2Ftests).
 
@@ -139,7 +154,7 @@ that it is invoked on the UI thread (e.g. `ThreadHelper.ThrowIfNotOnUIThread()`)
 [TestMethod] // or [Fact]
 public async Task VerifyWeDoSomethingGood()
 {
-    await ThreadHelper.SwitchToMainThreadAsync();
+    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
     MyVSPackage.DoSomethingAwesome();
 }
 ```
