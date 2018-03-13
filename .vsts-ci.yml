@@ -1,0 +1,65 @@
+queue: VSEng-MicroBuildVS2017
+
+steps:
+- task: MicroBuildSigningPlugin@1
+  inputs:
+    signType: $(SignType)
+    esrpSigning: true
+    zipSources: false
+
+- task: PowerShell@2
+  displayName: Set package upload feed
+  inputs:
+    targetType: inline
+    script: |
+      if ($env:SignType -eq 'Real') {
+        $feedGuid = '09d8d03c-1ac8-456e-9274-4d2364527d99'
+      } else {
+        $feedGuid = 'da484c78-f942-44ef-b197-99e2a1bef53c'
+      }
+
+      Write-Host "##vso[task.setvariable variable=feedGuid]$feedGuid"
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '**\*.sln'
+    feedsToUse: config
+    nugetConfigPath: src/nuget.config
+    externalFeedCredentials: mseng VS-PrivateAssemblies
+  displayName: Nuget restore packages
+
+- task: VSBuild@1
+  inputs:
+    vsVersion: 15.0
+    msbuildArgs: /t:build,pack
+    platform: $(BuildPlatform)
+    configuration: $(BuildConfiguration)
+  displayName: Build Visual Studio solution
+
+- task: VSTest@2
+  inputs:
+    testAssemblyVer2: bin/**/$(BuildConfiguration)/**/*tests*.dll
+    codeCoverageEnabled: true
+    runInParallel: true
+    vsTestVersion: latest
+    pathtoCustomTestAdapters: $(Build.SourcesDirectory)\bin\Microsoft.VisualStudio.Sdk.TestFramework.Tests\$(BuildConfiguration)\net46
+
+- task: MicroBuildCleanup@1
+  condition: succeededOrFailed()
+
+## The rest of these steps are for deployment and skipped for PR builds
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: $(build.sourcesdirectory)/bin
+    ArtifactName: bin
+    ArtifactType: Container
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
+- task: NuGetCommand@2
+  inputs:
+    command: push
+    searchPatternPush: $(Build.SourcesDirectory)/bin/**/$(BuildConfiguration)/**/*.nupkg
+    publishVstsFeed: $(feedGuid)
+    allowPackageConflicts: true
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
