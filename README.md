@@ -158,3 +158,18 @@ public async Task VerifyWeDoSomethingGood()
     MyVSPackage.DoSomethingAwesome();
 }
 ```
+
+## Built in service mocks
+
+There are a collection of "base services" that the VSSDKTestFx comes with mocks for.
+Calling `GlobalServiceProvider.AddService` for any of these will result in an `InvalidOperationException` being thrown claiming
+that the service is already added.
+
+These services include:
+
+* `SVsActivityLog`
+* `OLE.Interop.IServiceProvider`
+* `SVsTaskSchedulerService`
+* `SVsUIThreadInvokerPrivate`
+
+More may be added and can be found in [source code](https://devdiv.visualstudio.com/DefaultCollection/DevDiv/Connected%20Experience/_git/VSSDKTestFx?_a=contents&path=%2Fsrc%2FMicrosoft.VisualStudio.Sdk.TestFramework%2FGlobalServiceProvider.cs&version=GBmaster&line=194&lineStyle=plain&lineEnd=198&lineStartColumn=1&lineEndColumn=1).
