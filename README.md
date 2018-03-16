@@ -33,7 +33,17 @@ Add these references to your project:
 <Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
 <Reference Include="$(PkgSystem_Collections_Immutable)\lib\netstandard1.0\System.Collections.Immutable.dll" />
 <Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
-```    
+<Reference Include="System.Runtime" />
+```
+
+Keep Cloud Build happy by adding these items to your project:
+
+```xml
+<ItemGroup>
+  <QCustomInput Include="@(Template)" />
+  <QCustomInput Include="$(INETROOT)\src\productdata\assemblyversions.tt" />
+</ItemGroup>
+```
 
 Add the following binding redirects to your test project, via an app.config.tt file as shown below.
 If you do not already have an app.config.tt file (or perhaps it is called just app.config),
@@ -78,6 +88,10 @@ You may need to adjust the version values in the `Moq` binding redirect to match
 </configuration>
 ```
 
+You will likely need to update the relative path in the app.config.tt file given above to the AssemblyVersions.tt file.
+The relative path must resolve from your test directory to the VS repo's src\ProductData\AssemblyVersions.tt file.
+A build break will result if the relative path is wrong.
+
 ## Unit test source code changes
 
 ### Xunit instructions
@@ -86,6 +100,7 @@ Add this class to your project (if a MockedVS.cs file was not added to your proj
 
 ```csharp
 using Xunit;
+using Microsoft.VisualStudio.Sdk.TestFramework;
 
 /// <summary>
 /// Defines the "MockedVS" xunit test collection.
@@ -104,6 +119,8 @@ Then for *each* of your test classes, apply the `Collection` attribute and
 add a parameter and statement to your constructor:
 
 ```csharp
+using Microsoft.VisualStudio.Sdk.TestFramework;
+
 [Collection(MockedVS.Collection)]
 public class YourTestClass
 {
@@ -119,6 +136,8 @@ public class YourTestClass
 Add these members to *one* of your test classes:
 
 ```csharp
+using Microsoft.VisualStudio.Sdk.TestFramework;
+
 [TestClass]
 public class SharedClass
 {
@@ -135,6 +154,8 @@ public class SharedClass
 Then in *each* of your test classes, Reset() the static service provider created earlier:
 
 ```csharp
+using Microsoft.VisualStudio.Sdk.TestFramework;
+
 [TestInitialize]
 public void TestInit()
 {
