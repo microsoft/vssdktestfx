@@ -179,4 +179,18 @@ public class TestFrameworkTests
             VsTaskLibraryHelper.CreateTaskBody(() => Assert.True(ThreadHelper.CheckAccess())));
         await vsTask;
     }
+
+    [Fact]
+    public async Task AwaitingIVsTaskPreservesContext()
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.RunAsyncAsVsTask(
+            VsTaskRunContext.UIThreadBackgroundPriority,
+            async ct =>
+            {
+                await Task.Delay(100);
+                return 0;
+            });
+        ThreadHelper.ThrowIfNotOnUIThread();
+    }
 }

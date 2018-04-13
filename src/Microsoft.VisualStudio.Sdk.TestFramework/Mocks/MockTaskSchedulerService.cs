@@ -63,6 +63,11 @@
         public object GetTaskScheduler([ComAliasName("VsShell.VSTASKRUNCONTEXT")]uint context)
         {
             var runContext = (VsTaskRunContext)context;
+            if (runContext == VsTaskRunContext.CurrentContext)
+            {
+                runContext = ThreadHelper.CheckAccess() ? VsTaskRunContext.UIThreadNormalPriority : VsTaskRunContext.BackgroundThread;
+            }
+
             switch (runContext)
             {
                 case VsTaskRunContext.UIThreadBackgroundPriority:
