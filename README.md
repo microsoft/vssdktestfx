@@ -148,6 +148,12 @@ public class SharedClass
     {
         MockServiceProvider = new GlobalServiceProvider();
     }
+
+    [AssemblyCleanup]
+    public static void AssemblyCleanup()
+    {
+        MockServiceProvider.Dispose();
+    }
 }
 ```
 
