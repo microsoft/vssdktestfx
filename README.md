@@ -47,7 +47,7 @@ Keep Cloud Build happy by adding these items to your project:
 
 Add the following binding redirects to your test project, via an app.config.tt file as shown below.
 If you do not already have an app.config.tt file (or perhaps it is called just app.config),
-you can create your T4 macro-enabled file as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
+you can create your T4 macro-enabled file as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/default/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
 
 You may need to adjust the version values in the `Moq` binding redirect to match the available version.
 
@@ -169,7 +169,7 @@ public void TestInit()
 }
 ```
 
-For a sample of applying this pattern to an MSTest project within the VS repo, check out [this pull request](https://devdiv.visualstudio.com/DevDiv/Connected%20Experience/_git/VS/pullrequest/57056?_a=files&path=%2Fsrc%2Fenv%2Fshell%2FConnected%2Ftests).
+For a sample of applying this pattern to an MSTest project within the VS repo, check out [this pull request](https://devdiv.visualstudio.com/DevDiv/default/_git/VS/pullrequest/57056?_a=files&path=%2Fsrc%2Fenv%2Fshell%2FConnected%2Ftests).
 
 ## Main Thread considerations
 
@@ -199,4 +199,4 @@ These services include:
 * `SVsTaskSchedulerService`
 * `SVsUIThreadInvokerPrivate`
 
-More may be added and can be found in [source code](https://devdiv.visualstudio.com/DefaultCollection/DevDiv/Connected%20Experience/_git/VSSDKTestFx?_a=contents&path=%2Fsrc%2FMicrosoft.VisualStudio.Sdk.TestFramework%2FGlobalServiceProvider.cs&version=GBmaster&line=194&lineStyle=plain&lineEnd=198&lineStartColumn=1&lineEndColumn=1).
+More may be added and can be found in [source code](https://devdiv.visualstudio.com/DefaultCollection/DevDiv/default/_git/VSSDKTestFx?_a=contents&path=%2Fsrc%2FMicrosoft.VisualStudio.Sdk.TestFramework%2FGlobalServiceProvider.cs&version=GBmaster&line=194&lineStyle=plain&lineEnd=198&lineStartColumn=1&lineEndColumn=1).
