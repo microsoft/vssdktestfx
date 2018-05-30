@@ -30,6 +30,7 @@ Make sure your unit test project generates the required binding redirects by add
 Add these references to your project:
 
 ```xml
+<Reference Include="$(PkgMicrosoft_VisualStudio_Composition)\lib\net45\Microsoft.VisualStudio.Composition.dll" />
 <Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
 <Reference Include="$(PkgSystem_Collections_Immutable)\lib\netstandard1.0\System.Collections.Immutable.dll" />
 <Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
@@ -41,7 +42,7 @@ Keep Cloud Build happy by adding these items to your project:
 ```xml
 <ItemGroup>
   <QCustomInput Include="@(Template)" />
-  <QCustomInput Include="$(INETROOT)\src\productdata\assemblyversions.tt" />
+  <QCustomInput Include="$(INETROOT)\src\ProductData\AssemblyVersions.tt" />
 </ItemGroup>
 ```
 
