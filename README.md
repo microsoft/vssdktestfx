@@ -69,8 +69,20 @@ You may need to adjust the version values in the `Moq` binding redirect to match
         <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioCompositionVersion #>" newVersion="<#= MicrosoftVisualStudioCompositionVersion #>"/>
       </dependentAssembly>
       <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Shell.15.0" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= VSGeneralAssemblyVersion #>" newVersion="<#= VSGeneralAssemblyVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Shell.Framework" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= VSGeneralAssemblyVersion #>" newVersion="<#= VSGeneralAssemblyVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
         <assemblyIdentity name="Microsoft.VisualStudio.Threading" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
         <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioThreadingVersion #>" newVersion="<#= MicrosoftVisualStudioThreadingVersion #>"/>
+      </dependentAssembly>
+      <dependentAssembly>
+        <assemblyIdentity name="Microsoft.VisualStudio.Utilities" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
+        <bindingRedirect oldVersion="0.0.0.0-<#= VSGeneralAssemblyVersion #>" newVersion="<#= VSGeneralAssemblyVersion #>"/>
       </dependentAssembly>
       <dependentAssembly>
         <assemblyIdentity name="Microsoft.VisualStudio.Validation" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
