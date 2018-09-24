@@ -105,6 +105,10 @@ You will likely need to update the relative path in the app.config.tt file given
 The relative path must resolve from your test directory to the VS repo's src\ProductData\AssemblyVersions.tt file.
 A build break will result if the relative path is wrong.
 
+When making changes to your .tt file, verify your changes make it into $(AssemblyName).dll.config in your build output.
+You might need to perform a clean/build. For reasons unknown, it's been seen that the transformation from app.config.tt
+-> app.config -> assemblyname.dll.config can confuse the build, and changes aren't re-built.
+
 ## Unit test source code changes
 
 ### Xunit instructions
