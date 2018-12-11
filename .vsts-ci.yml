@@ -7,19 +7,6 @@ steps:
     esrpSigning: true
     zipSources: false
 
-- task: PowerShell@2
-  displayName: Set package upload feed
-  inputs:
-    targetType: inline
-    script: |
-      if ($env:SignType -eq 'Real') {
-        $feedGuid = '09d8d03c-1ac8-456e-9274-4d2364527d99'
-      } else {
-        $feedGuid = 'da484c78-f942-44ef-b197-99e2a1bef53c'
-      }
-
-      Write-Host "##vso[task.setvariable variable=feedGuid]$feedGuid"
-
 - task: NuGetCommand@2
   inputs:
     restoreSolution: '**\*.sln'
@@ -47,19 +34,18 @@ steps:
 - task: MicroBuildCleanup@1
   condition: succeededOrFailed()
 
-## The rest of these steps are for deployment and skipped for PR builds
+- task: CopyFiles@1
+  inputs:
+    Contents: |
+      bin/**/$(BuildConfiguration)/*.nupkg
+    TargetFolder: $(Build.ArtifactStagingDirectory)/deployables
+    flattenFolders: true
+  displayName: Collecting deployables
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: $(build.sourcesdirectory)/bin
-    ArtifactName: bin
+    PathtoPublish: $(Build.ArtifactStagingDirectory)/deployables
+    ArtifactName: deployables
     ArtifactType: Container
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-
-- task: NuGetCommand@2
-  inputs:
-    command: push
-    searchPatternPush: $(Build.SourcesDirectory)/bin/**/$(BuildConfiguration)/**/*.nupkg
-    publishVstsFeed: $(feedGuid)
-    allowPackageConflicts: true
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  displayName: Publish deployables artifacts
+  condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
