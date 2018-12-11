@@ -20,12 +20,15 @@ using Xunit;
 using OleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
+#pragma warning disable CS0618 // We intentionally test APIs that are obsolete
+#pragma warning disable VSTHRD001 // We intentionally test APIs that are obsolete
+
 [Collection(MockedVS.Collection)]
 public class TestFrameworkTests
 {
     private readonly MefHosting mef;
 
-    public TestFrameworkTests(GlobalServiceProvider sp, MefHosting mef)
+    public TestFrameworkTests(GlobalServiceProvider sp, MefHostingFixture mef)
     {
         this.mef = mef;
         sp.Reset();
