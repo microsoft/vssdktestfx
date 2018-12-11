@@ -120,7 +120,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.mainThread.SetApartmentState(ApartmentState.STA);
                 this.mainThread.Name = "VS Main Thread (mocked)";
                 this.mainThread.Start();
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
                 this.mainThreadInitialized.WaitAsync().Wait();
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             }
 
             /// <inheritdoc />
@@ -173,7 +175,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             internal void Shutdown()
             {
                 // Terminate the main thread.
+#pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
                 this.mainThreadInitialized?.WaitAsync().Wait();
+#pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
                 this.mainMessagePumpFrame.Continue = false;
                 this.mainThread.Join();
             }

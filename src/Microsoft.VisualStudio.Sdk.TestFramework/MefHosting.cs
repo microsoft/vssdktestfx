@@ -15,6 +15,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     using System.Text;
     using System.Threading.Tasks;
     using Composition;
+    using Microsoft.VisualStudio.Shell;
     using Threading;
 
     /// <summary>
@@ -59,7 +60,8 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 
             this.catalogAssemblyNames = ImmutableArray.CreateRange(assemblyNames);
             this.exportProviderFactory = new AsyncLazy<IExportProviderFactory>(
-                this.CreateExportProviderFactoryAsync);
+                this.CreateExportProviderFactoryAsync,
+                ThreadHelper.JoinableTaskFactory);
         }
 
         /// <summary>

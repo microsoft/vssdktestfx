@@ -6,6 +6,8 @@
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
 
+#pragma warning disable VSTHRD002 // Our mock implementation is pretty cheap
+
     /// <summary>
     /// A mock implementation of <see cref="IVsTask"/>.
     /// </summary>
