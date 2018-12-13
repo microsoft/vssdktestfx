@@ -13,7 +13,6 @@ To reference this test framework outside the VS repo,
 you will need these feeds as package sources in your [nuget.config file](https://docs.microsoft.com/en-us/nuget/schema/nuget-config-file#packagesources):
 
     https://api.nuget.org/v3/index.json (this is the default feed)
-    https://devdiv.pkgs.visualstudio.com/_packaging/vssdk/nuget/v3/index.json
     https://devdiv.pkgs.visualstudio.com/_packaging/vs-impl/nuget/v3/index.json
 
 Then install its NuGet package:
