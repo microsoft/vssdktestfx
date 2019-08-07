@@ -42,6 +42,13 @@ public class TestFrameworkTests
     }
 
     [Fact]
+    public async Task ServicesObtainableViaAsyncServiceProvider()
+    {
+        object activityLog = await AsyncServiceProvider.GlobalProvider.GetServiceAsync(typeof(SVsActivityLog));
+        Assert.IsAssignableFrom<IVsActivityLog>(activityLog);
+    }
+
+    [Fact]
     public async Task MainThreadHandling()
     {
         if (ThreadHelper.JoinableTaskContext.MainThread == Thread.CurrentThread)

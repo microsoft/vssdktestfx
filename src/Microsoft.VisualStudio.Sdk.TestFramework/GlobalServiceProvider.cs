@@ -199,10 +199,15 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
                 this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
                 this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
+
+                Shell.Interop.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
+                this.AddService(typeof(SAsyncServiceProvider), asyncServiceProvider);
+
                 this.baseServices = this.services;
 
                 // We can only call this once for the AppDomain.
                 ServiceProvider.CreateFromSetSite(this);
+                AsyncServiceProvider.CreateFromSetSite(asyncServiceProvider);
 
                 // Arrange to signal that we're done initialization the main thread
                 // once the message pump starts.
