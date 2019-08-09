@@ -71,7 +71,7 @@ public class TestFrameworkTests
     [Fact]
     public async Task TestAssemblyIsInMefCatalog()
     {
-        var ep = await this.mef.CreateExportProviderAsync();
+        Microsoft.VisualStudio.Composition.ExportProvider ep = await this.mef.CreateExportProviderAsync();
         Assert.NotNull(ep.GetExportedValue<SomeMefExport>());
     }
 
@@ -146,7 +146,7 @@ public class TestFrameworkTests
     public async Task ThreadHelper_InvokeAsync()
     {
         bool delegateExecuted = false;
-        var t = ThreadHelper.Generic.InvokeAsync(delegate
+        Task t = ThreadHelper.Generic.InvokeAsync(delegate
         {
             delegateExecuted = true;
         });

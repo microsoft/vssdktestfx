@@ -8,7 +8,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
     using System;
     using System.Collections.Immutable;
-    using Shell;
+    using Microsoft.VisualStudio.Shell;
 
     /// <summary>
     /// An <see cref="IServiceProvider"/> implementation that inherits services

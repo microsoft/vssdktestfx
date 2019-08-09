@@ -5,9 +5,21 @@ trigger:
   paths:
     exclude: ["doc", "*.md"]
 
-queue: VSEng-MicroBuildVS2017
+queue: VSEng-MicroBuildVS2019
 
 steps:
+- powershell: |
+    "$env:userprofile\.nuget\packages", "$env:LocalAppData\NuGet\Cache", "$env:AppData\tsd-cache" |% {
+      if (Test-Path $_) { Remove-Item $_ -Recurse -Force }
+    }
+  displayName: Purge package caches
+  condition: and(succeeded(), eq(variables['system.collectionId'], '011b8bdf-6d56-4f87-be0d-0092136884d9'))
+
+- task: UseDotNet@2
+  inputs:
+    packageType: sdk
+    useGlobalJson: true
+
 - task: MicroBuildSigningPlugin@1
   inputs:
     signType: $(SignType)
@@ -24,7 +36,6 @@ steps:
 
 - task: VSBuild@1
   inputs:
-    vsVersion: 15.0
     msbuildArgs: /t:build,pack
     platform: $(BuildPlatform)
     configuration: $(BuildConfiguration)
@@ -56,3 +67,12 @@ steps:
     ArtifactType: Container
   displayName: Publish deployables artifacts
   condition: and(succeeded(), ne(variables['system.pullrequest.isfork'], true))
+
+- task: PublishSymbols@2
+  inputs:
+    SymbolsFolder: $(Build.SourcesDirectory)/bin
+    SearchPattern: '**/*.pdb'
+    IndexSources: false
+    SymbolServerType: TeamServices
+  displayName: Publish symbols to symbol server
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))

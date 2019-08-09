@@ -44,7 +44,7 @@
         /// <inheritdoc />
         public IVsTask QueryServiceAsync(ref Guid guidService)
         {
-            var completionSource = this.taskSchedulerService.CreateTaskCompletionSource();
+            IVsTaskCompletionSource completionSource = this.taskSchedulerService.CreateTaskCompletionSource();
             try
             {
                 completionSource.SetResult(this.serviceProvider.QueryService(guidService));

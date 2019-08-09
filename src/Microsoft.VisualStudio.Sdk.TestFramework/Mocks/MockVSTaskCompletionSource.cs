@@ -5,7 +5,7 @@
     using Microsoft.VisualStudio.Shell.Interop;
 
     /// <summary>
-    /// A mock implementation of <see cref="IVsTaskCompletionSource"/>
+    /// A mock implementation of <see cref="IVsTaskCompletionSource"/>.
     /// </summary>
     internal sealed class MockVSTaskCompletionSource : IVsTaskCompletionSource
     {
@@ -17,7 +17,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTaskCompletionSource"/> class.
         /// </summary>
-        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/></param>
+        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/>.</param>
         /// <param name="asyncState">The state object.</param>
         public MockVSTaskCompletionSource(IVsTaskSchedulerService2 vsTaskSchedulerService2, object asyncState = null)
         {
