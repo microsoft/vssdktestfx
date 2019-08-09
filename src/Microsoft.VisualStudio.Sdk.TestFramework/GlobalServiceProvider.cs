@@ -79,7 +79,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         {
             private readonly Thread mainThread;
 
-            private readonly AsyncManualResetEvent mainThreadInitialized;
+            private readonly TaskCompletionSource<object> mainThreadInitialized = new TaskCompletionSource<object>();
 
             /// <summary>
             /// The initial set of minimal services.
@@ -115,13 +115,12 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             /// </remarks>
             internal OleServiceProviderMock()
             {
-                this.mainThreadInitialized = new AsyncManualResetEvent();
                 this.mainThread = new Thread(this.MainThread);
                 this.mainThread.SetApartmentState(ApartmentState.STA);
                 this.mainThread.Name = "VS Main Thread (mocked)";
                 this.mainThread.Start();
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-                this.mainThreadInitialized.WaitAsync().Wait();
+                this.mainThreadInitialized.Task.GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             }
 
@@ -176,7 +175,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             {
                 // Terminate the main thread.
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
-                this.mainThreadInitialized?.WaitAsync().Wait();
+                this.mainThreadInitialized.Task.GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
                 this.mainMessagePumpFrame.Continue = false;
                 this.mainThread.Join();
@@ -187,33 +186,40 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             /// </summary>
             private void MainThread()
             {
-                this.mainThreadSyncContext = new DispatcherSynchronizationContext();
-                SynchronizationContext.SetSynchronizationContext(this.mainThreadSyncContext);
-                new Application(); // just creating this sets it to Application.Current, as required
+                try
+                {
+                    this.mainThreadSyncContext = new DispatcherSynchronizationContext();
+                    SynchronizationContext.SetSynchronizationContext(this.mainThreadSyncContext);
+                    new Application(); // just creating this sets it to Application.Current, as required
 
-                this.joinableTaskContext = new JoinableTaskContext();
-                this.mainMessagePumpFrame = new DispatcherFrame();
+                    this.joinableTaskContext = new JoinableTaskContext();
+                    this.mainMessagePumpFrame = new DispatcherFrame();
 
-                this.services = ImmutableDictionary.Create<Guid, object>();
-                this.AddService(typeof(OLE.Interop.IServiceProvider), this);
-                this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
-                this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
-                this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
+                    this.services = ImmutableDictionary.Create<Guid, object>();
+                    this.AddService(typeof(OLE.Interop.IServiceProvider), this);
+                    this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
+                    this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
+                    this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
 
-                Shell.Interop.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
-                this.AddService(typeof(SAsyncServiceProvider), asyncServiceProvider);
+                    Shell.Interop.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
+                    this.AddService(typeof(SAsyncServiceProvider), asyncServiceProvider);
 
-                this.baseServices = this.services;
+                    this.baseServices = this.services;
 
-                // We can only call this once for the AppDomain.
-                ServiceProvider.CreateFromSetSite(this);
-                AsyncServiceProvider.CreateFromSetSite(asyncServiceProvider);
+                    // We can only call this once for the AppDomain.
+                    ServiceProvider.CreateFromSetSite(this);
+                    AsyncServiceProvider.CreateFromSetSite(asyncServiceProvider);
 
-                // Arrange to signal that we're done initialization the main thread
-                // once the message pump starts.
-                this.mainThreadSyncContext.Post(s => this.mainThreadInitialized.Set(), null);
+                    // Arrange to signal that we're done initialization the main thread
+                    // once the message pump starts.
+                    this.mainThreadSyncContext.Post(s => this.mainThreadInitialized.TrySetResult(null), null);
 
-                Dispatcher.PushFrame(this.mainMessagePumpFrame);
+                    Dispatcher.PushFrame(this.mainMessagePumpFrame);
+                }
+                catch (Exception ex)
+                {
+                    this.mainThreadInitialized.TrySetException(ex);
+                }
             }
 
             private Mock<IVsActivityLog> CreateVsActivityLogMock()
