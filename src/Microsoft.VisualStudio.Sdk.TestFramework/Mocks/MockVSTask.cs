@@ -22,7 +22,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTask"/> class.
         /// </summary>
-        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/></param>
+        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/>.</param>
         /// <param name="context">The scheduling option for this task.</param>
         /// <param name="task">The task to execute.</param>
         /// <param name="asyncState">The async state object to store.</param>
@@ -37,7 +37,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTask"/> class.
         /// </summary>
-        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/></param>
+        /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/>.</param>
         /// <param name="context">The scheduling option for this task.</param>
         /// <param name="taskBody">The body to execute.</param>
         /// <param name="asyncState">The async state object to store.</param>

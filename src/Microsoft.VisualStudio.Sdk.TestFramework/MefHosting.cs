@@ -12,11 +12,10 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Text;
     using System.Threading.Tasks;
-    using Composition;
+    using Microsoft.VisualStudio.Composition;
     using Microsoft.VisualStudio.Shell;
-    using Threading;
+    using Microsoft.VisualStudio.Threading;
 
     /// <summary>
     /// Provides VS MEF hosting facilities for unit tests.
@@ -71,7 +70,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// <returns>A task whose result is the <see cref="ExportProvider"/>.</returns>
         public async Task<ExportProvider> CreateExportProviderAsync()
         {
-            var exportProviderFactory = await this.exportProviderFactory.GetValueAsync();
+            IExportProviderFactory exportProviderFactory = await this.exportProviderFactory.GetValueAsync();
             return exportProviderFactory.CreateExportProvider();
         }
 
@@ -118,7 +117,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         {
             ComposableCatalog catalog = await this.CreateProductCatalogAsync();
             var configuration = CompositionConfiguration.Create(catalog);
-            var exportProviderFactory = configuration.CreateExportProviderFactory();
+            IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory();
             return exportProviderFactory;
         }
 
@@ -128,9 +127,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// <returns>A task whose result is the <see cref="ComposableCatalog"/>.</returns>
         private async Task<ComposableCatalog> CreateProductCatalogAsync()
         {
-            var assemblies = this.catalogAssemblyNames.Select(Assembly.Load);
-            var discoveredParts = await this.discoverer.CreatePartsAsync(assemblies);
-            var catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
+            IEnumerable<Assembly> assemblies = this.catalogAssemblyNames.Select(Assembly.Load);
+            DiscoveredParts discoveredParts = await this.discoverer.CreatePartsAsync(assemblies);
+            ComposableCatalog catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
                 .AddParts(discoveredParts)
                 .WithCompositionService();
             return catalog;

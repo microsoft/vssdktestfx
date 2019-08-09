@@ -7,21 +7,17 @@
 namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
-    using System.Reflection;
     using System.Runtime.InteropServices;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Threading;
-    using Internal.VisualStudio.Shell.Interop;
+    using Microsoft.Internal.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell;
+    using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Threading;
     using Moq;
-    using Shell;
-    using Shell.Interop;
-    using Threading;
 
     /// <summary>
     /// Provides the "global service provider" for Visual Studio components.
