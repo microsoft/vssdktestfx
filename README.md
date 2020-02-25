@@ -155,9 +155,10 @@ Add these members to *one* of your test classes:
 
 ```csharp
 using Microsoft.VisualStudio.Sdk.TestFramework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
-public class SharedClass
+public class AssemblyFixture
 {
     internal static GlobalServiceProvider MockServiceProvider { get; private set; }
 
@@ -183,7 +184,7 @@ using Microsoft.VisualStudio.Sdk.TestFramework;
 [TestInitialize]
 public void TestInit()
 {
-    SharedClass.MockServiceProvider.Reset();
+    AssemblyFixture.MockServiceProvider.Reset();
 }
 ```
 
