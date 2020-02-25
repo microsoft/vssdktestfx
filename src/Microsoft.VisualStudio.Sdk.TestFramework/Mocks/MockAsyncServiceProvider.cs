@@ -1,4 +1,7 @@
-﻿namespace Microsoft.VisualStudio.Sdk.TestFramework
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
     using System;
     using System.Runtime.InteropServices;
@@ -49,7 +52,9 @@
             {
                 completionSource.SetResult(this.serviceProvider.QueryService(guidService));
             }
+#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
             {
                 completionSource.SetFaulted(Marshal.GetHRForException(ex));
             }

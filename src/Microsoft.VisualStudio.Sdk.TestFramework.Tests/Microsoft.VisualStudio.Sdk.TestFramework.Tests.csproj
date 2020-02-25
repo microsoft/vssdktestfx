@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-    <CodeAnalysisRuleSet>Microsoft.VisualStudio.Sdk.TestFramework.Tests.ruleset</CodeAnalysisRuleSet>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-    <DebugType>Full</DebugType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <CodeAnalysisRuleSet>..\tests.ruleset</CodeAnalysisRuleSet>
+    <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Microsoft.VisualStudio.Sdk.TestFramework\content\MockedVS.cs">
@@ -14,21 +12,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MicroBuild.NonShipping" Version="2.0.52" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="coverlet.msbuild" Version="2.8.0" />
+    <PackageReference Include="MicroBuild.NonShipping" Version="$(MicroBuildVersion)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="System.Composition" Version="1.2.0" />
-    <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
-    <PackageReference Include="xunit.analyzers" Version="0.10.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 </Project>

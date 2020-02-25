@@ -1,4 +1,7 @@
-﻿namespace Microsoft.VisualStudio.Sdk.TestFramework
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
@@ -7,19 +10,21 @@
     /// <summary>
     /// A mock implementation of <see cref="IVsTaskCompletionSource"/>.
     /// </summary>
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
     internal sealed class MockVSTaskCompletionSource : IVsTaskCompletionSource
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private readonly IVsTaskSchedulerService2 vsTaskSchedulerService2;
         private readonly TaskCompletionSource<object> taskCompletionSource = new TaskCompletionSource<object>();
-        private readonly object asyncState;
-        private MockVSTask underlyingTask;
+        private readonly object? asyncState;
+        private MockVSTask? underlyingTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTaskCompletionSource"/> class.
         /// </summary>
         /// <param name="vsTaskSchedulerService2">The <see cref="SVsTaskSchedulerService"/>.</param>
         /// <param name="asyncState">The state object.</param>
-        public MockVSTaskCompletionSource(IVsTaskSchedulerService2 vsTaskSchedulerService2, object asyncState = null)
+        public MockVSTaskCompletionSource(IVsTaskSchedulerService2 vsTaskSchedulerService2, object? asyncState = null)
         {
             this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new System.ArgumentNullException(nameof(vsTaskSchedulerService2));
             this.asyncState = asyncState;

@@ -1,8 +1,5 @@
-﻿/********************************************************
-*                                                        *
-*   © Copyright (C) Microsoft. All rights reserved.      *
-*                                                        *
-*********************************************************/
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
@@ -70,7 +67,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// <returns>A task whose result is the <see cref="ExportProvider"/>.</returns>
         public async Task<ExportProvider> CreateExportProviderAsync()
         {
-            IExportProviderFactory exportProviderFactory = await this.exportProviderFactory.GetValueAsync();
+            IExportProviderFactory exportProviderFactory = await this.exportProviderFactory.GetValueAsync().ConfigureAwait(false);
             return exportProviderFactory.CreateExportProvider();
         }
 
@@ -88,7 +85,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                     continue;
                 }
 
-                string assemblyFullName = null;
+                string? assemblyFullName = null;
                 try
                 {
                     var assemblyName = AssemblyName.GetAssemblyName(file);
@@ -97,7 +94,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                         assemblyFullName = assemblyName.FullName;
                     }
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (Exception)
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                 }
 
@@ -115,7 +114,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// <returns>A task whose result is the <see cref="IExportProviderFactory"/>.</returns>
         private async Task<IExportProviderFactory> CreateExportProviderFactoryAsync()
         {
-            ComposableCatalog catalog = await this.CreateProductCatalogAsync();
+            ComposableCatalog catalog = await this.CreateProductCatalogAsync().ConfigureAwait(false);
             var configuration = CompositionConfiguration.Create(catalog);
             IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory();
             return exportProviderFactory;
@@ -128,7 +127,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         private async Task<ComposableCatalog> CreateProductCatalogAsync()
         {
             IEnumerable<Assembly> assemblies = this.catalogAssemblyNames.Select(Assembly.Load);
-            DiscoveredParts discoveredParts = await this.discoverer.CreatePartsAsync(assemblies);
+            DiscoveredParts discoveredParts = await this.discoverer.CreatePartsAsync(assemblies).ConfigureAwait(false);
             ComposableCatalog catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
                 .AddParts(discoveredParts)
                 .WithCompositionService();

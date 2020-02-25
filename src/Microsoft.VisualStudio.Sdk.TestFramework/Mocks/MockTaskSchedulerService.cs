@@ -1,4 +1,7 @@
-﻿namespace Microsoft.VisualStudio.Sdk.TestFramework
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
     using System;
     using System.Runtime.InteropServices;
@@ -30,7 +33,7 @@
         }
 
         /// <inheritdoc />
-        public IVsTask ContinueWhenAllCompletedEx(uint context, uint dwTasks, IVsTask[] pDependentTasks, uint options, IVsTaskBody pTaskBody, object pAsyncState)
+        public IVsTask ContinueWhenAllCompletedEx(uint context, uint dwTasks, IVsTask[] pDependentTasks, uint options, IVsTaskBody pTaskBody, object? pAsyncState)
         {
             throw new NotImplementedException();
         }
@@ -45,13 +48,13 @@
         public IVsTaskCompletionSource CreateTaskCompletionSource() => this.CreateTaskCompletionSourceEx(0, null);
 
         /// <inheritdoc />
-        public IVsTaskCompletionSource CreateTaskCompletionSourceEx(uint options, object asyncState)
+        public IVsTaskCompletionSource CreateTaskCompletionSourceEx(uint options, object? asyncState)
         {
             return new MockVSTaskCompletionSource(this, asyncState);
         }
 
         /// <inheritdoc />
-        public IVsTask CreateTaskEx(uint context, uint options, IVsTaskBody pTaskBody, object pAsyncState)
+        public IVsTask CreateTaskEx(uint context, uint options, IVsTaskBody pTaskBody, object? pAsyncState)
         {
             return new MockVSTask(this, context, pTaskBody, pAsyncState);
         }

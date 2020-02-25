@@ -1,4 +1,7 @@
-﻿namespace Microsoft.VisualStudio.Sdk.TestFramework
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
     using System;
     using System.Threading;
@@ -11,13 +14,13 @@
     /// <summary>
     /// A mock implementation of <see cref="IVsTask"/>.
     /// </summary>
-    internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents
+    internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, IDisposable
     {
         private readonly IVsTaskSchedulerService2 vsTaskSchedulerService2;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly uint context;
         private readonly Task<object> task;
-        private readonly object asyncState;
+        private readonly object? asyncState;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MockVSTask"/> class.
@@ -26,7 +29,7 @@
         /// <param name="context">The scheduling option for this task.</param>
         /// <param name="task">The task to execute.</param>
         /// <param name="asyncState">The async state object to store.</param>
-        public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, Task<object> task, object asyncState = null)
+        public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, Task<object> task, object? asyncState = null)
         {
             this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new ArgumentNullException(nameof(vsTaskSchedulerService2));
             this.context = context;
@@ -41,14 +44,14 @@
         /// <param name="context">The scheduling option for this task.</param>
         /// <param name="taskBody">The body to execute.</param>
         /// <param name="asyncState">The async state object to store.</param>
-        public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, IVsTaskBody taskBody, object asyncState = null)
+        public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, IVsTaskBody taskBody, object? asyncState = null)
         {
             this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new ArgumentNullException(nameof(vsTaskSchedulerService2));
             this.context = context;
             this.task = new Task<object>(
                 () =>
                 {
-                    taskBody.DoWork(this, 0, new IVsTask[0], out object result);
+                    taskBody.DoWork(this, 0, Array.Empty<IVsTask>(), out object result);
                     return result;
                 },
                 this.cancellationTokenSource.Token);
@@ -57,19 +60,19 @@
         }
 
         /// <inheritdoc />
-        public event EventHandler OnBlockingWaitBegin;
+        public event EventHandler? OnBlockingWaitBegin;
 
         /// <inheritdoc />
-        public event EventHandler OnBlockingWaitEnd;
+        public event EventHandler? OnBlockingWaitEnd;
 
         /// <inheritdoc />
-        public event EventHandler<BlockingTaskEventArgs> OnMarkedAsBlocking;
+        public event EventHandler<BlockingTaskEventArgs>? OnMarkedAsBlocking;
 
         /// <inheritdoc />
-        public object AsyncState => this.asyncState;
+        public object? AsyncState => this.asyncState;
 
         /// <inheritdoc />
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <inheritdoc />
         public bool IsCanceled => this.task.IsCanceled;
@@ -82,6 +85,12 @@
 
         /// <inheritdoc />
         public CancellationToken CancellationToken => this.cancellationTokenSource.Token;
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            this.cancellationTokenSource.Dispose();
+        }
 
         /// <inheritdoc />
         public void AbortIfCanceled()
@@ -102,7 +111,7 @@
         }
 
         /// <inheritdoc />
-        public IVsTask ContinueWithEx(uint context, uint options, IVsTaskBody pTaskBody, object pAsyncState)
+        public IVsTask ContinueWithEx(uint context, uint options, IVsTaskBody pTaskBody, object? pAsyncState)
         {
             // NOTE: We ignore options (and context), if any tests are testing code that relies on either this
             // would need to be modified to properly support them.
@@ -112,7 +121,7 @@
                 this.task.ContinueWith(
                     t =>
                     {
-                        pTaskBody.DoWork(this, 0, new IVsTask[0], out object result);
+                        pTaskBody.DoWork(this, 0, Array.Empty<IVsTask>(), out object result);
                         return result;
                     },
                     this.cancellationTokenSource.Token,
@@ -155,9 +164,9 @@
 
         private void FakeMethodToAvoidStupidWarningAsError()
         {
-            this.OnBlockingWaitBegin(this, EventArgs.Empty);
-            this.OnBlockingWaitEnd(this, EventArgs.Empty);
-            this.OnMarkedAsBlocking(this, new BlockingTaskEventArgs(this, this));
+            this.OnBlockingWaitBegin?.Invoke(this, EventArgs.Empty);
+            this.OnBlockingWaitEnd?.Invoke(this, EventArgs.Empty);
+            this.OnMarkedAsBlocking?.Invoke(this, new BlockingTaskEventArgs(this, this));
         }
     }
 }

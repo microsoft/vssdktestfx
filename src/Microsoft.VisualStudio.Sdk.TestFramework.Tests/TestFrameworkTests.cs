@@ -1,8 +1,5 @@
-﻿/********************************************************
-*                                                        *
-*   © Copyright (C) Microsoft. All rights reserved.      *
-*                                                        *
-*********************************************************/
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -11,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Sdk.TestFramework.Tests;
 using Microsoft.VisualStudio.Shell;
@@ -30,6 +28,7 @@ public class TestFrameworkTests
 
     public TestFrameworkTests(GlobalServiceProvider sp, MefHostingFixture mef)
     {
+        Requires.NotNull(sp, nameof(sp));
         this.mef = mef;
         sp.Reset();
     }

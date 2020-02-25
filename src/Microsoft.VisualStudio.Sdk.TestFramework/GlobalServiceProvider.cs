@@ -1,8 +1,5 @@
-﻿/********************************************************
-*                                                        *
-*   © Copyright (C) Microsoft. All rights reserved.      *
-*                                                        *
-*********************************************************/
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
@@ -47,7 +44,8 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// </summary>
         public void Dispose()
         {
-            this.instance.Shutdown();
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -69,13 +67,27 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         }
 
         /// <summary>
+        /// Disposes of managed and native resources.
+        /// </summary>
+        /// <param name="disposing">A value indicating whether the object is being disposed.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.instance.Shutdown();
+            }
+        }
+
+        /// <summary>
         /// The mock OLE service provider used by Visual Studio as the global service provider.
         /// </summary>
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
         private class OleServiceProviderMock : OLE.Interop.IServiceProvider
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
         {
             private readonly Thread mainThread;
 
-            private readonly TaskCompletionSource<object> mainThreadInitialized = new TaskCompletionSource<object>();
+            private readonly TaskCompletionSource<object?> mainThreadInitialized = new TaskCompletionSource<object?>();
 
             /// <summary>
             /// The initial set of minimal services.
@@ -109,8 +121,12 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             /// This type must be a singleton because static members in VS components
             /// capture it once they've seen it once.
             /// </remarks>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
             internal OleServiceProviderMock()
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
             {
+                this.services = ImmutableDictionary.Create<Guid, object>();
+
                 this.mainThread = new Thread(this.MainThread);
                 this.mainThread.SetApartmentState(ApartmentState.STA);
                 this.mainThread.Name = "VS Main Thread (mocked)";
@@ -118,6 +134,8 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 #pragma warning disable VSTHRD002 // Avoid problematic synchronous waits
                 this.mainThreadInitialized.Task.GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
+
+                this.baseServices = this.services;
             }
 
             /// <inheritdoc />
@@ -161,7 +179,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 
                 Verify.Operation(
                     ImmutableInterlocked.TryAdd(ref this.services, serviceType.GUID, instance),
-                    "Service already added.");
+                    Strings.ServiceAlreadyAdded);
             }
 
             /// <summary>
@@ -177,6 +195,17 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 this.mainThread.Join();
             }
 
+            private static Mock<IVsActivityLog> CreateVsActivityLogMock()
+            {
+                var mock = new Mock<IVsActivityLog>();
+                return mock;
+            }
+
+            private IVsTaskSchedulerService CreateVsTaskSchedulerServiceMock()
+            {
+                return new MockTaskSchedulerService(this.joinableTaskContext);
+            }
+
             /// <summary>
             /// The entrypoint for the mocked main thread.
             /// </summary>
@@ -186,25 +215,24 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 {
                     this.mainThreadSyncContext = new DispatcherSynchronizationContext();
                     SynchronizationContext.SetSynchronizationContext(this.mainThreadSyncContext);
-                    new Application(); // just creating this sets it to Application.Current, as required
+                    _ = new Application(); // just creating this sets it to Application.Current, as required
 
                     this.joinableTaskContext = new JoinableTaskContext();
                     this.mainMessagePumpFrame = new DispatcherFrame();
 
-                    this.services = ImmutableDictionary.Create<Guid, object>();
                     this.AddService(typeof(OLE.Interop.IServiceProvider), this);
-                    this.AddService(typeof(SVsActivityLog), this.CreateVsActivityLogMock().Object);
+                    this.AddService(typeof(SVsActivityLog), CreateVsActivityLogMock().Object);
                     this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
                     this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
 
                     Shell.Interop.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
                     this.AddService(typeof(SAsyncServiceProvider), asyncServiceProvider);
 
-                    this.baseServices = this.services;
-
                     // We can only call this once for the AppDomain.
+#pragma warning disable CA2000 // Dispose objects before losing scope
                     ServiceProvider.CreateFromSetSite(this);
                     AsyncServiceProvider.CreateFromSetSite(asyncServiceProvider);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
                     // Arrange to signal that we're done initialization the main thread
                     // once the message pump starts.
@@ -212,21 +240,12 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 
                     Dispatcher.PushFrame(this.mainMessagePumpFrame);
                 }
+#pragma warning disable CA1031 // Do not catch general exception types
                 catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
                 {
                     this.mainThreadInitialized.TrySetException(ex);
                 }
-            }
-
-            private Mock<IVsActivityLog> CreateVsActivityLogMock()
-            {
-                var mock = new Mock<IVsActivityLog>();
-                return mock;
-            }
-
-            private IVsTaskSchedulerService CreateVsTaskSchedulerServiceMock()
-            {
-                return new MockTaskSchedulerService(this.joinableTaskContext);
             }
 
             private class VsUIThreadInvoker : IVsInvokerPrivate
@@ -259,7 +278,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                             return pInvokable.Invoke();
                         });
                     }
+#pragma warning disable CA1031 // Do not catch general exception types
                     catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
                     {
                         return Marshal.GetHRForException(ex);
                     }

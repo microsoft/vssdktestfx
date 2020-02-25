@@ -1,8 +1,5 @@
-﻿/********************************************************
-*                                                        *
-*   © Copyright (C) Microsoft. All rights reserved.      *
-*                                                        *
-*********************************************************/
+﻿// Copyright (c) Microsoft. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework
 {
@@ -55,7 +52,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         {
             if (!ImmutableInterlocked.TryAdd(ref this.services, serviceType, service))
             {
-                throw new InvalidOperationException("Service already added.");
+                throw new InvalidOperationException(Strings.ServiceAlreadyAdded);
             }
         }
 

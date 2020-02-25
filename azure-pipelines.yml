@@ -1,0 +1,19 @@
+trigger:
+  branches:
+    include:
+    - master
+    - 'validate/*'
+  paths:
+    exclude:
+    - doc/
+    - '*.md'
+    - .vscode/
+
+variables:
+  TreatWarningsAsErrors: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  BuildConfiguration: Release
+  NUGET_PACKAGES: $(Agent.TempDirectory)/.nuget/packages
+
+jobs:
+- template: azure-pipelines/build.yml

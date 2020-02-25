@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26616.2
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29824.212
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework", "Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj", "{A62E3D92-0B5C-4D53-9269-EAC253BBCDEE}"
 EndProject
@@ -10,11 +10,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{824473EA-BB16-47EE-96CA-CD854BF62276}"
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
-		..\.vsts-ci.yml = ..\.vsts-ci.yml
 		Directory.Build.props = Directory.Build.props
-		nuget.config = nuget.config
+		Directory.Build.targets = Directory.Build.targets
+		..\global.json = ..\global.json
+		..\nuget.config = ..\nuget.config
 		..\README.md = ..\README.md
-		version.json = version.json
+		stylecop.json = stylecop.json
+		..\version.json = ..\version.json
 	EndProjectSection
 EndProject
 Global
