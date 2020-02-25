@@ -48,23 +48,11 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Removes any services added via <see cref="AddService"/>.
-        /// </summary>
-        public void Reset()
-        {
-            this.instance.Reset();
-        }
+        /// <inheritdoc cref="OleServiceProviderMock.Reset()" />
+        public void Reset() => this.instance.Reset();
 
-        /// <summary>
-        /// Adds a global service.
-        /// </summary>
-        /// <param name="serviceType">The type identity of the service.</param>
-        /// <param name="instance">The instance of the service.</param>
-        public void AddService(Type serviceType, object instance)
-        {
-            this.instance.AddService(serviceType, instance);
-        }
+        /// <inheritdoc cref="OleServiceProviderMock.AddService(Type, object)" />
+        public void AddService(Type serviceType, object instance) => this.instance.AddService(serviceType ?? throw new ArgumentNullException(nameof(serviceType)), instance ?? throw new ArgumentNullException(nameof(instance)));
 
         /// <summary>
         /// Disposes of managed and native resources.
@@ -160,7 +148,8 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             }
 
             /// <summary>
-            /// Removes any services added via <see cref="AddService"/>.
+            /// Removes any services added via <see cref="AddService"/>,
+            /// leaving only those services whose marks are built into this library.
             /// </summary>
             internal void Reset()
             {
@@ -168,17 +157,15 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             }
 
             /// <summary>
-            /// Adds a global service.
+            /// Adds a global service, replacing a built-in mock if any.
             /// </summary>
             /// <param name="serviceType">The type identity of the service.</param>
             /// <param name="instance">The instance of the service.</param>
             internal void AddService(Type serviceType, object instance)
             {
-                Requires.NotNull(serviceType, nameof(serviceType));
-                Requires.NotNull(instance, nameof(instance));
-
                 Verify.Operation(
-                    ImmutableInterlocked.TryAdd(ref this.services, serviceType.GUID, instance),
+                    ImmutableInterlocked.TryAdd(ref this.services, serviceType.GUID, instance) ||
+                    (this.baseServices.TryGetValue(serviceType.GUID, out object mock) && ImmutableInterlocked.TryUpdate(ref this.services, serviceType.GUID, instance, mock)),
                     Strings.ServiceAlreadyAdded);
             }
 

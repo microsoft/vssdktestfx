@@ -25,12 +25,14 @@ using Task = System.Threading.Tasks.Task;
 public class TestFrameworkTests
 {
     private readonly MefHosting mef;
+    private readonly GlobalServiceProvider container;
 
     public TestFrameworkTests(GlobalServiceProvider sp, MefHostingFixture mef)
     {
         Requires.NotNull(sp, nameof(sp));
         this.mef = mef;
         sp.Reset();
+        this.container = sp;
     }
 
     [Fact]
@@ -201,5 +203,30 @@ public class TestFrameworkTests
                 return 0;
             });
         ThreadHelper.ThrowIfNotOnUIThread();
+    }
+
+    [Fact]
+    public void AddService()
+    {
+        object expected = new object();
+        this.container.AddService(typeof(SVsProjectMRU), expected);
+        Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsProjectMRU)));
+    }
+
+    [Fact]
+    public void AddService_TwiceThrows()
+    {
+        object expected = new object();
+        this.container.AddService(typeof(SVsProjectMRU), expected);
+        Assert.Throws<InvalidOperationException>(() => this.container.AddService(typeof(SVsProjectMRU), new object()));
+        Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsProjectMRU)));
+    }
+
+    [Fact]
+    public void AddService_ExistingMock()
+    {
+        object expected = new object();
+        this.container.AddService(typeof(SVsActivityLog), expected);
+        Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsActivityLog)));
     }
 }
