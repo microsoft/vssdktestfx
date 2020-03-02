@@ -219,3 +219,9 @@ These services include:
 * `SVsUIThreadInvokerPrivate`
 
 More may be added and can be found in [source code](https://devdiv.visualstudio.com/DefaultCollection/DevDiv/default/_git/VSSDKTestFx?_a=contents&path=%2Fsrc%2FMicrosoft.VisualStudio.Sdk.TestFramework%2FGlobalServiceProvider.cs&version=GBmaster&line=194&lineStyle=plain&lineEnd=198&lineStartColumn=1&lineEndColumn=1).
+
+## Contributing
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+
+See our [contributing doc](CONTRIBUTING.md) for more info.
