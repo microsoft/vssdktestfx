@@ -36,8 +36,9 @@ public class TestFrameworkTests
     }
 
     [Fact]
-    public void OleServiceProviderIsService()
+    public async Task OleServiceProviderIsService()
     {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         object sp = ServiceProvider.GlobalProvider.GetService(typeof(OleServiceProvider));
         Assert.IsAssignableFrom<OleServiceProvider>(sp);
     }
@@ -65,7 +66,9 @@ public class TestFrameworkTests
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         Assert.Same(ThreadHelper.JoinableTaskContext.MainThread, Thread.CurrentThread);
 
+#pragma warning disable VSTHRD109 // Switch instead of assert in async methods
         ThreadHelper.ThrowIfNotOnUIThread();
+#pragma warning restore VSTHRD109 // Switch instead of assert in async methods
         Assert.Throws<COMException>(() => ThreadHelper.ThrowIfOnUIThread());
     }
 
@@ -202,20 +205,24 @@ public class TestFrameworkTests
                 await Task.Delay(100);
                 return 0;
             });
+#pragma warning disable VSTHRD109 // Switch instead of assert in async methods
         ThreadHelper.ThrowIfNotOnUIThread();
+#pragma warning restore VSTHRD109 // Switch instead of assert in async methods
     }
 
     [Fact]
-    public void AddService()
+    public async Task AddService()
     {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         object expected = new object();
         this.container.AddService(typeof(SVsProjectMRU), expected);
         Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsProjectMRU)));
     }
 
     [Fact]
-    public void AddService_TwiceThrows()
+    public async Task AddService_TwiceThrows()
     {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         object expected = new object();
         this.container.AddService(typeof(SVsProjectMRU), expected);
         Assert.Throws<InvalidOperationException>(() => this.container.AddService(typeof(SVsProjectMRU), new object()));
@@ -223,8 +230,9 @@ public class TestFrameworkTests
     }
 
     [Fact]
-    public void AddService_ExistingMock()
+    public async Task AddService_ExistingMock()
     {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
         object expected = new object();
         this.container.AddService(typeof(SVsActivityLog), expected);
         Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsActivityLog)));

@@ -28,7 +28,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// Initializes a new instance of the <see cref="ChildServiceProvider"/> class.
         /// </summary>
         public ChildServiceProvider()
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
             : this(ServiceProvider.GlobalProvider)
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
         {
         }
 
