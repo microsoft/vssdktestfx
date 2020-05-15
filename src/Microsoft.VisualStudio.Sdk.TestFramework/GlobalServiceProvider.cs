@@ -204,7 +204,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                     SynchronizationContext.SetSynchronizationContext(this.mainThreadSyncContext);
                     _ = new Application(); // just creating this sets it to Application.Current, as required
 
+#pragma warning disable VSSDK005 // Avoid instantiating JoinableTaskContext
                     this.joinableTaskContext = new JoinableTaskContext();
+#pragma warning restore VSSDK005 // Avoid instantiating JoinableTaskContext
                     this.mainMessagePumpFrame = new DispatcherFrame();
 
                     this.AddService(typeof(OLE.Interop.IServiceProvider), this);
@@ -217,7 +219,9 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
 
                     // We can only call this once for the AppDomain.
 #pragma warning disable CA2000 // Dispose objects before losing scope
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
                     ServiceProvider.CreateFromSetSite(this);
+#pragma warning restore VSTHRD010 // Invoke single-threaded types on Main thread
                     AsyncServiceProvider.CreateFromSetSite(asyncServiceProvider);
 #pragma warning restore CA2000 // Dispose objects before losing scope
 
