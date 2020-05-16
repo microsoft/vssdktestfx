@@ -9,11 +9,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft;
+using Microsoft.ServiceHub.Framework;
+using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.Sdk.TestFramework;
 using Microsoft.VisualStudio.Sdk.TestFramework.Tests;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Microsoft.VisualStudio.Threading;
+using StreamJsonRpc;
 using Xunit;
 using OleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using Task = System.Threading.Tasks.Task;
@@ -24,6 +28,8 @@ using Task = System.Threading.Tasks.Task;
 [Collection(MockedVS.Collection)]
 public class TestFrameworkTests
 {
+    private static readonly ServiceJsonRpcDescriptor MockedBrokeredServiceDescriptor = new ServiceJsonRpcDescriptor(new ServiceMoniker("Mocked"), ServiceJsonRpcDescriptor.Formatters.MessagePack, ServiceJsonRpcDescriptor.MessageDelimiters.BigEndianInt32LengthHeader);
+
     private readonly MefHosting mef;
     private readonly GlobalServiceProvider container;
 
@@ -33,6 +39,13 @@ public class TestFrameworkTests
         this.mef = mef;
         sp.Reset();
         this.container = sp;
+    }
+
+    private interface ITestService
+    {
+        int Add(int a, int b);
+
+        void Throw();
     }
 
     [Fact]
@@ -236,5 +249,40 @@ public class TestFrameworkTests
         object expected = new object();
         this.container.AddService(typeof(SVsActivityLog), expected);
         Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsActivityLog)));
+    }
+
+    [Fact]
+    public async Task MockedBrokeredService_StandardFactory()
+    {
+        IBrokeredServiceContainer sbc = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();
+        sbc.Proffer(MockedBrokeredServiceDescriptor, (ServiceMoniker moniker, ServiceActivationOptions options, IServiceBroker serviceBroker, CancellationToken cancellationToken) => new ValueTask<object?>(new TestService()));
+        ITestService? proxy = await sbc.GetFullAccessServiceBroker().GetProxyAsync<ITestService>(MockedBrokeredServiceDescriptor);
+        using (proxy as IDisposable)
+        {
+            Assert.NotNull(proxy);
+            Assert.Equal(8, proxy.Add(3, 5));
+            Assert.Throws<RemoteInvocationException>(() => proxy.Throw());
+        }
+    }
+
+    [Fact]
+    public async Task MockedBrokeredService_AuthorizingFactory()
+    {
+        IBrokeredServiceContainer sbc = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();
+        sbc.Proffer(MockedBrokeredServiceDescriptor, (ServiceMoniker moniker, ServiceActivationOptions options, IServiceBroker serviceBroker, AuthorizationServiceClient auth, CancellationToken cancellationToken) => new ValueTask<object?>(new TestService()));
+        ITestService? proxy = await sbc.GetFullAccessServiceBroker().GetProxyAsync<ITestService>(MockedBrokeredServiceDescriptor);
+        using (proxy as IDisposable)
+        {
+            Assert.NotNull(proxy);
+            Assert.Equal(8, proxy.Add(3, 5));
+            Assert.Throws<RemoteInvocationException>(() => proxy.Throw());
+        }
+    }
+
+    private class TestService : ITestService
+    {
+        public int Add(int a, int b) => a + b;
+
+        public void Throw() => throw new InvalidOperationException("Test");
     }
 }

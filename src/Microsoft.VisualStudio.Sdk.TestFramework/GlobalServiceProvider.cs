@@ -11,8 +11,10 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     using System.Windows;
     using System.Windows.Threading;
     using Microsoft.Internal.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using Microsoft.VisualStudio.Shell.ServiceBroker;
     using Microsoft.VisualStudio.Threading;
     using Moq;
 
@@ -76,6 +78,8 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             private readonly Thread mainThread;
 
             private readonly TaskCompletionSource<object?> mainThreadInitialized = new TaskCompletionSource<object?>();
+
+            private readonly MockBrokeredServiceContainer mockBrokeredServiceContainer = new MockBrokeredServiceContainer();
 
             /// <summary>
             /// The initial set of minimal services.
@@ -154,6 +158,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             internal void Reset()
             {
                 this.services = this.baseServices;
+                this.mockBrokeredServiceContainer.Reset();
             }
 
             /// <summary>
@@ -213,6 +218,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                     this.AddService(typeof(SVsActivityLog), CreateVsActivityLogMock().Object);
                     this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
                     this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
+                    this.AddService(typeof(SVsBrokeredServiceContainer), this.mockBrokeredServiceContainer);
 
                     Shell.Interop.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
                     this.AddService(typeof(SAsyncServiceProvider), asyncServiceProvider);
