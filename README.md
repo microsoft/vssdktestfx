@@ -32,6 +32,7 @@ Add these references to your project:
 
 ```xml
 <Reference Include="$(PkgMicrosoft_VisualStudio_Composition)\lib\net472\Microsoft.VisualStudio.Composition.dll" />
+<Reference Include="$(PkgMicrosoft_ServiceHub_Framework)\lib\netstandard2.0\Microsoft.ServiceHub.Framework.dll" />
 <Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net46\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
 <Reference Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\System.Collections.Immutable.dll" />
 <Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
