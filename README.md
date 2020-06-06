@@ -13,7 +13,7 @@ To reference this test framework outside the VS repo,
 you will need these feeds as package sources in your [nuget.config file](https://docs.microsoft.com/en-us/nuget/schema/nuget-config-file#packagesources):
 
     https://api.nuget.org/v3/index.json (this is the default feed)
-    https://devdiv.pkgs.visualstudio.com/_packaging/vs-impl/nuget/v3/index.json
+    https://pkgs.dev.azure.com/devdiv/_packaging/vs-impl/nuget/v3/index.json"
 
 Then install its NuGet package:
 
@@ -28,88 +28,14 @@ Make sure your unit test project generates the required binding redirects by add
 
 ### For tests that build within the VS repo:
 
-Add these references to your project:
+Add this import to your project:
 
 ```xml
-<Reference Include="$(PkgMicrosoft_VisualStudio_Composition)\lib\net472\Microsoft.VisualStudio.Composition.dll" />
-<Reference Include="$(PkgMicrosoft_ServiceHub_Framework)\lib\netstandard2.0\Microsoft.ServiceHub.Framework.dll" />
-<Reference Include="$(PkgMicrosoft_VisualStudio_Sdk_TestFramework)\lib\net472\Microsoft.VisualStudio.Sdk.TestFramework.dll" />
-<Reference Include="$(PkgSystem_Collections_Immutable)\lib\netstandard2.0\System.Collections.Immutable.dll" />
-<Reference Include="$(PkgVS_ExternalAPIs_Moq)\v4.2\Moq.dll" />
-<Reference Include="System.Runtime" />
+<Import Project="$(SrcRoot)\Tests\vssdktestfx.targets" />
 ```
 
-Keep Cloud Build happy by adding these items to your project:
-
-```xml
-<ItemGroup>
-  <QCustomInput Include="@(Template)" />
-  <QCustomInput Include="$(INETROOT)\src\ProductData\AssemblyVersions.tt" />
-</ItemGroup>
-```
-
-Add the following binding redirects to your test project, via an app.config.tt file as shown below.
-If you do not already have an app.config.tt file (or perhaps it is called just app.config),
-you can create your T4 macro-enabled file as demonstrated by [this pull request](https://devdiv.visualstudio.com/DevDiv/default/_git/VS/pullrequest/62848?_a=files&path=%2Fsrc%2Fdebugger%2FRazor%2FUnitTests).
-
-You may need to adjust the version values in the `Moq` binding redirect to match the available version.
-
-```xml
-<?xml version="1.0" ?>
-<#@template hostspecific="true"#>
-<#@ include file="BrandNames.tt" #>
-<#@ include file="..\..\..\ProductData\AssemblyVersions.tt" #>
-<configuration>
-  <runtime>
-    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Composition.Configuration" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioCompositionVersion #>" newVersion="<#= MicrosoftVisualStudioCompositionVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Composition" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioCompositionVersion #>" newVersion="<#= MicrosoftVisualStudioCompositionVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Shell.15.0" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= VSGeneralAssemblyVersion #>" newVersion="<#= VSGeneralAssemblyVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Shell.Framework" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= VSGeneralAssemblyVersion #>" newVersion="<#= VSGeneralAssemblyVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Threading" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioThreadingVersion #>" newVersion="<#= MicrosoftVisualStudioThreadingVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Utilities" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= VSGeneralAssemblyVersion #>" newVersion="<#= VSGeneralAssemblyVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Microsoft.VisualStudio.Validation" publicKeyToken="b03f5f7f11d50a3a" culture="neutral"/>
-        <bindingRedirect oldVersion="0.0.0.0-<#= MicrosoftVisualStudioValidationVersion #>" newVersion="<#= MicrosoftVisualStudioValidationVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="System.Collections.Immutable" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-<#= SystemCollectionsImmutableVersion #>"  newVersion="<#= SystemCollectionsImmutableVersion #>"/>
-      </dependentAssembly>
-      <dependentAssembly>
-        <assemblyIdentity name="Moq" publicKeyToken="69f491c39445e920" culture="neutral" />
-        <bindingRedirect oldVersion="0.0.0.0-4.2.9999.999" newVersion="4.2.1502.911" />
-      </dependentAssembly>
-    </assemblyBinding>
-  </runtime>
-</configuration>
-```
-
-You will likely need to update the relative path in the app.config.tt file given above to the AssemblyVersions.tt file.
-The relative path must resolve from your test directory to the VS repo's src\ProductData\AssemblyVersions.tt file.
-A build break will result if the relative path is wrong.
-
-When making changes to your .tt file, verify your changes make it into $(AssemblyName).dll.config in your build output.
-You might need to perform a clean/build. For reasons unknown, it's been seen that the transformation from app.config.tt
--> app.config -> assemblyname.dll.config can confuse the build, and changes aren't re-built.
+Remove any references to an App.config or App.config.tt file from your test project
+since this is now generated during the build automatically.
 
 ## Unit test source code changes
 
