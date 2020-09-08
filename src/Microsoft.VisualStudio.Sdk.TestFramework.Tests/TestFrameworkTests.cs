@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
 using Xunit;
+using Xunit.Abstractions;
 using OleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 using Task = System.Threading.Tasks.Task;
 
@@ -26,14 +27,15 @@ using Task = System.Threading.Tasks.Task;
 #pragma warning disable VSTHRD001 // We intentionally test APIs that are obsolete
 
 [Collection(MockedVS.Collection)]
-public class TestFrameworkTests
+public class TestFrameworkTests : TestBase
 {
     private static readonly ServiceJsonRpcDescriptor MockedBrokeredServiceDescriptor = new ServiceJsonRpcDescriptor(new ServiceMoniker("Mocked"), ServiceJsonRpcDescriptor.Formatters.MessagePack, ServiceJsonRpcDescriptor.MessageDelimiters.BigEndianInt32LengthHeader);
 
     private readonly MefHosting mef;
     private readonly GlobalServiceProvider container;
 
-    public TestFrameworkTests(GlobalServiceProvider sp, MefHostingFixture mef)
+    public TestFrameworkTests(GlobalServiceProvider sp, MefHostingFixture mef, ITestOutputHelper logger)
+        : base(logger)
     {
         Requires.NotNull(sp, nameof(sp));
         this.mef = mef;
@@ -195,6 +197,35 @@ public class TestFrameworkTests
                 return true;
             });
         Assert.True(result);
+    }
+
+    [Fact]
+    public async Task YieldWorksOnUIThread()
+    {
+        var delegateInvoked = new AsyncManualResetEvent();
+        async Task Helper()
+        {
+            await Task.Yield();
+            delegateInvoked.Set();
+        }
+
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        Helper().Forget();
+        Assert.False(delegateInvoked.IsSet);
+        await delegateInvoked.WaitAsync(this.TimeoutToken);
+    }
+
+    [Fact]
+    public async Task StartOnIdleExecutesDelegateLater()
+    {
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        var delegateInvoked = new AsyncManualResetEvent();
+        ThreadHelper.JoinableTaskFactory.StartOnIdle(delegate
+        {
+            delegateInvoked.Set();
+        }).Task.Forget();
+        Assert.False(delegateInvoked.IsSet);
+        await delegateInvoked.WaitAsync(this.TimeoutToken);
     }
 
     [Fact]
