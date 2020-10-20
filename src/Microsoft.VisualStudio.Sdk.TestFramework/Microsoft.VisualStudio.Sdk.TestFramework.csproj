@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
-    <CodeAnalysisRuleSet>..\shipping.ruleset</CodeAnalysisRuleSet>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.</Description>
     <Authors>Andrew Arnott</Authors>
     <Company>Microsoft</Company>
