@@ -1,7 +1,7 @@
 # Visual Studio SDK Test Framework
 
 [![NuGet package](https://img.shields.io/nuget/v/Microsoft.VisualStudio.Sdk.TestFramework.svg)](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework)
-<!-- [![Build Status](https://dev.azure.com/azure-public/vside/_apis/build/status/vssdktestfx)](https://dev.azure.com/azure-public/vside/_build/latest?definitionId=12) -->
+[![Build Status](https://dev.azure.com/azure-public/vside/_apis/build/status/vssdktestfx?branchName=main)](https://dev.azure.com/azure-public/vside/_build/latest?definitionId=45&branchName=main)
 [![Join the chat at https://gitter.im/Microsoft/extendvs](https://badges.gitter.im/extendvs/Lobby.svg)](https://gitter.im/Microsoft/extendvs)
 
 The VS SDK Test Framework is a library for your unit tests that exercise VS code to use
