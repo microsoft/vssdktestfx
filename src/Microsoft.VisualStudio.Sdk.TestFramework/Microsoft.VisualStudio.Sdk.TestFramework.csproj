@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.</Description>
-    <Authors>Andrew Arnott</Authors>
-    <Company>Microsoft</Company>
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
-    <Copyright>Copyright © Microsoft</Copyright>
     <PackageProjectUrl>https://aka.ms/vssdktestfx</PackageProjectUrl>
     <PackageTags>VisualStudio sdk testing mocks</PackageTags>
   </PropertyGroup>
