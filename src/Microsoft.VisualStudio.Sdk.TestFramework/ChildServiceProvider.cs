@@ -63,8 +63,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         {
             Requires.NotNull(serviceType, nameof(serviceType));
 
-            object service;
-            if (!this.services.TryGetValue(serviceType, out service))
+            if (!this.services.TryGetValue(serviceType, out object? service))
             {
                 service = this.parent.GetService(serviceType);
             }

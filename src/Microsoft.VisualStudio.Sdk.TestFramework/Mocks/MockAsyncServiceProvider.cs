@@ -8,6 +8,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     using System.Threading.Tasks;
     using Microsoft.VisualStudio.Shell;
     using Microsoft.VisualStudio.Shell.Interop;
+    using IAsyncServiceProvider2 = Microsoft.VisualStudio.Shell.IAsyncServiceProvider2;
     using Task = System.Threading.Tasks.Task;
 
     /// <summary>
@@ -32,16 +33,16 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         }
 
         /// <inheritdoc/>
-        public Task<object> GetServiceAsync(Type serviceType, bool swallowExceptions)
+        public Task<object?> GetServiceAsync(Type serviceType, bool swallowExceptions)
         {
             return this.GetServiceAsync(serviceType);
         }
 
         /// <inheritdoc/>
-        public Task<object> GetServiceAsync(Type serviceType)
+        public Task<object?> GetServiceAsync(Type serviceType)
         {
             Requires.NotNull(serviceType, nameof(serviceType));
-            return Task.FromResult(this.serviceProvider.QueryService(serviceType.GUID));
+            return Task.FromResult<object?>(this.serviceProvider.QueryService(serviceType.GUID));
         }
 
         /// <inheritdoc />
