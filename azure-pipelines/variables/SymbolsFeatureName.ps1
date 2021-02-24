@@ -1,1 +1,1 @@
-'LibraryName'
+'VSSDKTestFx'

@@ -23,6 +23,9 @@ parameters:
   default: Test
   values: [ 'Test', 'Real' ]
 
+variables:
+  NugetSecurityAnalysisWarningLevel: none # nuget.config requires signed packages by trusted owners
+
 stages:
 
 - stage: Build
@@ -59,11 +62,11 @@ stages:
       artifact: symbols-Windows
       displayName: Download symbols-Windows artifact
     - task: MicroBuildArchiveSymbols@1
-      displayName: Archive $(SymbolsFeatureName) on Symweb
+      displayName: Archive symbols to Symweb
       inputs:
         SymbolsFeatureName: $(SymbolsFeatureName)
         SymbolsSymwebProject: VS
-        SymbolsUncPath: \\cpvsbuild\drops\$(TeamName)\$(Build.DefinitionName)\$(Build.SourceBranchName)\$(Build.BuildNumber)\Symbols.Archival
+        SymbolsUncPath: \\cpvsbuild\drops\$(TeamName)\$(Build.DefinitionName)\$(Build.SourceBranchName)\$(Build.BuildId)\Symbols.Archival
         SymbolsEmailContacts: vsidemicrobuild
         SymbolsAgentPath: $(Pipeline.Workspace)/symbols-Windows
     - task: MicroBuildCleanup@1

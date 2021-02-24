@@ -1,17 +1,15 @@
 steps:
-# We use VSBuild instead of "dotnet build" on Windows where MicroBuild tasks have to run (since they don't support MSBuild Core yet).
-- task: VSBuild@1
-  displayName: Build Visual Studio solution
-  inputs:
-    msbuildArgs: /t:build,pack /m /bl:"$(Build.ArtifactStagingDirectory)/build_logs/msbuild.binlog"
-    platform: Any CPU
-    configuration: $(BuildConfiguration)
+- script: dotnet build --no-restore -c $(BuildConfiguration) /v:m /bl:"$(Build.ArtifactStagingDirectory)/build_logs/build.binlog"
+  displayName: dotnet build
+
+- script: dotnet pack --no-build -c $(BuildConfiguration) /v:m /bl:"$(Build.ArtifactStagingDirectory)/build_logs/pack.binlog"
+  displayName: dotnet pack
 
 - task: DotNetCoreCLI@2
   displayName: dotnet test -f net472
   inputs:
     command: test
-    arguments: --no-build -c $(BuildConfiguration) -f net472 --filter "TestCategory!=FailsInCloudTest" -v n /p:CollectCoverage=true --settings "$(Build.Repository.LocalPath)/azure-pipelines/$(Agent.OS).runsettings"
+    arguments: --no-build -c $(BuildConfiguration) -f net472 --filter "TestCategory!=FailsInCloudTest" -v n /p:CollectCoverage=true --settings "$(Build.Repository.LocalPath)/azure-pipelines/$(Agent.OS).runsettings" /bl:"$(Build.ArtifactStagingDirectory)/build_logs/test_net472.binlog"
     testRunTitle: net472-$(Agent.JobName)
   condition: succeededOrFailed()
 
@@ -32,7 +30,15 @@ steps:
     IndexSources: false
     SymbolServerType: TeamServices
   displayName: Publish symbols to symbol server
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Agent.OS'], 'Windows_NT'))
+
+- task: PublishSymbols@2
+  inputs:
+    SymbolsFolder: $(Build.ArtifactStagingDirectory)/test_symbols-$(Agent.JobName)
+    SearchPattern: '**/*.pdb'
+    IndexSources: false
+    SymbolServerType: TeamServices
+  displayName: Publish test symbols to symbol server
+  condition: and(failed(), eq(variables['Agent.OS'], 'Windows_NT')) # Execute on failed test runs only.
 
 - bash: bash <(curl -s https://codecov.io/bash)
   displayName: Publish code coverage results to codecov.io
