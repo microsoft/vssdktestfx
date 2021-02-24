@@ -19,14 +19,10 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="16.6.8-alpha" PrivateAssets="none" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="16.6.13" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.4.11" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="16.5.29911.84" />
-    <PackageReference Include="Microsoft.VisualStudio.Telemetry" Version="16.3.59" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.12.0" Version="12.0.30111" />
-    <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime" Version="10.0.1" PrivateAssets="all" />
-    <PackageReference Include="Moq" Version="4.14.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="16.9.31023.347" />
+    <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime" Version="16.9.31023.347" PrivateAssets="all" />
+    <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Strings.Designer.cs">
