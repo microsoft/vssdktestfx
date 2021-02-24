@@ -81,7 +81,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks
 
             public event EventHandler<BrokeredServicesChangedEventArgs>? AvailabilityChanged;
 
-            public ValueTask<IDuplexPipe> GetPipeAsync(ServiceMoniker serviceMoniker, ServiceActivationOptions options = default, CancellationToken cancellationToken = default)
+            public ValueTask<IDuplexPipe?> GetPipeAsync(ServiceMoniker serviceMoniker, ServiceActivationOptions options = default, CancellationToken cancellationToken = default)
             {
                 throw new NotImplementedException();
             }

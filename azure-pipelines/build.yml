@@ -1,7 +1,5 @@
 parameters:
-- name: windowsPool
-  type: string
-  default: Hosted Windows 2019 with VS2019
+  windowsPool: Hosted Windows 2019 with VS2019
 
 jobs:
 - job: Windows

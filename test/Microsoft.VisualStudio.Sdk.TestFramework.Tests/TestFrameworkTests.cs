@@ -61,7 +61,7 @@ public class TestFrameworkTests : TestBase
     [Fact]
     public async Task ServicesObtainableViaAsyncServiceProvider()
     {
-        object activityLog = await AsyncServiceProvider.GlobalProvider.GetServiceAsync(typeof(SVsActivityLog));
+        object? activityLog = await AsyncServiceProvider.GlobalProvider.GetServiceAsync(typeof(SVsActivityLog));
         Assert.IsAssignableFrom<IVsActivityLog>(activityLog);
     }
 
@@ -291,7 +291,7 @@ public class TestFrameworkTests : TestBase
         using (proxy as IDisposable)
         {
             Assert.NotNull(proxy);
-            Assert.Equal(8, proxy.Add(3, 5));
+            Assert.Equal(8, proxy!.Add(3, 5));
             Assert.Throws<RemoteInvocationException>(() => proxy.Throw());
         }
     }
@@ -305,7 +305,7 @@ public class TestFrameworkTests : TestBase
         using (proxy as IDisposable)
         {
             Assert.NotNull(proxy);
-            Assert.Equal(8, proxy.Add(3, 5));
+            Assert.Equal(8, proxy!.Add(3, 5));
             Assert.Throws<RemoteInvocationException>(() => proxy.Throw());
         }
     }
