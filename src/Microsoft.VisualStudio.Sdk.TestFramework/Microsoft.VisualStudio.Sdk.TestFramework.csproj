@@ -19,10 +19,12 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.4.11" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="16.9.31023.347" />
+    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.8.118" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.9.28307" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading" Version="15.8.209" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime" Version="16.9.31023.347" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.VisualStudio.Designer.Interfaces" Version="16.10.0-preview-2-31023-285" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Designer.Interfaces" Version="16.10.0-preview-2-31104-017" PrivateAssets="all" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="all" />
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
   <ItemGroup>

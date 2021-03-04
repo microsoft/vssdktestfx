@@ -13,7 +13,8 @@
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="3.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="16.9.31023.347" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="15.9.28307" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>

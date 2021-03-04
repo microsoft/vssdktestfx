@@ -38,7 +38,8 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             {
                 this.jtf.RunAsync(async delegate
                 {
-                    await this.jtf.SwitchToMainThreadAsync(alwaysYield: true);
+                    await this.jtf.SwitchToMainThreadAsync();
+                    await Task.Yield();
                     this.TryExecuteTask(task);
                 });
             }
