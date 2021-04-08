@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <RootNamespace />
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework\content\MockedVS.cs">
@@ -13,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="3.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.0.0-preview-1-31128-022" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="17.0.0-preview-1-31204-1114" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>

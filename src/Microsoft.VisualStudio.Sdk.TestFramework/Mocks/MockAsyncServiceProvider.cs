@@ -15,7 +15,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     /// An implementation of <see cref="IAsyncServiceProvider2"/>
     /// that simply returns services from <see cref="OLE.Interop.IServiceProvider"/>.
     /// </summary>
-    internal class MockAsyncServiceProvider : IAsyncServiceProvider2, Shell.Interop.IAsyncServiceProvider
+    internal class MockAsyncServiceProvider : IAsyncServiceProvider2, Shell.Interop.COMAsyncServiceProvider.IAsyncServiceProvider
     {
         private readonly OLE.Interop.IServiceProvider serviceProvider;
         private readonly IVsTaskSchedulerService taskSchedulerService;
