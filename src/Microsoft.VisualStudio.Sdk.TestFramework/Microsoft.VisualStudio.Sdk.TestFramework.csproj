@@ -4,6 +4,7 @@
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
     <PackageProjectUrl>https://aka.ms/vssdktestfx</PackageProjectUrl>
     <PackageTags>VisualStudio sdk testing mocks</PackageTags>
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="content\MockedVS.cs" />
@@ -20,9 +21,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.4.11" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="16.9.31023.347" />
-    <PackageReference Include="Microsoft.Internal.VisualStudio.Shell.Interop.10.0.DesignTime" Version="16.9.31023.347" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.VisualStudio.Designer.Interfaces" Version="16.10.0-preview-2-31023-285" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.0.0-preview-2-31221-277" />
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="17.0.0-preview-2-31221-277" />
+    <PackageReference Include="Microsoft.Internal.VisualStudio.Interop" Version="17.0.0-preview-2-31221-277" />
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
   <ItemGroup>

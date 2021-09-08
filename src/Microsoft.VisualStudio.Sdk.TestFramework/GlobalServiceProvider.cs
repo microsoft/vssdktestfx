@@ -220,7 +220,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                     this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
                     this.AddService(typeof(SVsBrokeredServiceContainer), this.mockBrokeredServiceContainer);
 
-                    Shell.Interop.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
+                    Shell.Interop.COMAsyncServiceProvider.IAsyncServiceProvider asyncServiceProvider = new MockAsyncServiceProvider(this);
                     this.AddService(typeof(SAsyncServiceProvider), asyncServiceProvider);
 
                     // We can only call this once for the AppDomain.
