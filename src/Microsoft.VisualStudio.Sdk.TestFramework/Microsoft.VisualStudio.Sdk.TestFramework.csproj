@@ -23,6 +23,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.9.20" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.0.31902.203" />
     <PackageReference Include="Microsoft.Internal.VisualStudio.Interop" Version="17.0.31918.195" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.0.34" />
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
   <ItemGroup>

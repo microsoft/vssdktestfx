@@ -40,7 +40,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
                 {
                     await this.jtf.SwitchToMainThreadAsync(alwaysYield: true);
                     this.TryExecuteTask(task);
-                });
+                }).Task.Forget();
             }
         }
 
