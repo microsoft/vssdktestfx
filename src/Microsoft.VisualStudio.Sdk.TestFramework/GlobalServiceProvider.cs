@@ -3,18 +3,10 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Collections.Immutable;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
-using Microsoft.VisualStudio.Threading;
 using Moq;
 
 /// <summary>

@@ -3,13 +3,6 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Threading;
-
 /// <summary>
 /// A mock implementation of <see cref="SVsTaskSchedulerService"/>.
 /// </summary>

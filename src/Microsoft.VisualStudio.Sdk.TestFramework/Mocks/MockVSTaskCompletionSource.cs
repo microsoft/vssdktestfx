@@ -3,10 +3,6 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell.Interop;
-
 /// <summary>
 /// A mock implementation of <see cref="IVsTaskCompletionSource"/>.
 /// </summary>

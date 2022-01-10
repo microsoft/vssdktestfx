@@ -9,6 +9,14 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.Sdk.TestFramework"/>
+    <Using Include="Microsoft.VisualStudio.Shell"/>
+    <Using Include="Microsoft.VisualStudio.Shell.Interop"/>
+    <Using Include="Microsoft.VisualStudio.Threading"/>
+    <Using Include="Xunit"/>
+    <Using Include="Xunit.Abstractions"/>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
   </ItemGroup>
   <ItemGroup>

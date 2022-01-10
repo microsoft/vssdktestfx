@@ -3,11 +3,6 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Threading;
-
 /// <summary>
 /// A <see cref="TaskScheduler"/> that executes tasks on the mocked up UI thread.
 /// </summary>

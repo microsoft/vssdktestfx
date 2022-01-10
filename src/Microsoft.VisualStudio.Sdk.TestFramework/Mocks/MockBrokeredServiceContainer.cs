@@ -3,12 +3,7 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO.Pipelines;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
 using Microsoft.VisualStudio.Shell.ServiceBroker;

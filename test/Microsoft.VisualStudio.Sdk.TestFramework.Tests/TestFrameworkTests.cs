@@ -1,30 +1,15 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
-using Microsoft.VisualStudio.Sdk.TestFramework;
-using Microsoft.VisualStudio.Sdk.TestFramework.Tests;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
-using Microsoft.VisualStudio.Threading;
 using StreamJsonRpc;
-using Xunit;
-using Xunit.Abstractions;
 using OleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
-using Task = System.Threading.Tasks.Task;
 
 #pragma warning disable CS0618 // We intentionally test APIs that are obsolete
-#pragma warning disable VSTHRD001 // We intentionally test APIs that are obsolete
 
 [Collection(MockedVS.Collection)]
 public class TestFrameworkTests : TestBase

@@ -3,14 +3,6 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using IAsyncServiceProvider2 = Microsoft.VisualStudio.Shell.IAsyncServiceProvider2;
-using Task = System.Threading.Tasks.Task;
-
 /// <summary>
 /// An implementation of <see cref="IAsyncServiceProvider2"/>
 /// that simply returns services from <see cref="OLE.Interop.IServiceProvider"/>.

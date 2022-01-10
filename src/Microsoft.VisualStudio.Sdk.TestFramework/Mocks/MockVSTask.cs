@@ -3,12 +3,6 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-
 #pragma warning disable VSTHRD002 // Our mock implementation is pretty cheap
 
 /// <summary>

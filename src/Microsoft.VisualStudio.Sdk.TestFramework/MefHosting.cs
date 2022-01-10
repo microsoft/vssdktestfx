@@ -3,16 +3,8 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Composition;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 
 /// <summary>
 /// Provides VS MEF hosting facilities for unit tests.
