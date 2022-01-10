@@ -43,9 +43,14 @@ public abstract class TestBase : IDisposable
     protected virtual TimeSpan UnexpectedTimeout => Debugger.IsAttached ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(10);
 
     /// <summary>
-    /// Gets a token that gets canceled <see cref="UnexpectedTimeout"/> after the test class starts initializing in preparation for running an individual test method.
+    /// Gets a token that gets canceled <see cref="UnexpectedTimeout"/> after the test class is instantiated.
     /// </summary>
     protected CancellationToken TimeoutToken => Debugger.IsAttached ? CancellationToken.None : this.timeoutTokenSource.Token;
+
+    /// <summary>
+    /// Gets a stopwatch that is started when the test class is instantiated.
+    /// </summary>
+    protected Stopwatch TestStopwatch { get; } = Stopwatch.StartNew();
 
     /// <inheritdoc/>
     public void Dispose()

@@ -12,7 +12,7 @@ using OleServiceProvider = Microsoft.VisualStudio.OLE.Interop.IServiceProvider;
 #pragma warning disable CS0618 // We intentionally test APIs that are obsolete
 
 [Collection(MockedVS.Collection)]
-public class TestFrameworkTests : TestBase
+public class TestFrameworkTests : LoggingTestBase
 {
     private static readonly ServiceJsonRpcDescriptor MockedBrokeredServiceDescriptor = new ServiceJsonRpcDescriptor(new ServiceMoniker("Mocked"), ServiceJsonRpcDescriptor.Formatters.MessagePack, ServiceJsonRpcDescriptor.MessageDelimiters.BigEndianInt32LengthHeader);
 
