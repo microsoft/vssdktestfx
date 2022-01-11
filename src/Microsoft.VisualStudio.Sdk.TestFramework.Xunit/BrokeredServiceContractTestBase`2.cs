@@ -14,7 +14,7 @@ using Xunit;
 /// </summary>
 /// <typeparam name="TInterface">The service interface.</typeparam>
 /// <typeparam name="TServiceMock">The class that mocks the service.</typeparam>
-public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : LoggingTestBase, IAsyncLifetime
+public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> : LoggingTestBase, IAsyncLifetime
     where TInterface : class
     where TServiceMock : TInterface, new()
 {
@@ -32,11 +32,11 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
 
 #pragma warning disable CS8618 // We initialize non-nullable fields in InitializeAsync
     /// <summary>
-    /// Initializes a new instance of the <see cref="BrokeredServiceTestBase{TInterface, TServiceMock}"/> class.
+    /// Initializes a new instance of the <see cref="BrokeredServiceContractTestBase{TInterface, TServiceMock}"/> class.
     /// </summary>
     /// <param name="logger"><inheritdoc cref="LoggingTestBase(ITestOutputHelper)" path="/param[@name='logger']"/></param>
     /// <param name="serviceRpcDescriptor">The descriptor that the product will use to request or proffer the brokered service.</param>
-    public BrokeredServiceTestBase(ITestOutputHelper logger, ServiceRpcDescriptor serviceRpcDescriptor)
+    public BrokeredServiceContractTestBase(ITestOutputHelper logger, ServiceRpcDescriptor serviceRpcDescriptor)
 #pragma warning restore CS8618 // We initialize non-nullable fields in InitializeAsync
         : base(logger)
     {
@@ -50,7 +50,7 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
     public ServiceRpcDescriptor Descriptor { get; }
 
     /// <summary>
-    /// Gets or sets the mock service.
+    /// Gets or sets the mock service implementation.
     /// </summary>
     public TServiceMock Service { get; protected set; }
 
@@ -60,10 +60,13 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
     public TInterface ClientProxy { get; protected set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether convention tests defined on the <see cref="BrokeredServiceTestBase{TInterface, TServiceMock}"/> base class should run as part of the derived test class.
+    /// Gets or sets a value indicating whether convention tests defined on the <see cref="BrokeredServiceContractTestBase{TInterface, TServiceMock}"/> base class should run as part of the derived test class.
     /// </summary>
     /// <value>The default value is <see langword="true"/>.</value>
-    protected bool DefaultContractTestsEnabled { get; set; } = true;
+    /// <remarks>
+    /// Derived test classes that want to disable default tests should set this property to <see langword="false" /> in their constructor.
+    /// </remarks>
+    protected bool DefaultTestsEnabled { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the verbosity level to use for logging messages related to the <see cref="MultiplexingStream"/>.
@@ -178,7 +181,7 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
     [SkippableFact]
     public void AllMethodsIncludeCancellationToken()
     {
-        Skip.IfNot(this.DefaultContractTestsEnabled, $"{nameof(this.DefaultContractTestsEnabled)} is set to false.");
+        Skip.IfNot(this.DefaultTestsEnabled, $"{nameof(this.DefaultTestsEnabled)} is set to false.");
         Assert.All<System.Reflection.MethodInfo>(typeof(TInterface).GetMethods(), m =>
         {
             // SpecialName is true for property getters/setters and event adders/removers.
