@@ -65,14 +65,24 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
     /// <value>The default value is <see langword="true"/>.</value>
     protected bool DefaultContractTestsEnabled { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the verbosity level to use for logging messages related to the <see cref="MultiplexingStream"/>.
+    /// </summary>
+    protected SourceLevels MultiplexingLoggingVerbosity { get; set; } = SourceLevels.Warning;
+
+    /// <summary>
+    /// Gets or sets the verbosity level to use for logging messages related to the RPC calls between client and service.
+    /// </summary>
+    protected SourceLevels DescriptorLoggingVerbosity { get; set; } = SourceLevels.Verbose;
+
     /// <inheritdoc/>
     public virtual async Task InitializeAsync()
     {
         int testId = Interlocked.Increment(ref testCounter);
-        Func<string, TraceSource> traceSourceFactory = name =>
+        Func<string, SourceLevels, TraceSource> traceSourceFactory = (name, verbosity) =>
             new TraceSource(name)
             {
-                Switch = { Level = SourceLevels.Verbose },
+                Switch = { Level = verbosity },
                 Listeners =
                 {
                     new XunitTraceListener(this.Logger, testId, this.TestStopwatch),
@@ -86,18 +96,18 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
             this.ClientProxy = descriptor
                 .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
                 {
-                    TraceSource = traceSourceFactory("Client mxstream"),
-                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")"),
+                    TraceSource = traceSourceFactory("Client mxstream", this.MultiplexingLoggingVerbosity),
+                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
                 })
-                .WithTraceSource(traceSourceFactory("Client RPC"))
+                .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
                 .ConstructRpc<TInterface>(underlyingPipes.Item1);
             descriptor
                 .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
                 {
-                    TraceSource = traceSourceFactory("Server mxstream"),
-                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")"),
+                    TraceSource = traceSourceFactory("Server mxstream", this.MultiplexingLoggingVerbosity),
+                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
                 })
-                .WithTraceSource(traceSourceFactory("Server RPC"))
+                .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
                 .ConstructRpc(this.Service, underlyingPipes.Item2);
         }
         else
@@ -108,16 +118,16 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
                 underlyingStreams.Item1,
                 new MultiplexingStream.Options
                 {
-                    TraceSource = traceSourceFactory("Client mxstream"),
-                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")"),
+                    TraceSource = traceSourceFactory("Client mxstream", this.MultiplexingLoggingVerbosity),
+                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
                 },
                 this.TimeoutToken);
             Task<MultiplexingStream> mxStreamTask2 = MultiplexingStream.CreateAsync(
                 underlyingStreams.Item2,
                 new MultiplexingStream.Options
                 {
-                    TraceSource = traceSourceFactory("Server mxstream"),
-                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")"),
+                    TraceSource = traceSourceFactory("Server mxstream", this.MultiplexingLoggingVerbosity),
+                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
                 },
                 this.TimeoutToken);
             MultiplexingStream[] mxStreams = await Task.WhenAll(mxStreamTask1, mxStreamTask2);
@@ -130,11 +140,11 @@ public abstract class BrokeredServiceTestBase<TInterface, TServiceMock> : Loggin
 
 #pragma warning disable CS0618 // Type or member is obsolete
             this.ClientProxy = this.Descriptor
-                .WithTraceSource(traceSourceFactory("Client RPC"))
+                .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
                 .WithMultiplexingStream(mxStreams[0])
                 .ConstructRpc<TInterface>(channels[0]);
             this.Descriptor
-                .WithTraceSource(traceSourceFactory("Server RPC"))
+                .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
                 .WithMultiplexingStream(mxStreams[1])
                 .ConstructRpc(this.Service, channels[1]);
 #pragma warning restore CS0618 // Type or member is obsolete
