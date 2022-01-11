@@ -3,5 +3,9 @@
 
 public interface ICalculator
 {
+    event EventHandler<double> SumFound;
+
+    event EventHandler OperationComplete;
+
     ValueTask<double> AddAsync(double a, double b, CancellationToken cancellationToken);
 }

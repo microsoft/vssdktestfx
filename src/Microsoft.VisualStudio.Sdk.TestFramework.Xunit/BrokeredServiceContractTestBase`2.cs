@@ -6,6 +6,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework;
 using System.Diagnostics;
 using System.IO.Pipelines;
 using Microsoft.ServiceHub.Framework;
+using Microsoft.VisualStudio.Threading;
 using Nerdbank.Streams;
 using Xunit;
 
@@ -190,5 +191,62 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
                 Assert.Contains(m.GetParameters(), p => p.ParameterType == typeof(CancellationToken));
             }
         });
+    }
+
+    /// <summary>
+    /// Asserts that an event is raised with expected data.
+    /// </summary>
+    /// <param name="addHandler">The delegate that can add the given handler to the event on the <see cref="ClientProxy"/>.</param>
+    /// <param name="removeHandler">The delegate that can remove the given handler from the event on the <see cref="ClientProxy"/>.</param>
+    /// <param name="triggerEvent">The delegate that calls directly into the <see cref="Service"/> to raise the event.</param>
+    /// <returns>A <see cref="Task"/> that should be awaited by the test method.</returns>
+    protected async Task AssertEventRaisedAsync(Action<TInterface, EventHandler> addHandler, Action<TInterface, EventHandler> removeHandler, Action<TServiceMock> triggerEvent)
+    {
+        var eventRaised = new TaskCompletionSource<object?>();
+        EventHandler handler = (s, e) =>
+        {
+            try
+            {
+                eventRaised.SetResult(null);
+            }
+            catch (Exception ex)
+            {
+                eventRaised.SetException(ex);
+            }
+        };
+        addHandler(this.ClientProxy, handler);
+        triggerEvent(this.Service);
+        await eventRaised.Task.WithCancellation(this.TimeoutToken);
+        removeHandler(this.ClientProxy, handler);
+    }
+
+    /// <summary>
+    /// Asserts that an event is raised with expected data.
+    /// </summary>
+    /// <typeparam name="TEventArgs">The type argument for the <see cref="EventHandler{TEventArgs}"/> delegate.</typeparam>
+    /// <param name="addHandler">The delegate that can add the given handler to the event on the <see cref="ClientProxy"/>.</param>
+    /// <param name="removeHandler">The delegate that can remove the given handler from the event on the <see cref="ClientProxy"/>.</param>
+    /// <param name="triggerEvent">The delegate that calls directly into the <see cref="Service"/> to raise the event.</param>
+    /// <param name="argsAssertions">A delegate to execute that contains assertions on the data sent with the event.</param>
+    /// <returns>A <see cref="Task"/> that should be awaited by the test method.</returns>
+    protected async Task AssertEventRaisedAsync<TEventArgs>(Action<TInterface, EventHandler<TEventArgs>> addHandler, Action<TInterface, EventHandler<TEventArgs>> removeHandler, Action<TServiceMock> triggerEvent, Action<TEventArgs> argsAssertions)
+    {
+        var eventRaised = new TaskCompletionSource<object?>();
+        EventHandler<TEventArgs> handler = (s, e) =>
+        {
+            try
+            {
+                argsAssertions(e);
+                eventRaised.SetResult(null);
+            }
+            catch (Exception ex)
+            {
+                eventRaised.SetException(ex);
+            }
+        };
+        addHandler(this.ClientProxy, handler);
+        triggerEvent(this.Service);
+        await eventRaised.Task.WithCancellation(this.TimeoutToken);
+        removeHandler(this.ClientProxy, handler);
     }
 }
