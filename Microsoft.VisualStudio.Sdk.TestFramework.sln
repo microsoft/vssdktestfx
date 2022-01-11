@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29824.212
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32107.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework", "src\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj", "{A62E3D92-0B5C-4D53-9269-EAC253BBCDEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = ".VisualStudio.Sdk.TestFramework.Tests", "test\Microsoft.VisualStudio.Sdk.TestFramework.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Tests.csproj", "{94569D82-0C5E-4437-AADF-67738037ED9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework.Tests", "test\Microsoft.VisualStudio.Sdk.TestFramework.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Tests.csproj", "{94569D82-0C5E-4437-AADF-67738037ED9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{824473EA-BB16-47EE-96CA-CD854BF62276}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,6 +18,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		stylecop.json = stylecop.json
 		version.json = version.json
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7750CC1F-2803-4A54-BBF7-5FD05FD49B96}"
+	ProjectSection(SolutionItems) = preProject
+		src\.editorconfig = src\.editorconfig
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3D7D871C-3834-4575-B158-D38FEC07BC6B}"
+	ProjectSection(SolutionItems) = preProject
+		test\.editorconfig = test\.editorconfig
+		test\Directory.Build.props = test\Directory.Build.props
+		test\Directory.Build.targets = test\Directory.Build.targets
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit", "src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.csproj", "{A7FDF327-106E-4627-8D44-AFE7FDF56633}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +49,18 @@ Global
 		{94569D82-0C5E-4437-AADF-67738037ED9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94569D82-0C5E-4437-AADF-67738037ED9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94569D82-0C5E-4437-AADF-67738037ED9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7FDF327-106E-4627-8D44-AFE7FDF56633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7FDF327-106E-4627-8D44-AFE7FDF56633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7FDF327-106E-4627-8D44-AFE7FDF56633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7FDF327-106E-4627-8D44-AFE7FDF56633}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A62E3D92-0B5C-4D53-9269-EAC253BBCDEE} = {7750CC1F-2803-4A54-BBF7-5FD05FD49B96}
+		{94569D82-0C5E-4437-AADF-67738037ED9D} = {3D7D871C-3834-4575-B158-D38FEC07BC6B}
+		{A7FDF327-106E-4627-8D44-AFE7FDF56633} = {7750CC1F-2803-4A54-BBF7-5FD05FD49B96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27C43278-C8F5-4183-A1E3-712A83362BB5}
