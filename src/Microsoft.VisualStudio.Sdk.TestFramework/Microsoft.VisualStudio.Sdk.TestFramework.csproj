@@ -8,12 +8,6 @@ Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramew
     <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="content\MockedVS.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="content\MockedVS.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Using Include="System.Collections.Immutable" />
     <Using Include="System.Runtime.InteropServices" />
     <Using Include="Microsoft.VisualStudio.Shell" />
@@ -21,11 +15,11 @@ Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramew
     <Using Include="Microsoft.VisualStudio.Threading" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.9.20" />

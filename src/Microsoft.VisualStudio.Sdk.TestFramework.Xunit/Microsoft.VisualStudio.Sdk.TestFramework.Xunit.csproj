@@ -5,11 +5,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RootNamespace>Microsoft.VisualStudio.Sdk.TestFramework</RootNamespace>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.</Description>
-    <Product>Microsoft VisualStudio SDK Test Framework</Product>
+    <Product>Microsoft VisualStudio SDK Test Framework for Xunit</Product>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="contentFiles\**\*.cs" />
+    <Content Include="contentFiles\**\*.cs" BuildAction="compile" />
+  </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.Sdk.TestFramework" />
     <Using Include="Xunit" />

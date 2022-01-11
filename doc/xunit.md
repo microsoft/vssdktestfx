@@ -1,39 +1,20 @@
 # Xunit instructions
 
 These instructions apply when consuming this test framework from an Xunit project.
-This is just a subset of the full instructions outlined in [our README](../README.md).
+This is an addendum to general instructions outlined in [our README](../README.md).
 
-Add this class to your project (if a MockedVS.cs file was not added to your project automatically):
+1. Install the NuGet package `Microsoft.VisualStudio.Sdk.TestFramework.Xunit` [![NuGet package](https://img.shields.io/nuget/v/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.svg)](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit)
+1. For *each* of your test classes that rely on VS mocked services, apply the `Collection` attribute and add a parameter and statement to your constructor:
 
-```csharp
-using Xunit;
-using Microsoft.VisualStudio.Sdk.TestFramework;
+    ```csharp
+    using Microsoft.VisualStudio.Sdk.TestFramework;
 
-/// <summary>
-/// Defines the "MockedVS" xunit test collection.
-/// </summary>
-[CollectionDefinition(Collection)]
-public class MockedVS : ICollectionFixture<GlobalServiceProvider>, ICollectionFixture<MefHostingFixture>
-{
-    /// <summary>
-    /// The name of the xunit test collection.
-    /// </summary>
-    public const string Collection = "MockedVS";
-}
-```
-
-Then for *each* of your test classes, apply the `Collection` attribute and
-add a parameter and statement to your constructor:
-
-```csharp
-using Microsoft.VisualStudio.Sdk.TestFramework;
-
-[Collection(MockedVS.Collection)]
-public class YourTestClass
-{
-    public TestFrameworkTests(GlobalServiceProvider sp)
+    [Collection(MockedVS.Collection)]
+    public class YourTestClass
     {
-        sp.Reset();
+        public TestFrameworkTests(GlobalServiceProvider sp)
+        {
+            sp.Reset();
+        }
     }
-}
-```
+    ```

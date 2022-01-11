@@ -5,9 +5,7 @@
     <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework\content\MockedVS.cs">
-      <Link>MockedVS.cs</Link>
-    </Compile>
+    <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
   </ItemGroup>
   <ItemGroup>
     <Using Include="Microsoft.VisualStudio.Sdk.TestFramework" />
