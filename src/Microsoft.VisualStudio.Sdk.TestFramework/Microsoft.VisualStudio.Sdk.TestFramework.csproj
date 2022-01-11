@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.</Description>
+    <TargetFramework>net472</TargetFramework>
+    <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.
+
+Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit package.</Description>
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
-    <PackageProjectUrl>https://aka.ms/vssdktestfx</PackageProjectUrl>
-    <PackageTags>VisualStudio sdk testing mocks</PackageTags>
     <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -13,11 +14,11 @@
     <None Include="content\MockedVS.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Using Include="System.Collections.Immutable"/>
-    <Using Include="System.Runtime.InteropServices"/>
-    <Using Include="Microsoft.VisualStudio.Shell"/>
-    <Using Include="Microsoft.VisualStudio.Shell.Interop"/>
-    <Using Include="Microsoft.VisualStudio.Threading"/>
+    <Using Include="System.Collections.Immutable" />
+    <Using Include="System.Runtime.InteropServices" />
+    <Using Include="Microsoft.VisualStudio.Shell" />
+    <Using Include="Microsoft.VisualStudio.Shell.Interop" />
+    <Using Include="Microsoft.VisualStudio.Threading" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.Composition" />
