@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
+using Microsoft.VisualStudio.Utilities.ServiceBroker;
 using Moq;
 
 /// <summary>
@@ -70,7 +71,7 @@ public class GlobalServiceProvider : IDisposable
 
         private readonly TaskCompletionSource<object?> mainThreadInitialized = new TaskCompletionSource<object?>();
 
-        private readonly MockBrokeredServiceContainer mockBrokeredServiceContainer = new MockBrokeredServiceContainer();
+        private MockBrokeredServiceContainer mockBrokeredServiceContainer = new MockBrokeredServiceContainer();
 
         /// <summary>
         /// The initial set of minimal services.
@@ -148,8 +149,8 @@ public class GlobalServiceProvider : IDisposable
         /// </summary>
         internal void Reset()
         {
-            this.services = this.baseServices;
-            this.mockBrokeredServiceContainer.Reset();
+            this.mockBrokeredServiceContainer = new();
+            this.services = this.baseServices.SetItem(typeof(SVsBrokeredServiceContainer).GUID, this.mockBrokeredServiceContainer);
         }
 
         /// <summary>
