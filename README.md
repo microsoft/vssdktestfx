@@ -13,9 +13,6 @@ tend to fail in unit tests without this library installed.
 
 **Microsoft Internal users**: See [specific guidance if consuming within the `VS` repo](doc/vs_repo.md).
 
-1. Modify/create your nuget.config file to include [these two feeds](https://github.com/microsoft/vssdktestfx/blob/5327c89b7f53afda1baa9558ad4901c4290289d2/nuget.config#L9-L10).
-   This is a workaround for a Visual Studio 2022 SDK bug that we expect to fix in a future release. See [issue #4](https://github.com/microsoft/vssdktestfx/issues/4) for more information.
-
 1. Install the NuGet package [Microsoft.VisualStudio.Sdk.TestFramework](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework),
    or for Xunit test projects, install the more specific [Microsoft.VisualStudio.Sdk.TestFramework.Xunit](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit) package
 
