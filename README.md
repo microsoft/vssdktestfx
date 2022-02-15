@@ -52,6 +52,7 @@ that the service is already added.
 These services include:
 
 * `SVsActivityLog`
+  Customize behavior by acquiring the service and downcasting to the `MockVsActivityLog` type, then setting the `ForwardTo` property.
 * `OLE.Interop.IServiceProvider`
 * `SVsTaskSchedulerService`
 * `SVsUIThreadInvokerPrivate`
