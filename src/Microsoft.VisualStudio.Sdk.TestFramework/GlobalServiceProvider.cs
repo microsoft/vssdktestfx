@@ -6,6 +6,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework;
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
 using Microsoft.VisualStudio.Utilities.ServiceBroker;
 using Moq;
@@ -179,12 +180,6 @@ public class GlobalServiceProvider : IDisposable
             this.mainThread.Join();
         }
 
-        private static Mock<IVsActivityLog> CreateVsActivityLogMock()
-        {
-            var mock = new Mock<IVsActivityLog>();
-            return mock;
-        }
-
         private IVsTaskSchedulerService CreateVsTaskSchedulerServiceMock()
         {
             return new MockTaskSchedulerService(this.joinableTaskContext);
@@ -207,7 +202,7 @@ public class GlobalServiceProvider : IDisposable
                 this.mainMessagePumpFrame = new DispatcherFrame();
 
                 this.AddService(typeof(OLE.Interop.IServiceProvider), this);
-                this.AddService(typeof(SVsActivityLog), CreateVsActivityLogMock().Object);
+                this.AddService(typeof(SVsActivityLog), new MockVsActivityLog());
                 this.AddService(typeof(SVsTaskSchedulerService), this.CreateVsTaskSchedulerServiceMock());
                 this.AddService(typeof(SVsUIThreadInvokerPrivate), new VsUIThreadInvoker(this.joinableTaskContext));
                 this.AddService(typeof(SVsBrokeredServiceContainer), this.mockBrokeredServiceContainer);
