@@ -14,7 +14,7 @@ public class MefHosting
     /// <summary>
     /// The MEF discovery module to use (which finds both MEFv1 and MEFv2 parts).
     /// </summary>
-    private readonly PartDiscovery discoverer = PartDiscovery.Combine(
+    public static readonly PartDiscovery PartDiscoverer = PartDiscovery.Combine(
         new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
         new AttributedPartDiscoveryV1(Resolver.DefaultInstance));
 
@@ -22,6 +22,16 @@ public class MefHosting
     /// The names of the assemblies to include in the catalog.
     /// </summary>
     private readonly ImmutableArray<string> catalogAssemblyNames;
+
+    /// <summary>
+    /// The lazily-created catalog.
+    /// </summary>
+    private AsyncLazy<ComposableCatalog> catalog;
+
+    /// <summary>
+    /// The lazily-created configuration.
+    /// </summary>
+    private AsyncLazy<CompositionConfiguration> configuration;
 
     /// <summary>
     /// The lazily-created export provider factory.
@@ -47,10 +57,38 @@ public class MefHosting
         Requires.NotNull(assemblyNames, nameof(assemblyNames));
 
         this.catalogAssemblyNames = ImmutableArray.CreateRange(assemblyNames);
+        this.catalog = new AsyncLazy<ComposableCatalog>(this.CreateProductCatalogAsync, ThreadHelper.JoinableTaskFactory);
+        this.configuration = new AsyncLazy<CompositionConfiguration>(this.CreateConfigurationAsync, ThreadHelper.JoinableTaskFactory);
         this.exportProviderFactory = new AsyncLazy<IExportProviderFactory>(
             this.CreateExportProviderFactoryAsync,
             ThreadHelper.JoinableTaskFactory);
     }
+
+    /// <summary>
+    /// Creates a one-off <see cref="ExportProvider"/> based on an explicit list of MEF parts.
+    /// </summary>
+    /// <param name="partTypes">The types that define the MEF parts to include in the backing catalog.</param>
+    /// <returns>An <see cref="ExportProvider"/>.</returns>
+    public static async Task<ExportProvider> CreateExportProviderAsync(params Type[] partTypes)
+    {
+        DiscoveredParts parts = await PartDiscoverer.CreatePartsAsync(partTypes);
+        ComposableCatalog catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts);
+        CompositionConfiguration configuration = CompositionConfiguration.Create(catalog);
+        IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory();
+        return exportProviderFactory.CreateExportProvider();
+    }
+
+    /// <summary>
+    /// Gets the <see cref="ComposableCatalog"/> that backs this MEF service.
+    /// </summary>
+    /// <returns>The <see cref="ComposableCatalog"/>.</returns>
+    public Task<ComposableCatalog> GetCatalogAsync() => this.catalog.GetValueAsync();
+
+    /// <summary>
+    /// Gets the <see cref="CompositionConfiguration"/> that backs this MEF service.
+    /// </summary>
+    /// <returns>The <see cref="CompositionConfiguration"/>.</returns>
+    public Task<CompositionConfiguration> GetConfigurationAsync() => this.configuration.GetValueAsync();
 
     /// <summary>
     /// Creates a new MEF container, initialized with all the assemblies
@@ -59,7 +97,7 @@ public class MefHosting
     /// <returns>A task whose result is the <see cref="ExportProvider"/>.</returns>
     public async Task<ExportProvider> CreateExportProviderAsync()
     {
-        IExportProviderFactory exportProviderFactory = await this.exportProviderFactory.GetValueAsync().ConfigureAwait(false);
+        IExportProviderFactory exportProviderFactory = await this.exportProviderFactory.GetValueAsync();
         return exportProviderFactory.CreateExportProvider();
     }
 
@@ -106,8 +144,7 @@ public class MefHosting
     /// <returns>A task whose result is the <see cref="IExportProviderFactory"/>.</returns>
     private async Task<IExportProviderFactory> CreateExportProviderFactoryAsync()
     {
-        ComposableCatalog catalog = await this.CreateProductCatalogAsync().ConfigureAwait(false);
-        var configuration = CompositionConfiguration.Create(catalog);
+        CompositionConfiguration configuration = await this.configuration.GetValueAsync();
         IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory();
         return exportProviderFactory;
     }
@@ -119,10 +156,16 @@ public class MefHosting
     private async Task<ComposableCatalog> CreateProductCatalogAsync()
     {
         IEnumerable<Assembly> assemblies = this.catalogAssemblyNames.Select(Assembly.Load);
-        DiscoveredParts discoveredParts = await this.discoverer.CreatePartsAsync(assemblies).ConfigureAwait(false);
+        DiscoveredParts discoveredParts = await PartDiscoverer.CreatePartsAsync(assemblies);
         ComposableCatalog catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
             .AddParts(discoveredParts)
             .WithCompositionService();
         return catalog;
+    }
+
+    private async Task<CompositionConfiguration> CreateConfigurationAsync()
+    {
+        ComposableCatalog catalog = await this.catalog.GetValueAsync();
+        return CompositionConfiguration.Create(catalog);
     }
 }
