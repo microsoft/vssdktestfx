@@ -177,7 +177,15 @@ public class GlobalServiceProvider : IDisposable
             this.mainThreadInitialized.Task.GetAwaiter().GetResult();
 #pragma warning restore VSTHRD002 // Avoid problematic synchronous waits
             this.mainMessagePumpFrame.Continue = false;
-            this.mainThread.Join();
+
+            // The test runner has been known to at least once call us *on* the mocked main thread.
+            // In such a case, joining oneself would deadlock the thread.
+            // But if we're *on* the main thread, we don't need to block on its completion
+            // as it is implicitly so until the stack unwinds.
+            if (Thread.CurrentThread != this.mainThread)
+            {
+                this.mainThread.Join();
+            }
         }
 
         private IVsTaskSchedulerService CreateVsTaskSchedulerServiceMock()
