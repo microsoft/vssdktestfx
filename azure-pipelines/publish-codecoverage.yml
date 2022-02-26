@@ -1,0 +1,13 @@
+steps:
+- powershell: |
+    dotnet tool install --tool-path obj dotnet-reportgenerator-globaltool --version 4.8.5 --configfile azure-pipelines/justnugetorg.nuget.config
+    $reports = Get-ChildItem -Recurse '$(System.DefaultWorkingDirectory)/bin/coverage.*cobertura.xml'
+    $Inputs = [string]::join(';', ($reports |% { Resolve-Path -relative $_ }))
+    obj/reportgenerator -reports:"$Inputs" -targetdir:coveragereport -reporttypes:Cobertura
+  displayName: Merge coverage
+- task: PublishCodeCoverageResults@1
+  displayName: Publish code coverage results to Azure DevOps
+  inputs:
+    codeCoverageTool: cobertura
+    summaryFileLocation: 'coveragereport/Cobertura.xml'
+    failIfCoverageEmpty: true
