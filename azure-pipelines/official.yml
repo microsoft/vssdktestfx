@@ -22,6 +22,10 @@ parameters:
   type: string
   default: Test
   values: [ 'Test', 'Real' ]
+- name: EnableAPIScan
+  displayName: Run APIScan
+  type: boolean
+  default: true
 
 variables:
   NugetSecurityAnalysisWarningLevel: none # nuget.config requires signed packages by trusted owners
@@ -36,11 +40,13 @@ stages:
     push_to_ci: true
     NUGET_PACKAGES: $(Agent.TempDirectory)/.nuget/packages
     SignTypeSelection: ${{ parameters.SignTypeSelection }}
+    Packaging.EnableSBOMSigning: false
 
   jobs:
   - template: build.yml
     parameters:
-      windowsPool: VSEngSS-MicroBuild2019-1ES
+      EnableAPIScan: ${{ parameters.EnableAPIScan }}
+      windowsPool: VSEngSS-MicroBuild2022-1ES
 
 - stage: symbol_archive
   displayName: Symbol archival
@@ -58,8 +64,8 @@ stages:
         targetType: filePath
         filePath: $(Pipeline.Workspace)/Variables-Windows/_pipelines.ps1
     - download: current
-      artifact: symbols-Windows
-      displayName: Download symbols-Windows artifact
+      artifact: symbols-legacy
+      displayName: Download symbols-legacy artifact
     - task: MicroBuildArchiveSymbols@1
       displayName: Archive symbols to Symweb
       inputs:
@@ -67,7 +73,7 @@ stages:
         SymbolsSymwebProject: VS
         SymbolsUncPath: \\cpvsbuild\drops\$(TeamName)\$(Build.DefinitionName)\$(Build.SourceBranchName)\$(Build.BuildId)\Symbols.Archival
         SymbolsEmailContacts: vsidemicrobuild
-        SymbolsAgentPath: $(Pipeline.Workspace)/symbols-Windows
+        SymbolsAgentPath: $(Pipeline.Workspace)/symbols-legacy
     - task: MicroBuildCleanup@1
       displayName: Send Telemetry
 

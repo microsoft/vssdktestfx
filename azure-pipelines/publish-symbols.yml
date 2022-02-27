@@ -1,0 +1,20 @@
+steps:
+
+- task: PublishSymbols@2
+  inputs:
+    SymbolsFolder: $(Build.ArtifactStagingDirectory)/symbols-Windows
+    SearchPattern: '**/*.pdb'
+    IndexSources: false
+    SymbolServerType: TeamServices
+  displayName: Publish symbols
+
+- task: PublishSymbols@2
+  inputs:
+    SymbolsFolder: $(Build.ArtifactStagingDirectory)/test_symbols-Windows
+    SearchPattern: '**/*.pdb'
+    IndexSources: false
+    SymbolServerType: TeamServices
+  displayName: Publish test symbols
+
+- powershell: azure-pipelines/Publish-Legacy-Symbols.ps1 -Path $(Build.ArtifactStagingDirectory)/symbols-Windows
+  displayName: Publish symbols for symbol archival

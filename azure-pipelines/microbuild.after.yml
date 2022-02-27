@@ -1,3 +1,7 @@
+parameters:
+- name: EnableAPIScan
+  type: boolean
+
 steps:
 - task: MicroBuildCodesignVerify@3
   displayName: Verify Signed Files
@@ -9,8 +13,14 @@ steps:
   condition: succeededOrFailed()
   displayName: MicroBuild Cleanup
 
-- task: ComponentGovernanceComponentDetection@0
-  displayName: Component Detection
+- task: ManifestGeneratorTask@0
+  displayName: Software Bill of Materials generation
+  inputs:
+    BuildDropPath: $(System.DefaultWorkingDirectory)/bin/Microsoft.VisualStudio.Sdk.TestFramework/$(BuildConfiguration)
+    BuildComponentPath: $(System.DefaultWorkingDirectory)/obj/src/Microsoft.VisualStudio.Sdk.TestFramework
+
+- powershell: Copy-Item -Recurse "$(System.DefaultWorkingDirectory)/bin/Microsoft.VisualStudio.Sdk.TestFramework/$(BuildConfiguration)/_manifest" "$(System.DefaultWorkingDirectory)/bin/Packages/$(BuildConfiguration)/NuGet"
+  displayName: Publish Software Bill of Materials
 
 - task: Ref12Analyze@0
   displayName: Ref12 (Codex) Analyze
@@ -26,3 +36,5 @@ steps:
   continueOnError: true
 
 - template: secure-development-tools.yml
+  parameters:
+    EnableAPIScan: ${{ parameters.EnableAPIScan }}
