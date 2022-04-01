@@ -23,7 +23,7 @@ Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramew
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="17.2.23-alpha" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.2.0-preview-2-32228-143" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.2.32331.320" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities.Testing" Version="17.2.0-preview-3-32308-409" />
     <PackageReference Include="Moq" Version="4.17.2" />
   </ItemGroup>
