@@ -15,7 +15,6 @@ schedules:
   branches:
     include:
     - main
-    - 'v16.*'
 
 parameters:
 - name: SignTypeSelection
