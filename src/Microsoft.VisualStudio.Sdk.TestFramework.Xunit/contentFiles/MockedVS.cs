@@ -10,7 +10,11 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
     /// Defines the "MockedVS" xunit test collection.
     /// </summary>
     [CollectionDefinition(Collection)]
-    public class MockedVS : ICollectionFixture<GlobalServiceProvider>, ICollectionFixture<MefHostingFixture>
+    public class MockedVS :
+#if NETFRAMEWORK || WINDOWS
+        ICollectionFixture<GlobalServiceProvider>,
+#endif
+        ICollectionFixture<MefHostingFixture>
     {
         /// <summary>
         /// The name of the xunit test collection.

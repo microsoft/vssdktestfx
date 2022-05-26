@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if NETFRAMEWORK || WINDOWS
+
 using System.Runtime.InteropServices;
 using Microsoft;
 using Microsoft.ServiceHub.Framework;
@@ -302,3 +304,5 @@ public class TestFrameworkTests : LoggingTestBase
         public void Throw() => throw new InvalidOperationException("Test");
     }
 }
+
+#endif

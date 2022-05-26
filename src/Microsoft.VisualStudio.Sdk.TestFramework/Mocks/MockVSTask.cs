@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if NETFRAMEWORK || WINDOWS
+
 namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
 #pragma warning disable VSTHRD002 // Our mock implementation is pretty cheap
@@ -163,3 +165,5 @@ internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, 
         this.OnMarkedAsBlocking?.Invoke(this, new BlockingTaskEventArgs(this, this));
     }
 }
+
+#endif

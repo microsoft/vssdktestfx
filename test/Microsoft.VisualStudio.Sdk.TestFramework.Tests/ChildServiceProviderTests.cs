@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if NETFRAMEWORK || WINDOWS
+
 using Moq;
 
 public class ChildServiceProviderTests
@@ -30,3 +32,5 @@ public class ChildServiceProviderTests
         Assert.IsAssignableFrom<IVsSolution>(childServiceProvider.GetService(typeof(SVsSolution)));
     }
 }
+
+#endif
