@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if NETFRAMEWORK || WINDOWS
+
 namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
 using System.Runtime.InteropServices.ComTypes;
@@ -63,3 +65,5 @@ internal class MockLocalRegistry : ILocalRegistry
         return VSConstants.E_NOTIMPL;
     }
 }
+
+#endif

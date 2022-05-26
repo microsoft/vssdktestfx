@@ -3,6 +3,7 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
+using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.Composition;
 
@@ -56,12 +57,18 @@ public class MefHosting
     {
         Requires.NotNull(assemblyNames, nameof(assemblyNames));
 
+#if NETFRAMEWORK || WINDOWS
+        JoinableTaskFactory? joinableTaskFactory = ThreadHelper.JoinableTaskFactory;
+#else
+        JoinableTaskFactory? joinableTaskFactory = null;
+#endif
+
         this.catalogAssemblyNames = ImmutableArray.CreateRange(assemblyNames);
-        this.catalog = new AsyncLazy<ComposableCatalog>(this.CreateProductCatalogAsync, ThreadHelper.JoinableTaskFactory);
-        this.configuration = new AsyncLazy<CompositionConfiguration>(this.CreateConfigurationAsync, ThreadHelper.JoinableTaskFactory);
+        this.catalog = new AsyncLazy<ComposableCatalog>(this.CreateProductCatalogAsync, joinableTaskFactory);
+        this.configuration = new AsyncLazy<CompositionConfiguration>(this.CreateConfigurationAsync, joinableTaskFactory);
         this.exportProviderFactory = new AsyncLazy<IExportProviderFactory>(
             this.CreateExportProviderFactoryAsync,
-            ThreadHelper.JoinableTaskFactory);
+            joinableTaskFactory);
     }
 
     /// <summary>

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if NETFRAMEWORK || WINDOWS
+
 namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
 /// <summary>
@@ -58,8 +60,10 @@ internal sealed class MockVSTaskCompletionSource : IVsTaskCompletionSource
     public void SetCanceled() => this.UnderlyingTask.Cancel();
 
     /// <inheritdoc />
-    public void SetFaulted(int hr) => this.taskCompletionSource.SetException(Marshal.GetExceptionForHR(hr));
+    public void SetFaulted(int hr) => this.taskCompletionSource.SetException(Marshal.GetExceptionForHR(hr) ?? new COMException("Unknown failure.", hr));
 
     /// <inheritdoc />
     public void SetResult(object result) => this.taskCompletionSource.SetResult(result);
 }
+
+#endif
