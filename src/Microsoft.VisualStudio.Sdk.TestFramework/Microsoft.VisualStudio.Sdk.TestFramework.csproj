@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net6.0;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.
 
 Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit package.</Description>
