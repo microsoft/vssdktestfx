@@ -3,6 +3,7 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
+using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.Composition;
 

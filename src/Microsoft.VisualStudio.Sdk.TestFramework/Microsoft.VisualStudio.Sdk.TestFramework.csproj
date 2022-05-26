@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworks>net472;net6.0;net6.0-windows</TargetFrameworks>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.
 
 Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit package.</Description>
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
     <NoWarn>$(NoWarn);NU1603</NoWarn>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System.Collections.Immutable" />
@@ -15,17 +16,11 @@ Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramew
     <Using Include="Microsoft.VisualStudio.Threading" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="17.2.53" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="17.2.32524.276" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities.Testing" Version="17.2.32524.276" />
     <PackageReference Include="Moq" Version="4.18.1" />
+    <PackageReference Include="System.ComponentModel.Composition" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Strings.Designer.cs">

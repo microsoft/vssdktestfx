@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+#if NETFRAMEWORK || WINDOWS
+
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
 /// <summary>
@@ -55,7 +57,7 @@ public class ChildServiceProvider : IServiceProvider
     }
 
     /// <inheritdoc />
-    public object GetService(Type serviceType)
+    public object? GetService(Type serviceType)
     {
         Requires.NotNull(serviceType, nameof(serviceType));
 
@@ -67,3 +69,5 @@ public class ChildServiceProvider : IServiceProvider
         return service;
     }
 }
+
+#endif
