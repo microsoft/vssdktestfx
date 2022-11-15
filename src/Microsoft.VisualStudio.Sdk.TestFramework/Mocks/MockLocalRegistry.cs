@@ -3,10 +3,10 @@
 
 #if NETFRAMEWORK || WINDOWS
 
-namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
-
 using System.Runtime.InteropServices.ComTypes;
 using Microsoft.VisualStudio.OLE.Interop;
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
 /// <summary>
 /// A mock implementation of <see cref="ILocalRegistry"/>.

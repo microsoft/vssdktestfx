@@ -3,9 +3,9 @@
 
 #if NETFRAMEWORK || WINDOWS
 
-namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
-
 using Microsoft.VisualStudio.Shell.Interop;
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
 /// <summary>
 /// An adapter that can log to Xunit's <see cref="ITestOutputHelper"/>

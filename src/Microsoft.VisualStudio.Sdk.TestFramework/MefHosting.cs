@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-namespace Microsoft.VisualStudio.Sdk.TestFramework;
-
 using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.Composition;
+
+namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
 /// <summary>
 /// Provides VS MEF hosting facilities for unit tests.
