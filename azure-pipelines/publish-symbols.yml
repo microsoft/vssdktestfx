@@ -6,7 +6,7 @@ steps:
     SearchPattern: '**/*.pdb'
     IndexSources: false
     SymbolServerType: TeamServices
-  displayName: Publish symbols
+  displayName: 📢 Publish symbols
 
 - task: PublishSymbols@2
   inputs:
@@ -14,7 +14,7 @@ steps:
     SearchPattern: '**/*.pdb'
     IndexSources: false
     SymbolServerType: TeamServices
-  displayName: Publish test symbols
+  displayName: 📢 Publish test symbols
 
 - powershell: azure-pipelines/Publish-Legacy-Symbols.ps1 -Path $(Build.ArtifactStagingDirectory)/symbols-Windows
-  displayName: Publish symbols for symbol archival
+  displayName: 📢 Publish symbols for symbol archival
