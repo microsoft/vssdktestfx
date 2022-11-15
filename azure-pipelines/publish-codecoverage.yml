@@ -1,5 +1,5 @@
 steps:
-- powershell: azure-pipelines/Merge-CodeCoverage.ps1 -Path '$(System.DefaultWorkingDirectory)/bin' -OutputFile coveragereport/merged.cobertura.xml -Format Cobertura -Verbose
+- powershell: azure-pipelines/Merge-CodeCoverage.ps1 -Path '$(System.DefaultWorkingDirectory)' -OutputFile coveragereport/merged.cobertura.xml -Format Cobertura -Verbose
   displayName: ⚙ Merge coverage
 - task: PublishCodeCoverageResults@1
   displayName: 📢 Publish code coverage results to Azure DevOps
