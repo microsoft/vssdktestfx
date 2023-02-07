@@ -6,9 +6,9 @@
 using System.Windows;
 using System.Windows.Threading;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
+using Microsoft.ServiceHub.Framework.Testing;
 using Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 using Microsoft.VisualStudio.Shell.ServiceBroker;
-using Microsoft.VisualStudio.Utilities.ServiceBroker;
 using Moq;
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;

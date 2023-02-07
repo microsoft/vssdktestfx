@@ -12,7 +12,8 @@
     <PackageVersion Include="Microsoft.VisualStudio.Composition" Version="17.4.16" />
     <PackageVersion Include="Microsoft.VisualStudio.Internal.MicroBuild.NonShipping" Version="$(MicroBuildVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.4.33216.74" />
-    <PackageVersion Include="Microsoft.VisualStudio.Utilities.Testing" Version="17.4.33130.147" />
+    <PackageVersion Include="Microsoft.VisualStudio.Utilities" Version="17.4.33216.74" />
+    <PackageVersion Include="Microsoft.ServiceHub.Framework.Testing" Version="4.2.46-beta" />
     <PackageVersion Include="Moq" Version="4.18.4" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="6.0.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
