@@ -122,12 +122,6 @@ public class MefHosting
                 continue;
             }
 
-            if (string.Equals(Path.GetFileNameWithoutExtension(file), "Microsoft.VisualStudio.Utilities", StringComparison.OrdinalIgnoreCase))
-            {
-                // Temporarily skip MS.VS.Utilities till it removes the MEF parts that are redundant with those from Microsoft.ServiceHub.Framework.
-                continue;
-            }
-
             string? assemblyFullName = null;
             try
             {
