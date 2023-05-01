@@ -161,13 +161,13 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
         (this.ClientProxy as IDisposable)?.Dispose();
 
         List<Task> tasks = new();
-        if (this.clientMxStream is object)
+        if (this.clientMxStream is not null)
         {
             tasks.Add(this.clientMxStream.DisposeAsync().AsTask());
             tasks.Add(this.clientMxStream.Completion);
         }
 
-        if (this.serviceMxStream is object)
+        if (this.serviceMxStream is not null)
         {
             tasks.Add(this.serviceMxStream.DisposeAsync().AsTask());
             tasks.Add(this.serviceMxStream.Completion);
@@ -202,6 +202,10 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// <returns>A <see cref="Task"/> that should be awaited by the test method.</returns>
     protected async Task AssertEventRaisedAsync(Action<TInterface, EventHandler> addHandler, Action<TInterface, EventHandler> removeHandler, Action<TServiceMock> triggerEvent)
     {
+        Requires.NotNull(addHandler);
+        Requires.NotNull(removeHandler);
+        Requires.NotNull(triggerEvent);
+
         var eventRaised = new TaskCompletionSource<object?>();
         EventHandler handler = (s, e) =>
         {
@@ -231,6 +235,10 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// <returns>A <see cref="Task"/> that should be awaited by the test method.</returns>
     protected async Task AssertEventRaisedAsync<TEventArgs>(Action<TInterface, EventHandler<TEventArgs>> addHandler, Action<TInterface, EventHandler<TEventArgs>> removeHandler, Action<TServiceMock> triggerEvent, Action<TEventArgs> argsAssertions)
     {
+        Requires.NotNull(addHandler);
+        Requires.NotNull(removeHandler);
+        Requires.NotNull(triggerEvent);
+
         var eventRaised = new TaskCompletionSource<object?>();
         EventHandler<TEventArgs> handler = (s, e) =>
         {
