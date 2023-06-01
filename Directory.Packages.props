@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <MicroBuildVersion>2.0.117</MicroBuildVersion>
+    <MicroBuildVersion>2.0.124</MicroBuildVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
