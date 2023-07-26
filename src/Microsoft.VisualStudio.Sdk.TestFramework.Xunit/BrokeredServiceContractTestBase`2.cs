@@ -183,7 +183,16 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     public void AllMethodsIncludeCancellationToken()
     {
         Skip.IfNot(this.DefaultTestsEnabled, $"{nameof(this.DefaultTestsEnabled)} is set to false.");
-        Assert.All<System.Reflection.MethodInfo>(typeof(TInterface).GetMethods(), m =>
+        AssertAllMethodsIncludeCancellationToken<TInterface>();
+    }
+
+    /// <summary>
+    /// Verifies that all methods on a given interface include a <see cref="CancellationToken"/> as the last parameter.
+    /// </summary>
+    /// <typeparam name="T">The interface on which to perform the test.</typeparam>
+    protected static void AssertAllMethodsIncludeCancellationToken<T>()
+    {
+        Assert.All(typeof(T).GetMethods(), m =>
         {
             // SpecialName is true for property getters/setters and event adders/removers.
             if (!m.IsSpecialName)
