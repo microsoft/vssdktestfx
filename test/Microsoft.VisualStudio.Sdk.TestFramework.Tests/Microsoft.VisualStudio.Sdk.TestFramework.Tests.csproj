@@ -22,6 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" ExcludeAssets="compile" />
+    <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit" />
   </ItemGroup>

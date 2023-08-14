@@ -3,7 +3,9 @@
 
 #if NETFRAMEWORK || WINDOWS
 
-using Moq;
+#pragma warning disable VSSDK006 // Check services exist
+
+using NSubstitute;
 
 public class ChildServiceProviderTests
 {
@@ -11,17 +13,15 @@ public class ChildServiceProviderTests
 
     public ChildServiceProviderTests()
     {
-        var parentSP = new Mock<IServiceProvider>();
-        parentSP.Setup(sp => sp.GetService(typeof(SVsSolution)))
-            .Returns(new Mock<IVsSolution>().Object);
-        this.parentServiceProvider = parentSP.Object;
+        this.parentServiceProvider = Substitute.For<IServiceProvider>();
+        _ = this.parentServiceProvider.GetService(typeof(SVsSolution)).Returns(Substitute.For<IVsSolution>());
     }
 
     [Fact]
     public void OffersOwnServices()
     {
         var childServiceProvider = new ChildServiceProvider(this.parentServiceProvider);
-        childServiceProvider.AddService(typeof(IVsProject), new Mock<IVsProject>().Object);
+        childServiceProvider.AddService(typeof(IVsProject), Substitute.For<IVsProject>());
         Assert.NotNull(childServiceProvider.GetService(typeof(IVsProject)));
     }
 
