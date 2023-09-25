@@ -10,7 +10,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.Composition" Version="17.6.17" />
     <PackageVersion Include="Microsoft.VisualStudio.Internal.MicroBuild.NonShipping" Version="$(MicroBuildVersion)" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.6.35837" />
-    <PackageVersion Include="Microsoft.VisualStudio.Utilities" Version="17.6.35837" />
+    <PackageVersion Include="Microsoft.VisualStudio.Utilities" Version="17.8.36909" />
     <PackageVersion Include="Microsoft.ServiceHub.Framework.Testing" Version="4.2.102" />
     <PackageVersion Include="NSubstitute" Version="5.0.0" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="7.0.0" />
