@@ -5,5 +5,8 @@
   "omnisharp.enableEditorConfigSupport": true,
   "omnisharp.enableRoslynAnalyzers": true,
   "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
-  "dotnet.defaultSolution": "Microsoft.VisualStudio.Sdk.TestFramework.sln"
+  "editor.formatOnSave": true,
+  "[xml]": {
+    "editor.wordWrap": "off"
+  }
 }
