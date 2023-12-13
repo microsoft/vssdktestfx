@@ -47,6 +47,9 @@ jobs:
         EnableCompliance: ${{ parameters.EnableCompliance }}
         EnableAPIScan: ${{ parameters.EnableAPIScan }}
 
+  - script: dotnet format --verify-no-changes --no-restore
+    displayName: 💅 Verify formatted code
+
   - template: publish-symbols.yml
   - ${{ if parameters.RunTests }}:
     - template: publish-codecoverage.yml

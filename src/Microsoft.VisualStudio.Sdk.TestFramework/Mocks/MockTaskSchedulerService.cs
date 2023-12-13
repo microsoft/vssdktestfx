@@ -58,7 +58,7 @@ internal sealed class MockTaskSchedulerService : IVsTaskSchedulerService, IVsTas
     public object GetAsyncTaskContext() => this.joinableTaskContext;
 
     /// <inheritdoc />
-    public object GetTaskScheduler([ComAliasName("VsShell.VSTASKRUNCONTEXT")]uint context)
+    public object GetTaskScheduler([ComAliasName("VsShell.VSTASKRUNCONTEXT")] uint context)
     {
         var runContext = (VsTaskRunContext)context;
         if (runContext == VsTaskRunContext.CurrentContext)
