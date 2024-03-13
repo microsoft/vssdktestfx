@@ -19,11 +19,11 @@ parameters:
   default: true
 
 variables:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  BuildConfiguration: Release
-  NUGET_PACKAGES: $(Agent.TempDirectory)/.nuget/packages/
+- template: /azure-pipelines/BuildStageVariables.yml@self
 
 jobs:
 - template: azure-pipelines/build.yml
   parameters:
+    Is1ESPT: false
+    EnableMacOSBuild: false
     RunTests: ${{ parameters.RunTests }}
