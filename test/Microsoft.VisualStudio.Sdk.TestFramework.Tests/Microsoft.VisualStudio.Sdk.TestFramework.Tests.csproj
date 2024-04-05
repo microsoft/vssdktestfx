@@ -1,19 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <RootNamespace />
     <NoWarn>$(NoWarn);NU1603</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.Sdk.TestFramework" />
-    <Using Include="Microsoft.VisualStudio.Shell" />
-    <Using Include="Microsoft.VisualStudio.Shell.Interop" Condition="'$(TargetFramework)'!='net6.0'" />
-    <Using Include="Microsoft.VisualStudio.Threading" />
-    <Using Include="Xunit" />
-    <Using Include="Xunit.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />

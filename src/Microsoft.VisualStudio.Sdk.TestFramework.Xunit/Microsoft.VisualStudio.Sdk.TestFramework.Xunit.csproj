@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RootNamespace>Microsoft.VisualStudio.Sdk.TestFramework</RootNamespace>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.</Description>
@@ -14,11 +13,6 @@
   <ItemGroup>
     <Compile Remove="contentFiles\**\*.cs" />
     <Content Include="contentFiles\**\*.cs" BuildAction="compile" />
-  </ItemGroup>
-  <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.Sdk.TestFramework" />
-    <Using Include="Xunit" />
-    <Using Include="Xunit.Abstractions" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="xunit" />
