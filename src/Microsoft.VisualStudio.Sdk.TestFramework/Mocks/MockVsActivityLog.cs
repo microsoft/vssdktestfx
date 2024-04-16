@@ -5,9 +5,6 @@
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
-// This interface is actually free-threaded.
-#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread
-
 /// <summary>
 /// An implementation of <see cref="IVsActivityLog"/> for testing.
 /// </summary>
