@@ -5,6 +5,7 @@
 
 using System.Windows;
 using System.Windows.Threading;
+using Microsoft.Internal.VisualStudio.PlatformUI;
 using Microsoft.Internal.VisualStudio.Shell.Interop;
 using Microsoft.ServiceHub.Framework.Testing;
 using Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
@@ -32,8 +33,14 @@ public class GlobalServiceProvider : IDisposable
     /// </summary>
     public GlobalServiceProvider()
     {
+        ThisInstance = this;
         this.instance = new OleServiceProviderMock();
     }
+
+    /// <summary>
+    /// Gets the singleton instance of this object.
+    /// </summary>
+    internal static GlobalServiceProvider? ThisInstance { get; private set; }
 
     /// <summary>
     /// Disposes of any dedicated resources for VS mocks.
@@ -49,6 +56,9 @@ public class GlobalServiceProvider : IDisposable
 
     /// <inheritdoc cref="OleServiceProviderMock.AddService(Type, object)" />
     public void AddService(Type serviceType, object instance) => this.instance.AddService(serviceType ?? throw new ArgumentNullException(nameof(serviceType)), instance ?? throw new ArgumentNullException(nameof(instance)));
+
+    /// <inheritdoc cref="OleServiceProviderMock.AddService(Guid, Func{Task{object}})" />
+    public void AddService(Guid serviceId, Func<Task<object>> factory) => this.instance.AddService(serviceId, factory ?? throw new ArgumentNullException(nameof(factory)));
 
     /// <summary>
     /// Disposes of managed and native resources.
@@ -127,7 +137,7 @@ public class GlobalServiceProvider : IDisposable
         /// <inheritdoc />
         int OLE.Interop.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
         {
-            if (!this.services.TryGetValue(guidService, out object? service))
+            if (!this.services.TryGetValue(guidService, out object? serviceOrFactory))
             {
                 ppvObject = IntPtr.Zero;
                 return VSConstants.E_INVALIDARG;
@@ -136,6 +146,18 @@ public class GlobalServiceProvider : IDisposable
             IntPtr pUnk = IntPtr.Zero;
             try
             {
+                object? service = serviceOrFactory switch
+                {
+                    Func<Task<object>> factory => this.joinableTaskContext.Factory.Run(factory),
+                    _ => serviceOrFactory,
+                };
+
+                if (service is null)
+                {
+                    ppvObject = IntPtr.Zero;
+                    return VSConstants.E_NOINTERFACE;
+                }
+
                 pUnk = Marshal.GetIUnknownForObject(service);
                 return Marshal.QueryInterface(pUnk, ref riid, out ppvObject);
             }
@@ -146,7 +168,7 @@ public class GlobalServiceProvider : IDisposable
         }
 
         /// <summary>
-        /// Removes any services added via <see cref="AddService"/>,
+        /// Removes any services added via <see cref="AddService(Type, object)"/> or <see cref="AddService(Guid, Func{Task{object}})"/>,
         /// leaving only those services whose marks are built into this library.
         /// </summary>
         internal void Reset()
@@ -165,6 +187,19 @@ public class GlobalServiceProvider : IDisposable
             Verify.Operation(
                 ImmutableInterlocked.TryAdd(ref this.services, serviceType.GUID, instance) ||
                 (this.baseServices.TryGetValue(serviceType.GUID, out object? mock) && ImmutableInterlocked.TryUpdate(ref this.services, serviceType.GUID, instance, mock)),
+                Strings.ServiceAlreadyAdded);
+        }
+
+        /// <summary>
+        /// Adds a global service, replacing a built-in mock if any.
+        /// </summary>
+        /// <param name="serviceId">The identity of the service.</param>
+        /// <param name="factory">The service factory.</param>
+        internal void AddService(Guid serviceId, Func<Task<object>> factory)
+        {
+            Verify.Operation(
+                ImmutableInterlocked.TryAdd(ref this.services, serviceId, factory) ||
+                (this.baseServices.TryGetValue(serviceId, out object? mock) && ImmutableInterlocked.TryUpdate(ref this.services, serviceId, factory, mock)),
                 Strings.ServiceAlreadyAdded);
         }
 
