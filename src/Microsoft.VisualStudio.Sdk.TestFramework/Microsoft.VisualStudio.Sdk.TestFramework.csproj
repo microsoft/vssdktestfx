@@ -10,6 +10,7 @@ Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramew
   <ItemGroup>
     <PackageReference Include="Microsoft.ServiceHub.Framework.Testing" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" />
+    <PackageReference Include="Microsoft.VisualStudio.Interop" />
     <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Condition="'$(TargetFramework)'!='net8.0'" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" ExcludeAssets="compile" />
     <PackageReference Include="System.ComponentModel.Composition" />
