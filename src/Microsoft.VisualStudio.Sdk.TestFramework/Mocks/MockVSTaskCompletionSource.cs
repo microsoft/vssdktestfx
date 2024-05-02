@@ -57,7 +57,11 @@ internal sealed class MockVSTaskCompletionSource : IVsTaskCompletionSource
     }
 
     /// <inheritdoc />
-    public void SetCanceled() => this.UnderlyingTask.Cancel();
+    public void SetCanceled()
+    {
+        this.taskCompletionSource.SetCanceled();
+        this.UnderlyingTask.Cancel();
+    }
 
     /// <inheritdoc />
     public void SetFaulted(int hr) => this.taskCompletionSource.SetException(Marshal.GetExceptionForHR(hr) ?? new COMException("Unknown failure.", hr));
