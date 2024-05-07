@@ -4,7 +4,7 @@
 #if NETFRAMEWORK || WINDOWS
 
 [Collection(MockedVS.Collection)]
-public class VsTaskTests
+public class VsTaskTests : TestBase
 {
     public VsTaskTests(GlobalServiceProvider sp)
     {
@@ -23,6 +23,27 @@ public class VsTaskTests
                     VsTaskRunContext.UIThreadNormalPriority,
                     (ct) => Task.FromCanceled<bool>(cancelledToken));
             });
+    }
+
+    [Fact]
+    public async Task CanAwaitCancelled2Task()
+    {
+        AsyncManualResetEvent evt = new();
+
+        IVsTask result = ThreadHelper.JoinableTaskFactory.RunAsyncAsVsTask<bool>(
+           VsTaskRunContext.UIThreadNormalPriority,
+           async (ct) =>
+           {
+               await evt;
+               throw new OperationCanceledException();
+           });
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            async () =>
+            {
+                evt.Set();
+                await result;
+            }).WithCancellation(this.TimeoutToken);
     }
 
     [Fact]

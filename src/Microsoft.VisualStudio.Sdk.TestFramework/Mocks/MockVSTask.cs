@@ -13,7 +13,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, IDisposable
 {
     private readonly IVsTaskSchedulerService2 vsTaskSchedulerService2;
-    private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+    private readonly CancellationTokenSource cancellationTokenSource;
     private readonly uint context;
     private readonly Task<object> task;
     private readonly object? asyncState;
@@ -25,12 +25,14 @@ internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, 
     /// <param name="context">The scheduling option for this task.</param>
     /// <param name="task">The task to execute.</param>
     /// <param name="asyncState">The async state object to store.</param>
-    public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, Task<object> task, object? asyncState = null)
+    /// <param name="cts">The cancellation token source to use. This is useful when the caller needs to have already observed the token for the construction of <paramref name="task"/>.</param>
+    internal MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, Task<object> task, object? asyncState = null, CancellationTokenSource? cts = null)
     {
         this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new ArgumentNullException(nameof(vsTaskSchedulerService2));
         this.context = context;
         this.task = task ?? throw new ArgumentNullException(nameof(task));
         this.asyncState = asyncState;
+        this.cancellationTokenSource = cts ?? new CancellationTokenSource();
     }
 
     /// <summary>
@@ -40,10 +42,11 @@ internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, 
     /// <param name="context">The scheduling option for this task.</param>
     /// <param name="taskBody">The body to execute.</param>
     /// <param name="asyncState">The async state object to store.</param>
-    public MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, IVsTaskBody taskBody, object? asyncState = null)
+    internal MockVSTask(IVsTaskSchedulerService2 vsTaskSchedulerService2, uint context, IVsTaskBody taskBody, object? asyncState = null)
     {
         this.vsTaskSchedulerService2 = vsTaskSchedulerService2 ?? throw new ArgumentNullException(nameof(vsTaskSchedulerService2));
         this.context = context;
+        this.cancellationTokenSource = new CancellationTokenSource();
         this.task = new Task<object>(
             () =>
             {
@@ -109,8 +112,10 @@ internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, 
     /// <inheritdoc />
     public IVsTask ContinueWithEx(uint context, uint options, IVsTaskBody pTaskBody, object? pAsyncState)
     {
-        // NOTE: We ignore options (and context), if any tests are testing code that relies on either this
+        // NOTE: We ignore context, if any tests are testing code that relies on either this
         // would need to be modified to properly support them.
+        VsTaskContinuationOptions internalOptions = (VsTaskContinuationOptions)options;
+        CancellationTokenSource cts = new();
         return new MockVSTask(
             this.vsTaskSchedulerService2,
             context,
@@ -120,10 +125,11 @@ internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, 
                     pTaskBody.DoWork(this, 0, Array.Empty<IVsTask>(), out object result);
                     return result;
                 },
-                this.cancellationTokenSource.Token,
-                TaskContinuationOptions.None,
+                cts.Token,
+                GetTPLOptions(internalOptions),
                 (TaskScheduler)this.vsTaskSchedulerService2.GetTaskScheduler(context)),
-            pAsyncState);
+            pAsyncState,
+            cts);
     }
 
     /// <inheritdoc />
@@ -156,6 +162,22 @@ internal sealed class MockVSTask : IVsTask, IVsTaskJoinableTask, IVsTaskEvents, 
     /// <inheritdoc />
     public void AssociateJoinableTask(object joinableTask)
     {
+    }
+
+    private static TaskContinuationOptions GetTPLOptions(VsTaskContinuationOptions options)
+    {
+        TaskContinuationOptions tplOptions = (TaskContinuationOptions)(options & ~(VsTaskContinuationOptions.NotCancelable | VsTaskContinuationOptions.IndependentlyCanceled | VsTaskContinuationOptions.CancelWithParent));
+
+        // Do not execute continuations synchronously as VS Task Library doesn't support it.
+        //
+        // Reason is that we have to store the TPL task that Task.ContinueWith method returns in InternalTask property to do certain
+        // checks (like deadlock mitigation) but if task starts executing inside ContinueWith function (i.e. inlined) before it returns
+        // we never get to set InternalTask property. As VS task library tries to access InternalTask for checks, we redundantly spin
+        // wait for it to be set for 10 seconds and then return null shortcutting the checks. Since we shipped this option with
+        // Shell.11.0 it is better if we don't throw exception but silently ignore it.
+        tplOptions &= ~TaskContinuationOptions.ExecuteSynchronously;
+
+        return tplOptions;
     }
 
     private void FakeMethodToAvoidStupidWarningAsError()
