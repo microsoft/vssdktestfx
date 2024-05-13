@@ -9,7 +9,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 /// An implementation of <see cref="IAsyncServiceProvider2"/>
 /// that simply returns services from <see cref="OLE.Interop.IServiceProvider"/>.
 /// </summary>
-internal class MockAsyncServiceProvider : IAsyncServiceProvider2, Shell.Interop.COMAsyncServiceProvider.IAsyncServiceProvider
+internal class MockAsyncServiceProvider : IAsyncServiceProvider3, Shell.Interop.COMAsyncServiceProvider.IAsyncServiceProvider
 {
     private readonly OLE.Interop.IServiceProvider serviceProvider;
     private readonly IVsTaskSchedulerService taskSchedulerService;
@@ -37,6 +37,18 @@ internal class MockAsyncServiceProvider : IAsyncServiceProvider2, Shell.Interop.
     {
         Requires.NotNull(serviceType, nameof(serviceType));
         return Task.FromResult<object?>(this.serviceProvider.QueryService(serviceType.GUID));
+    }
+
+    /// <inheritdoc />
+    public Task<TInterface?> GetServiceAsync<TService, TInterface>(bool throwOnFailure, CancellationToken cancellationToken)
+        where TInterface : class
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return Task.FromCanceled<TInterface?>(cancellationToken);
+        }
+
+        return Task.FromResult<TInterface?>((TInterface)this.serviceProvider.QueryService(typeof(TService).GUID));
     }
 
     /// <inheritdoc />
