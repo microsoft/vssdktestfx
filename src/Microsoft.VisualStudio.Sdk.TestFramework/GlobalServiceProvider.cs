@@ -163,7 +163,10 @@ public class GlobalServiceProvider : IDisposable
             }
             finally
             {
-                Marshal.Release(pUnk);
+                if (pUnk != IntPtr.Zero)
+                {
+                    Marshal.Release(pUnk);
+                }
             }
         }
 
