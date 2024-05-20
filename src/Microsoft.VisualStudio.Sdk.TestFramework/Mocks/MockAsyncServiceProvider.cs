@@ -48,7 +48,19 @@ internal class MockAsyncServiceProvider : IAsyncServiceProvider3, Shell.Interop.
             return Task.FromCanceled<TInterface?>(cancellationToken);
         }
 
-        return Task.FromResult<TInterface?>((TInterface)this.serviceProvider.QueryService(typeof(TService).GUID));
+        var service = this.serviceProvider.QueryService(typeof(TService).GUID);
+
+        if (service is not TInterface @interface)
+        {
+            if (throwOnFailure)
+            {
+                throw new ServiceUnavailableException(service is null ? typeof(TService) : typeof(TInterface));
+            }
+
+            return Task.FromResult<TInterface?>(null);
+        }
+
+        return Task.FromResult<TInterface?>(@interface);
     }
 
     /// <inheritdoc />
