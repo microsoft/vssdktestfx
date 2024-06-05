@@ -163,7 +163,10 @@ public class GlobalServiceProvider : IDisposable
             }
             finally
             {
-                Marshal.Release(pUnk);
+                if (pUnk != IntPtr.Zero)
+                {
+                    Marshal.Release(pUnk);
+                }
             }
         }
 
@@ -303,7 +306,9 @@ public class GlobalServiceProvider : IDisposable
                     return this.joinableTaskContext.Factory.Run(async delegate
                     {
                         await this.joinableTaskContext.Factory.SwitchToMainThreadAsync();
+#pragma warning disable VSTHRD010 // Invoke single-threaded types on Main thread (https://github.com/microsoft/VSSDK-Analyzers/issues/274)
                         return pInvokable.Invoke();
+#pragma warning restore VSTHRD010
                     });
                 }
 #pragma warning disable CA1031 // Do not catch general exception types
