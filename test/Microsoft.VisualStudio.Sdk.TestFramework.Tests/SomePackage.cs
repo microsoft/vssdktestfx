@@ -23,8 +23,8 @@ public class SomePackage : AsyncPackage
 
     protected override Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
     {
-        this.AddService(typeof(SVsPromotedService), (sc, ct, serviceType) => Task.FromResult<object?>(new object()), true);
-        this.AddService(typeof(SVsNonPromotedService), (sc, ct, serviceType) => Task.FromResult<object?>(new object()), false);
+        this.AddService(typeof(SVsPromotedService), (sc, ct, serviceType) => Task.FromResult(new object()), true);
+        this.AddService(typeof(SVsNonPromotedService), (sc, ct, serviceType) => Task.FromResult(new object()), false);
 
         return Task.CompletedTask;
     }
