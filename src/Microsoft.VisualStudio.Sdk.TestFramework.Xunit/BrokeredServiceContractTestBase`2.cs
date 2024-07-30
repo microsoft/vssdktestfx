@@ -80,9 +80,9 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     protected SourceLevels DescriptorLoggingVerbosity { get; set; } = SourceLevels.Verbose;
 
     /// <summary>
-    /// Gets the testCounter 
+    /// Gets the test count.
     /// </summary>
-    protected int TestCounter { get { return testCounter; } }
+    protected int TestCounter => testCounter;
 
     /// <inheritdoc/>
     public virtual async Task InitializeAsync()

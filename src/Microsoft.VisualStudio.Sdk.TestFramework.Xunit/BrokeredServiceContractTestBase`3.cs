@@ -48,7 +48,7 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         {
             await base.InitializeAsync();
 
-            int testId = TestCounter;
+            int testId = this.TestCounter;
             Func<string, SourceLevels, TraceSource> traceSourceFactory = (name, verbosity) =>
                 new TraceSource(name)
                 {
