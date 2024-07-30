@@ -280,8 +280,8 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// <summary>
     /// Configures a proxy for the mocked brokered service.
     /// </summary>
-    /// <param name="clientConnection">RPC connection to the proxy.</param>
-    /// <param name="serverConnection">RPC connection to the mocked instance.</param>
+    /// <param name="clientConnection">RPC connection to the test class (client).</param>
+    /// <param name="serverConnection">RPC connection to the mocked service (server).</param>
     protected virtual void ConfigureServiceProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
     {
         Requires.NotNull(serverConnection, nameof(serverConnection));
@@ -294,8 +294,8 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// <summary>
     /// Configures a proxy for the mocked client callback.
     /// </summary>
-    /// <param name="clientConnection">RPC connection to the proxy.</param>
-    /// <param name="serverConnection">RPC connection to the mocked instance.</param>
+    /// <param name="clientConnection">RPC connection to the test class (client).</param>
+    /// <param name="serverConnection">RPC connection to the mocked service (server).</param>
     protected virtual void ConfigureClientCallbackProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
     {
         return;
