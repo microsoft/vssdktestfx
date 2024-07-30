@@ -26,7 +26,7 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// Test logs can get misattributed to the wrong test, and prefixing each logged message with a number makes this detectable.
     /// See <see href="https://github.com/microsoft/vstest/issues/3047">this bug</see>.
     /// </remarks>
-    protected static int testCounter;
+    private static int testCounter;
 
     private MultiplexingStream clientMxStream;
     private MultiplexingStream serviceMxStream;
@@ -78,6 +78,11 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// Gets or sets the verbosity level to use for logging messages related to the RPC calls between client and service.
     /// </summary>
     protected SourceLevels DescriptorLoggingVerbosity { get; set; } = SourceLevels.Verbose;
+
+    /// <summary>
+    /// Gets the testCounter 
+    /// </summary>
+    protected int TestCounter { get { return testCounter; } }
 
     /// <inheritdoc/>
     public virtual async Task InitializeAsync()

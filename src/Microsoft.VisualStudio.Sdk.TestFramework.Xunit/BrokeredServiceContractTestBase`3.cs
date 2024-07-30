@@ -41,14 +41,14 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         /// <summary>
         /// Gets or sets the mock client callback instance.
         /// </summary>
-        public TClientInterfaceMock? ClientInterface { get; protected set; }
+        public TClientInterfaceMock ClientInterface { get; protected set; }
 
         /// <inheritdoc/>
         public override async Task InitializeAsync()
         {
-            base.InitializeAsync();
+            await base.InitializeAsync();
 
-            int testId = testCounter;
+            int testId = TestCounter;
             Func<string, SourceLevels, TraceSource> traceSourceFactory = (name, verbosity) =>
                 new TraceSource(name)
                 {
