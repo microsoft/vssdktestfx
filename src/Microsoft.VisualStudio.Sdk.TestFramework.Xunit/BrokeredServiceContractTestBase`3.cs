@@ -1,12 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Diagnostics;
-using System.IO.Pipelines;
 using Microsoft.ServiceHub.Framework;
-using Microsoft.VisualStudio.Threading;
-using Nerdbank.Streams;
-using Xunit;
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
@@ -15,11 +10,11 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework;
 /// </summary>
 /// <typeparam name="TInterface">The service interface.</typeparam>
 /// <typeparam name="TServiceMock">The class that mocks the service.</typeparam>
-/// <typeparam name="TClientInterfaceMock">The class that mockes the service's client callback.</typeparam>
-public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, TClientInterfaceMock> : BrokeredServiceContractTestBase<TInterface, TServiceMock>
+/// <typeparam name="TClientMock">The class that mocks the service's client callback.</typeparam>
+public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, TClientMock> : BrokeredServiceContractTestBase<TInterface, TServiceMock>
     where TInterface : class
     where TServiceMock : TInterface, IMockServiceWithClientCallback, new()
-    where TClientInterfaceMock : class, new()
+    where TClientMock : class, new()
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BrokeredServiceContractTestBase{TInterface, TServiceMock, TClientInterfaceMock}"/> class.
@@ -29,26 +24,22 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, 
     public BrokeredServiceContractTestBase(ITestOutputHelper logger, ServiceRpcDescriptor serviceRpcDescriptor)
         : base(logger, serviceRpcDescriptor)
     {
-        Assert.NotNull(serviceRpcDescriptor.ClientInterface);
-        Assert.Equal(typeof(TClientInterfaceMock), serviceRpcDescriptor.ClientInterface.GetType());
+        Requires.Argument(serviceRpcDescriptor.ClientInterface?.IsAssignableFrom(typeof(TClientMock)) is true, nameof(serviceRpcDescriptor), $"The type identified by the {nameof(ServiceRpcDescriptor.ClientInterface)} property must be assignable from the {nameof(TClientMock)} generic type argument.");
 
-        this.ClientInterface = new TClientInterfaceMock();
+        this.ClientCallback = new TClientMock();
     }
 
     /// <summary>
     /// Gets or sets the mock client callback instance.
     /// </summary>
-    public TClientInterfaceMock ClientInterface { get; protected set; }
+    public TClientMock ClientCallback { get; protected set; }
 
     /// <inheritdoc/>
-    protected override void ConfigureClientCallbackProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
+    protected override void ConfigureRpcConnections(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
     {
-        Requires.NotNull(serverConnection, nameof(serverConnection));
-        Requires.NotNull(clientConnection, nameof(clientConnection));
+        base.ConfigureRpcConnections(clientConnection, serverConnection);
 
-        base.ConfigureClientCallbackProxy(clientConnection, serverConnection);
-
-        (this.Service as IMockServiceWithClientCallback).ClientCallback = serverConnection.ConstructRpcClient<TClientInterfaceMock>();
-        clientConnection.AddLocalRpcTarget(this.ClientInterface);
+        this.Service.ClientCallback = serverConnection.ConstructRpcClient<TClientMock>();
+        clientConnection.AddLocalRpcTarget(this.ClientCallback);
     }
 }

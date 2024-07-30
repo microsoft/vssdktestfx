@@ -6,7 +6,6 @@ using System.IO.Pipelines;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.VisualStudio.Threading;
 using Nerdbank.Streams;
-using Xunit;
 
 namespace Microsoft.VisualStudio.Sdk.TestFramework;
 
@@ -161,8 +160,7 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
 #pragma warning restore CS0618 // Type or member is obsolete
         }
 
-        this.ConfigureServiceProxy(clientConnection, serverConnection);
-        this.ConfigureClientCallbackProxy(clientConnection, serverConnection);
+        this.ConfigureRpcConnections(clientConnection, serverConnection);
     }
 
     /// <inheritdoc/>
@@ -278,26 +276,16 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     }
 
     /// <summary>
-    /// Configures a proxy for the mocked brokered service.
+    /// Configures the targets and proxies for the RPC connections.
     /// </summary>
     /// <param name="clientConnection">RPC connection to the test class (client).</param>
     /// <param name="serverConnection">RPC connection to the mocked service (server).</param>
-    protected virtual void ConfigureServiceProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
+    protected virtual void ConfigureRpcConnections([ValidatedNotNull] ServiceRpcDescriptor.RpcConnection clientConnection, [ValidatedNotNull] ServiceRpcDescriptor.RpcConnection serverConnection)
     {
         Requires.NotNull(serverConnection, nameof(serverConnection));
         Requires.NotNull(clientConnection, nameof(clientConnection));
 
         this.ClientProxy = clientConnection.ConstructRpcClient<TInterface>();
         serverConnection.AddLocalRpcTarget(this.Service);
-    }
-
-    /// <summary>
-    /// Configures a proxy for the mocked client callback.
-    /// </summary>
-    /// <param name="clientConnection">RPC connection to the test class (client).</param>
-    /// <param name="serverConnection">RPC connection to the mocked service (server).</param>
-    protected virtual void ConfigureClientCallbackProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
-    {
-        return;
     }
 }
