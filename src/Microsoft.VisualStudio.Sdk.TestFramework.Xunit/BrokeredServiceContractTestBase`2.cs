@@ -98,26 +98,28 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
                 },
             };
 
+        ServiceRpcDescriptor.RpcConnection clientConnection;
+        ServiceRpcDescriptor.RpcConnection serverConnection;
         if (this.Descriptor is ServiceJsonRpcDescriptor { MultiplexingStreamOptions: object } descriptor)
         {
             // This is a V3 descriptor, which sets up its own MultiplexingStream.
             (IDuplexPipe, IDuplexPipe) underlyingPipes = FullDuplexStream.CreatePipePair();
-            this.ClientProxy = descriptor
+            clientConnection = descriptor
                 .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
                 {
                     TraceSource = traceSourceFactory("Client mxstream", this.MultiplexingLoggingVerbosity),
                     DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
                 })
                 .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
-                .ConstructRpc<TInterface>(underlyingPipes.Item1);
-            descriptor
+                .ConstructRpcConnection(underlyingPipes.Item1);
+            serverConnection = descriptor
                 .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
                 {
                     TraceSource = traceSourceFactory("Server mxstream", this.MultiplexingLoggingVerbosity),
                     DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
                 })
                 .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
-                .ConstructRpc(this.Service, underlyingPipes.Item2);
+                .ConstructRpcConnection(underlyingPipes.Item2);
         }
         else
         {
@@ -148,16 +150,19 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
             MultiplexingStream.Channel[] channels = await Task.WhenAll(offerTask, acceptTask);
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            this.ClientProxy = this.Descriptor
+            clientConnection = this.Descriptor
                 .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
                 .WithMultiplexingStream(mxStreams[0])
-                .ConstructRpc<TInterface>(channels[0]);
-            this.Descriptor
+                .ConstructRpcConnection(channels[0]);
+            serverConnection = this.Descriptor
                 .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
                 .WithMultiplexingStream(mxStreams[1])
-                .ConstructRpc(this.Service, channels[1]);
+                .ConstructRpcConnection(channels[1]);
 #pragma warning restore CS0618 // Type or member is obsolete
         }
+
+        this.ConfigureServiceProxy(clientConnection, serverConnection);
+        this.ConfigureClientCallbackProxy(clientConnection, serverConnection);
     }
 
     /// <inheritdoc/>
@@ -270,5 +275,29 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
         triggerEvent(this.Service);
         await eventRaised.Task.WithCancellation(this.TimeoutToken);
         removeHandler(this.ClientProxy, handler);
+    }
+
+    /// <summary>
+    /// Configures a proxy for the mocked brokered service.
+    /// </summary>
+    /// <param name="clientConnection">RPC connection to the proxy.</param>
+    /// <param name="serverConnection">RPC connection to the mocked instance.</param>
+    protected virtual void ConfigureServiceProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
+    {
+        Requires.NotNull(serverConnection, nameof(serverConnection));
+        Requires.NotNull(clientConnection, nameof(clientConnection));
+
+        this.ClientProxy = clientConnection.ConstructRpcClient<TInterface>();
+        serverConnection.AddLocalRpcTarget(this.Service);
+    }
+
+    /// <summary>
+    /// Configures a proxy for the mocked client callback.
+    /// </summary>
+    /// <param name="clientConnection">RPC connection to the proxy.</param>
+    /// <param name="serverConnection">RPC connection to the mocked instance.</param>
+    protected virtual void ConfigureClientCallbackProxy(ServiceRpcDescriptor.RpcConnection clientConnection, ServiceRpcDescriptor.RpcConnection serverConnection)
+    {
+        return;
     }
 }

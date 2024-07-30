@@ -7,16 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Microsoft.VisualStudio.Sdk.TestFramework
+namespace Microsoft.VisualStudio.Sdk.TestFramework;
+
+/// <summary>
+/// Interface for service mocks that need to interact with a client callback proxy.
+/// </summary>
+public interface IMockServiceWithClientCallback
 {
     /// <summary>
-    /// Interface for service mocks that need to interact with a client callback proxy.
+    /// Gets or sets the proxy to a client callback object.
     /// </summary>
-    public interface IMockServiceWithClientCallback
-    {
-        /// <summary>
-        /// Gets or sets the proxy to a client callback object.
-        /// </summary>
-        public object ClientCallback { get; set; }
-    }
+    public object ClientCallback { get; set; }
 }
