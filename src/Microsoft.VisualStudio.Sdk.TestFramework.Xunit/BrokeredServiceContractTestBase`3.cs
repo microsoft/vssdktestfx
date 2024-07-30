@@ -44,6 +44,84 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
         public TClientInterfaceMock? ClientInterface { get; protected set; }
 
         /// <inheritdoc/>
+        public override async Task InitializeAsync()
+        {
+            base.InitializeAsync();
+
+            int testId = testCounter;
+            Func<string, SourceLevels, TraceSource> traceSourceFactory = (name, verbosity) =>
+                new TraceSource(name)
+                {
+                    Switch = { Level = verbosity },
+                    Listeners =
+                    {
+                    new XunitTraceListener(this.Logger, testId, this.TestStopwatch),
+                    },
+                };
+
+            if (this.Descriptor is ServiceJsonRpcDescriptor { MultiplexingStreamOptions: object } descriptor)
+            {
+                // This is a V3 descriptor, which sets up its own MultiplexingStream.
+                (IDuplexPipe, IDuplexPipe) underlyingPipes = FullDuplexStream.CreatePipePair();
+                (this.Service as IMockServiceWithClientCallback).ClientCallback = descriptor
+                    .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
+                    {
+                        TraceSource = traceSourceFactory("Client mxstream", this.MultiplexingLoggingVerbosity),
+                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
+                    })
+                    .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
+                    .ConstructRpc<TClientInterfaceMock>(underlyingPipes.Item1);
+                descriptor
+                    .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
+                    {
+                        TraceSource = traceSourceFactory("Server mxstream", this.MultiplexingLoggingVerbosity),
+                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
+                    })
+                    .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
+                    .ConstructRpc(this.ClientInterface, underlyingPipes.Item2);
+            }
+            else
+            {
+                // This is an older descriptor that we have to set up the multiplexing stream ourselves for.
+                (Stream, Stream) underlyingStreams = FullDuplexStream.CreatePair();
+                Task<MultiplexingStream> mxStreamTask1 = MultiplexingStream.CreateAsync(
+                    underlyingStreams.Item1,
+                    new MultiplexingStream.Options
+                    {
+                        TraceSource = traceSourceFactory("Client mxstream", this.MultiplexingLoggingVerbosity),
+                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
+                    },
+                    this.TimeoutToken);
+                Task<MultiplexingStream> mxStreamTask2 = MultiplexingStream.CreateAsync(
+                    underlyingStreams.Item2,
+                    new MultiplexingStream.Options
+                    {
+                        TraceSource = traceSourceFactory("Server mxstream", this.MultiplexingLoggingVerbosity),
+                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
+                    },
+                    this.TimeoutToken);
+                MultiplexingStream[] mxStreams = await Task.WhenAll(mxStreamTask1, mxStreamTask2);
+                this.clientCallbackClientMxStream = mxStreams[0];
+                this.clientCallbackServiceMxStream = mxStreams[1];
+
+                Task<MultiplexingStream.Channel> offerTask = mxStreams[0].OfferChannelAsync(string.Empty, this.TimeoutToken);
+                Task<MultiplexingStream.Channel> acceptTask = mxStreams[1].AcceptChannelAsync(string.Empty, this.TimeoutToken);
+                MultiplexingStream.Channel[] channels = await Task.WhenAll(offerTask, acceptTask);
+
+#pragma warning disable CS0618 // Type or member is obsolete
+                (this.Service as IMockServiceWithClientCallback).ClientCallback = this.Descriptor
+                    .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
+                    .WithMultiplexingStream(mxStreams[0])
+                    .ConstructRpc<TClientInterfaceMock>(channels[0]);
+                this.Descriptor
+                    .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
+                    .WithMultiplexingStream(mxStreams[1])
+                    .ConstructRpc(this.ClientInterface, channels[1]);
+#pragma warning restore CS0618 // Type or member is obsolete
+            }
+        }
+
+        /// <inheritdoc/>
         public override async Task DisposeAsync()
         {
             await base.DisposeAsync();
@@ -64,71 +142,6 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework
             }
 
             await Task.WhenAll(tasks);
-        }
-
-        /// <inheritdoc/>
-        protected override async Task ConfigureClientInterfaceAsync()
-        {
-            if (this.Descriptor is ServiceJsonRpcDescriptor { MultiplexingStreamOptions: object } descriptor)
-            {
-                // This is a V3 descriptor, which sets up its own MultiplexingStream.
-                (IDuplexPipe, IDuplexPipe) underlyingPipes = FullDuplexStream.CreatePipePair();
-                (this.Service as IMockServiceWithClientCallback).ClientCallback = descriptor
-                    .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
-                    {
-                        TraceSource = this.TraceSourceFactory?.Invoke("Client mxstream", this.MultiplexingLoggingVerbosity),
-                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => this.TraceSourceFactory?.Invoke($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
-                    })
-                    .WithTraceSource(this.TraceSourceFactory?.Invoke("Client RPC", this.DescriptorLoggingVerbosity))
-                    .ConstructRpc<TClientInterfaceMock>(underlyingPipes.Item1);
-                descriptor
-                    .WithMultiplexingStream(new MultiplexingStream.Options(descriptor.MultiplexingStreamOptions)
-                    {
-                        TraceSource = this.TraceSourceFactory?.Invoke("Server mxstream", this.MultiplexingLoggingVerbosity),
-                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => this.TraceSourceFactory?.Invoke($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
-                    })
-                    .WithTraceSource(this.TraceSourceFactory?.Invoke("Server RPC", this.DescriptorLoggingVerbosity))
-                    .ConstructRpc(this.ClientInterface, underlyingPipes.Item2);
-            }
-            else
-            {
-                // This is an older descriptor that we have to set up the multiplexing stream ourselves for.
-                (Stream, Stream) underlyingStreams = FullDuplexStream.CreatePair();
-                Task<MultiplexingStream> mxStreamTask1 = MultiplexingStream.CreateAsync(
-                    underlyingStreams.Item1,
-                    new MultiplexingStream.Options
-                    {
-                        TraceSource = this.TraceSourceFactory?.Invoke("Client mxstream", this.MultiplexingLoggingVerbosity),
-                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => this.TraceSourceFactory?.Invoke($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
-                    },
-                    this.TimeoutToken);
-                Task<MultiplexingStream> mxStreamTask2 = MultiplexingStream.CreateAsync(
-                    underlyingStreams.Item2,
-                    new MultiplexingStream.Options
-                    {
-                        TraceSource = this.TraceSourceFactory?.Invoke("Server mxstream", this.MultiplexingLoggingVerbosity),
-                        DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => this.TraceSourceFactory?.Invoke($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
-                    },
-                    this.TimeoutToken);
-                MultiplexingStream[] mxStreams = await Task.WhenAll(mxStreamTask1, mxStreamTask2);
-                this.clientCallbackClientMxStream = mxStreams[0];
-                this.clientCallbackServiceMxStream = mxStreams[1];
-
-                Task<MultiplexingStream.Channel> offerTask = mxStreams[0].OfferChannelAsync(string.Empty, this.TimeoutToken);
-                Task<MultiplexingStream.Channel> acceptTask = mxStreams[1].AcceptChannelAsync(string.Empty, this.TimeoutToken);
-                MultiplexingStream.Channel[] channels = await Task.WhenAll(offerTask, acceptTask);
-
-#pragma warning disable CS0618 // Type or member is obsolete
-                (this.Service as IMockServiceWithClientCallback).ClientCallback = this.Descriptor
-                    .WithTraceSource(this.TraceSourceFactory?.Invoke("Client RPC", this.DescriptorLoggingVerbosity))
-                    .WithMultiplexingStream(mxStreams[0])
-                    .ConstructRpc<TClientInterfaceMock>(channels[0]);
-                this.Descriptor
-                    .WithTraceSource(this.TraceSourceFactory?.Invoke("Server RPC", this.DescriptorLoggingVerbosity))
-                    .WithMultiplexingStream(mxStreams[1])
-                    .ConstructRpc(this.ClientInterface, channels[1]);
-#pragma warning restore CS0618 // Type or member is obsolete
-            }
         }
     }
 }
