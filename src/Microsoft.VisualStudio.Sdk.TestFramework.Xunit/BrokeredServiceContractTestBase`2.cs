@@ -161,6 +161,9 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
         }
 
         this.ConfigureRpcConnections(clientConnection, serverConnection);
+
+        clientConnection.StartListening();
+        serverConnection.StartListening();
     }
 
     /// <inheritdoc/>

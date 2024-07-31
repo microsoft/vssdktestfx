@@ -12,4 +12,12 @@ internal static class Descriptors
         ServiceJsonRpcDescriptor.MessageDelimiters.BigEndianInt32LengthHeader,
         new Nerdbank.Streams.MultiplexingStream.Options { ProtocolMajorVersion = 3 })
         .WithExceptionStrategy(StreamJsonRpc.ExceptionProcessing.ISerializable);
+
+    internal static readonly ServiceRpcDescriptor Greet = new ServiceJsonRpcDescriptor(
+        new ServiceMoniker("Greet", new Version(1, 0)),
+        clientInterface: typeof(ISayName),
+        ServiceJsonRpcDescriptor.Formatters.MessagePack,
+        ServiceJsonRpcDescriptor.MessageDelimiters.BigEndianInt32LengthHeader,
+        new Nerdbank.Streams.MultiplexingStream.Options { ProtocolMajorVersion = 3 })
+        .WithExceptionStrategy(StreamJsonRpc.ExceptionProcessing.ISerializable);
 }

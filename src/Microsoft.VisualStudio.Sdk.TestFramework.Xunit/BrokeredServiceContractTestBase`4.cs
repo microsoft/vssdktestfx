@@ -10,11 +10,13 @@ namespace Microsoft.VisualStudio.Sdk.TestFramework;
 /// </summary>
 /// <typeparam name="TInterface">The service interface.</typeparam>
 /// <typeparam name="TServiceMock">The class that mocks the service.</typeparam>
+/// <typeparam name="TClientInterface">The interface of the client callback.</typeparam>
 /// <typeparam name="TClientMock">The class that mocks the service's client callback.</typeparam>
-public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, TClientMock> : BrokeredServiceContractTestBase<TInterface, TServiceMock>
+public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, TClientInterface, TClientMock> : BrokeredServiceContractTestBase<TInterface, TServiceMock>
     where TInterface : class
     where TServiceMock : TInterface, IMockServiceWithClientCallback, new()
-    where TClientMock : class, new()
+    where TClientInterface : class
+    where TClientMock : TClientInterface, new()
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BrokeredServiceContractTestBase{TInterface, TServiceMock, TClientInterfaceMock}"/> class.
@@ -39,7 +41,7 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, 
     {
         base.ConfigureRpcConnections(clientConnection, serverConnection);
 
-        this.Service.ClientCallback = serverConnection.ConstructRpcClient<TClientMock>();
+        this.Service.ClientCallback = serverConnection.ConstructRpcClient<TClientInterface>();
         clientConnection.AddLocalRpcTarget(this.ClientCallback);
     }
 }

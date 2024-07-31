@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-public class BrokeredServiceTests : BrokeredServiceContractTestBase<ICalculator, CalculatorMock>
+public class BrokeredServiceTests2 : BrokeredServiceContractTestBase<ICalculator, CalculatorMock>
 {
-    public BrokeredServiceTests(ITestOutputHelper logger)
+    public BrokeredServiceTests2(ITestOutputHelper logger)
         : base(logger, Descriptors.Calculator)
     {
     }
