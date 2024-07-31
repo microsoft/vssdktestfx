@@ -9,13 +9,11 @@ public class GreetMock : IGreet, IMockServiceWithClientCallback
 
     public event EventHandler? OperationComplete;
 
-    public object ClientCallback { get; set; } = new object();
+    public object ClientCallback { get; set; } = null!;
 
     public async ValueTask<string> MakeGreeting(CancellationToken cancellationToken)
     {
-#pragma warning disable CS8605
-        var name = await (ValueTask<string>)typeof(ISayName).GetMethod("SayName")?.Invoke(this.ClientCallback, null);
-#pragma warning restore CS8605
+        string name = await ((ISayName)this.ClientCallback).SayName();
         return $"Nice to meet you, {name}.";
     }
 
