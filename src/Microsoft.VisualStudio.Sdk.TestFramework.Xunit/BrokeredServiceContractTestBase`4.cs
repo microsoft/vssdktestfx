@@ -19,7 +19,7 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock, 
     where TClientMock : TClientInterface, new()
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="BrokeredServiceContractTestBase{TInterface, TServiceMock, TClientInterfaceMock}"/> class.
+    /// Initializes a new instance of the <see cref="BrokeredServiceContractTestBase{TInterface, TServiceMock, TClientInterface, TClientMock}"/> class.
     /// </summary>
     /// <param name="logger"><inheritdoc cref="LoggingTestBase(ITestOutputHelper)" path="/param[@name='logger']"/></param>
     /// <param name="serviceRpcDescriptor">The descriptor that the product will use to request or proffer the brokered service.</param>
