@@ -179,7 +179,7 @@ public class TestFrameworkTests : LoggingTestBase
             VsTaskRunContext.UIThreadNormalPriority,
             async ct =>
             {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(ct);
                 Assert.True(ThreadHelper.CheckAccess());
                 return true;
             });
@@ -233,7 +233,7 @@ public class TestFrameworkTests : LoggingTestBase
             VsTaskRunContext.UIThreadBackgroundPriority,
             async ct =>
             {
-                await Task.Delay(100);
+                await Task.Delay(100, ct);
                 return 0;
             });
 #pragma warning disable VSTHRD109 // Switch instead of assert in async methods
