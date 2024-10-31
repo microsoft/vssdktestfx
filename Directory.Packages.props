@@ -10,10 +10,10 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageVersion Include="Microsoft.VisualStudio.Composition" Version="17.11.13" />
     <PackageVersion Include="Microsoft.VisualStudio.Internal.MicroBuild.NonShipping" Version="$(MicroBuildVersion)" />
-    <PackageVersion Include="Microsoft.VisualStudio.Interop" Version="17.11.39607" />
+    <PackageVersion Include="Microsoft.VisualStudio.Interop" Version="17.11.40262" />
     <PackageVersion Include="Microsoft.VisualStudio.SDK.Analyzers" Version="17.7.41" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.11.40262" />
-    <PackageVersion Include="Microsoft.VisualStudio.Utilities" Version="17.11.39607" />
+    <PackageVersion Include="Microsoft.VisualStudio.Utilities" Version="17.11.40262" />
     <PackageVersion Include="Microsoft.ServiceHub.Framework.Testing" Version="4.4.22" />
     <PackageVersion Include="NSubstitute" Version="5.0.0" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="8.0.0" />
