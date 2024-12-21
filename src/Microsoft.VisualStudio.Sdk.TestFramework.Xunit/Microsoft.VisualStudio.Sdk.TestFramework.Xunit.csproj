@@ -21,4 +21,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
   </ItemGroup>
+  <Import Project="..\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared.projitems" Label="Shared" />
 </Project>

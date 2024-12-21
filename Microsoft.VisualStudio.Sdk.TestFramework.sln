@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3D7D871C-3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit", "src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.csproj", "{A7FDF327-106E-4627-8D44-AFE7FDF56633}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared", "src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared.shproj", "{774B64A2-B1AB-4A09-8307-B87EA0D6D1D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,8 +64,13 @@ Global
 		{A62E3D92-0B5C-4D53-9269-EAC253BBCDEE} = {7750CC1F-2803-4A54-BBF7-5FD05FD49B96}
 		{94569D82-0C5E-4437-AADF-67738037ED9D} = {3D7D871C-3834-4575-B158-D38FEC07BC6B}
 		{A7FDF327-106E-4627-8D44-AFE7FDF56633} = {7750CC1F-2803-4A54-BBF7-5FD05FD49B96}
+		{774B64A2-B1AB-4A09-8307-B87EA0D6D1D2} = {7750CC1F-2803-4A54-BBF7-5FD05FD49B96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {27C43278-C8F5-4183-A1E3-712A83362BB5}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared.projitems*{774b64a2-b1ab-4a09-8307-b87ea0d6d1d2}*SharedItemsImports = 13
+		src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared.projitems*{a7fdf327-106e-4627-8d44-afe7fdf56633}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
