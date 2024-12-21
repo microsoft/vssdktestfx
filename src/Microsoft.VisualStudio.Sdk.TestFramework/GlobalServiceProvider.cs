@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #if NETFRAMEWORK || WINDOWS
@@ -178,6 +178,13 @@ public class GlobalServiceProvider : IDisposable
         {
             this.mockBrokeredServiceContainer = new();
             this.services = this.baseServices.SetItem(typeof(SVsBrokeredServiceContainer).GUID, this.mockBrokeredServiceContainer);
+
+            // The mock activity log might be forwarding to a service that is only available
+            // within a test. Reset the log so that it does not forward to anything.
+            if (this.baseServices.GetValueOrDefault(typeof(SVsActivityLog).GUID) is MockVsActivityLog log)
+            {
+                log.ForwardTo = null;
+            }
         }
 
         /// <summary>

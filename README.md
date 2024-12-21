@@ -18,9 +18,17 @@ tend to fail in unit tests without this library installed.
 
 [![NuGet package](https://img.shields.io/nuget/v/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.svg)](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit)
 
-This package contains functionality applicable when using Xunit as your test framework.
+This package contains functionality applicable when using Xunit v2 as your test framework.
 
 [Learn more about this package](src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit/README.md).
+
+## Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3
+
+[![NuGet package](https://img.shields.io/nuget/v/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.svg)](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3)
+
+This package contains functionality applicable when using Xunit v3 as your test framework.
+
+[Learn more about this package](src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3/README.md).
 
 ## Contributing
 
