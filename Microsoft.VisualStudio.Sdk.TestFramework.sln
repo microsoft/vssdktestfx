@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32107.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework", "src\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj", "{A62E3D92-0B5C-4D53-9269-EAC253BBCDEE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework.Tests", "test\Microsoft.VisualStudio.Sdk.TestFramework.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Tests.csproj", "{94569D82-0C5E-4437-AADF-67738037ED9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests", "test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.csproj", "{94569D82-0C5E-4437-AADF-67738037ED9D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{824473EA-BB16-47EE-96CA-CD854BF62276}"
 	ProjectSection(SolutionItems) = preProject
