@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
@@ -79,7 +79,11 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     protected SourceLevels DescriptorLoggingVerbosity { get; set; } = SourceLevels.Verbose;
 
     /// <inheritdoc/>
+#if XUNIT_V3
+    public virtual async ValueTask InitializeAsync()
+#else
     public virtual async Task InitializeAsync()
+#endif
     {
         int testId = Interlocked.Increment(ref testCounter);
         Func<string, SourceLevels, TraceSource> traceSourceFactory = (name, verbosity) =>
@@ -162,7 +166,11 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     }
 
     /// <inheritdoc/>
+#if XUNIT_V3
+    public virtual async ValueTask DisposeAsync()
+#else
     public virtual async Task DisposeAsync()
+#endif
     {
         (this.ClientProxy as IDisposable)?.Dispose();
 
@@ -185,10 +193,23 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// <summary>
     /// Verifies that all methods on the service interface include a <see cref="CancellationToken"/> as the last parameter.
     /// </summary>
+#if XUNIT_V3
+    [Fact]
+#else
     [SkippableFact]
+#endif
     public void AllMethodsIncludeCancellationToken()
     {
-        Skip.IfNot(this.DefaultTestsEnabled, $"{nameof(this.DefaultTestsEnabled)} is set to false.");
+#if XUNIT_V3
+        Assert.SkipUnless(
+#else
+        Skip.IfNot(
+#endif
+#pragma warning disable SA1114 // Parameter list should follow declaration
+            this.DefaultTestsEnabled,
+#pragma warning restore SA1114 // Parameter list should follow declaration
+            $"{nameof(this.DefaultTestsEnabled)} is set to false.");
+
         AssertAllMethodsIncludeCancellationToken<TInterface>();
     }
 

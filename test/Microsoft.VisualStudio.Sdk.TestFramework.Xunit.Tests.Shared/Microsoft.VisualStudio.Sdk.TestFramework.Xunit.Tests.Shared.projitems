@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>e5d7c833-9946-4415-98e2-3ffc92c10b47</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\Descriptors.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\ICalculator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\IGreet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\ISayName.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChildServiceProviderTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MefHostingTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\CalculatorMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\GreetMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\SayNameMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SdkTestUtilitiesTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SomeMefExport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SomePackage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestFrameworkTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VsActivityLogTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VsTaskTests.cs" />
+  </ItemGroup>
+</Project>
