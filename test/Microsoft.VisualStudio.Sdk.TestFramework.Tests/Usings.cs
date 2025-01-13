@@ -8,4 +8,3 @@ global using Microsoft.VisualStudio.Shell.Interop;
 #endif
 global using Microsoft.VisualStudio.Threading;
 global using Xunit;
-global using Xunit.Abstractions;

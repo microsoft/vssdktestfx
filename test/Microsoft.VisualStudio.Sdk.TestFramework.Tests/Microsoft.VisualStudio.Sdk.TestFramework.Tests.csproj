@@ -2,6 +2,7 @@
   <PropertyGroup>
     <RootNamespace />
     <NoWarn>$(NoWarn);NU1603</NoWarn>
+    <OutputType>exe</OutputType>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
@@ -15,6 +16,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Utilities" ExcludeAssets="compile" />
     <PackageReference Include="NSubstitute" />
     <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.v3" />
   </ItemGroup>
 </Project>

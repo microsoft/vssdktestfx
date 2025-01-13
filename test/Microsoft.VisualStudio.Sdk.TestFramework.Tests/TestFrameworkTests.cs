@@ -40,7 +40,7 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task OleServiceProviderIsService()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         object sp = ServiceProvider.GlobalProvider.GetService(typeof(OleServiceProvider));
         Assert.IsAssignableFrom<OleServiceProvider>(sp);
     }
@@ -65,7 +65,7 @@ public class TestFrameworkTests : LoggingTestBase
         ThreadHelper.ThrowIfOnUIThread();
         Assert.Throws<COMException>(() => ThreadHelper.ThrowIfNotOnUIThread());
 
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         Assert.Same(ThreadHelper.JoinableTaskContext.MainThread, Thread.CurrentThread);
 
 #pragma warning disable VSTHRD109 // Switch instead of assert in async methods
@@ -94,7 +94,7 @@ public class TestFrameworkTests : LoggingTestBase
         }
         else if (fromMainThread && !ThreadHelper.CheckAccess())
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
             Assert.True(ThreadHelper.CheckAccess());
         }
 
@@ -121,7 +121,7 @@ public class TestFrameworkTests : LoggingTestBase
         }
         else if (fromMainThread && !ThreadHelper.CheckAccess())
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
             Assert.True(ThreadHelper.CheckAccess());
         }
 
@@ -145,7 +145,7 @@ public class TestFrameworkTests : LoggingTestBase
         {
             delegateExecuted.Set();
         });
-        await delegateExecuted.WaitAsync();
+        await delegateExecuted.WaitAsync(TestContext.Current.CancellationToken);
     }
 
     [Fact]
@@ -168,7 +168,7 @@ public class TestFrameworkTests : LoggingTestBase
             async delegate
             {
                 await Task.Yield();
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
             });
     }
 
@@ -196,7 +196,7 @@ public class TestFrameworkTests : LoggingTestBase
             delegateInvoked.Set();
         }
 
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         Helper().Forget();
         Assert.False(delegateInvoked.IsSet);
         await delegateInvoked.WaitAsync(this.TimeoutToken);
@@ -205,7 +205,7 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task StartOnIdleExecutesDelegateLater()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         var delegateInvoked = new AsyncManualResetEvent();
         ThreadHelper.JoinableTaskFactory.StartOnIdle(delegate
         {
@@ -228,7 +228,7 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task AwaitingIVsTaskPreservesContext()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         await ThreadHelper.JoinableTaskFactory.RunAsyncAsVsTask(
             VsTaskRunContext.UIThreadBackgroundPriority,
             async ct =>
@@ -244,7 +244,7 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task AddService()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         object expected = new object();
         this.container.AddService(typeof(SVsProjectMRU), expected);
         Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsProjectMRU)));
@@ -253,7 +253,7 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task AddService_TwiceThrows()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         object expected = new object();
         this.container.AddService(typeof(SVsProjectMRU), expected);
         Assert.Throws<InvalidOperationException>(() => this.container.AddService(typeof(SVsProjectMRU), new object()));
@@ -263,7 +263,7 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task AddService_ExistingMock()
     {
-        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(TestContext.Current.CancellationToken);
         object expected = new object();
         this.container.AddService(typeof(SVsActivityLog), expected);
         Assert.Same(expected, ServiceProvider.GlobalProvider.GetService(typeof(SVsActivityLog)));
@@ -272,9 +272,9 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task MockedBrokeredService_StandardFactory()
     {
-        IBrokeredServiceContainer sbc = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();
+        IBrokeredServiceContainer sbc = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>(TestContext.Current.CancellationToken);
         sbc.Proffer(MockedBrokeredServiceDescriptor, (ServiceMoniker moniker, ServiceActivationOptions options, IServiceBroker serviceBroker, CancellationToken cancellationToken) => new ValueTask<object?>(new TestService()));
-        ITestService? proxy = await sbc.GetFullAccessServiceBroker().GetProxyAsync<ITestService>(MockedBrokeredServiceDescriptor);
+        ITestService? proxy = await sbc.GetFullAccessServiceBroker().GetProxyAsync<ITestService>(MockedBrokeredServiceDescriptor, TestContext.Current.CancellationToken);
         using (proxy as IDisposable)
         {
             Assert.NotNull(proxy);
@@ -286,9 +286,9 @@ public class TestFrameworkTests : LoggingTestBase
     [Fact]
     public async Task MockedBrokeredService_AuthorizingFactory()
     {
-        IBrokeredServiceContainer sbc = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>();
+        IBrokeredServiceContainer sbc = await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SVsBrokeredServiceContainer, IBrokeredServiceContainer>(TestContext.Current.CancellationToken);
         sbc.Proffer(MockedBrokeredServiceDescriptor, (ServiceMoniker moniker, ServiceActivationOptions options, IServiceBroker serviceBroker, AuthorizationServiceClient auth, CancellationToken cancellationToken) => new ValueTask<object?>(new TestService()));
-        ITestService? proxy = await sbc.GetFullAccessServiceBroker().GetProxyAsync<ITestService>(MockedBrokeredServiceDescriptor);
+        ITestService? proxy = await sbc.GetFullAccessServiceBroker().GetProxyAsync<ITestService>(MockedBrokeredServiceDescriptor, TestContext.Current.CancellationToken);
         using (proxy as IDisposable)
         {
             Assert.NotNull(proxy);

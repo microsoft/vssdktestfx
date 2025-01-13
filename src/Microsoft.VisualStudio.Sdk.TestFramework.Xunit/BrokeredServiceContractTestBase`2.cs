@@ -79,7 +79,7 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     protected SourceLevels DescriptorLoggingVerbosity { get; set; } = SourceLevels.Verbose;
 
     /// <inheritdoc/>
-    public virtual async Task InitializeAsync()
+    public virtual async ValueTask InitializeAsync()
     {
         int testId = Interlocked.Increment(ref testCounter);
         Func<string, SourceLevels, TraceSource> traceSourceFactory = (name, verbosity) =>
@@ -162,7 +162,7 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     }
 
     /// <inheritdoc/>
-    public virtual async Task DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         (this.ClientProxy as IDisposable)?.Dispose();
 
@@ -185,10 +185,10 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
     /// <summary>
     /// Verifies that all methods on the service interface include a <see cref="CancellationToken"/> as the last parameter.
     /// </summary>
-    [SkippableFact]
+    [Fact]
     public void AllMethodsIncludeCancellationToken()
     {
-        Skip.IfNot(this.DefaultTestsEnabled, $"{nameof(this.DefaultTestsEnabled)} is set to false.");
+        Assert.SkipUnless(this.DefaultTestsEnabled, $"{nameof(this.DefaultTestsEnabled)} is set to false.");
         AssertAllMethodsIncludeCancellationToken<TInterface>();
     }
 
