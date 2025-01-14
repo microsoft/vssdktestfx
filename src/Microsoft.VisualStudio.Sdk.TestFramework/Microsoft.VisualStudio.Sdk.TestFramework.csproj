@@ -5,6 +5,7 @@
 Xunit test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit package.</Description>
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
     <UseWPF Condition="'$(TargetFramework)'!='net8.0'">true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <NoWarn>$(NoWarn);NU1701</NoWarn>
   </PropertyGroup>
   <ItemGroup>
