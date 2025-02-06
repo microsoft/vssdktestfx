@@ -2,9 +2,9 @@
   <PropertyGroup>
     <Description>A test library to help in writing unit and integration tests for Visual Studio extensions.
 
-Xunit v2 test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit package.
+      Xunit v2 test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit package.
 
-Xunit v3 test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3 package.</Description>
+      Xunit v3 test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3 package.</Description>
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
     <UseWPF Condition="'$(TargetFramework)'!='net8.0'">true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>

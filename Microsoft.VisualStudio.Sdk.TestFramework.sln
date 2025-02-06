@@ -40,9 +40,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.VisualStudio.Sdk.
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared", "test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared.shproj", "{E5D7C833-9946-4415-98E2-3FFC92C10B47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3", "src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.csproj", "{A384DBA5-D380-41AA-B89A-57D05BD33EA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3", "src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.csproj", "{A384DBA5-D380-41AA-B89A-57D05BD33EA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.Tests", "test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.Tests.csproj", "{6C1A5941-E2DA-4A98-B80A-8C2F32DD4828}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests", "test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj", "{6C1A5941-E2DA-4A98-B80A-8C2F32DD4828}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

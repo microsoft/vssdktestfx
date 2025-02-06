@@ -12,7 +12,7 @@ tend to fail in unit tests without this library installed.
 1. Install the NuGet package [Microsoft.VisualStudio.Sdk.TestFramework](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework),
    or for Xunit test projects, install the more specific package:
    * Xunit v2: [Microsoft.VisualStudio.Sdk.TestFramework.Xunit](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit)
-   * Xunit v3: [Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3)
+   * Xunit v3: [Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3)
 
 1. Make sure your unit test project generates the required binding redirects by adding these two properties to your project file:
 

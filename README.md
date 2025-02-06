@@ -22,13 +22,13 @@ This package contains functionality applicable when using Xunit v2 as your test 
 
 [Learn more about this package](src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit/README.md).
 
-## Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3
+## Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3
 
-[![NuGet package](https://img.shields.io/nuget/v/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.svg)](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3)
+[![NuGet package](https://img.shields.io/nuget/v/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.svg)](https://nuget.org/packages/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3)
 
 This package contains functionality applicable when using Xunit v3 as your test framework.
 
-[Learn more about this package](src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3/README.md).
+[Learn more about this package](src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3/README.md).
 
 ## Contributing
 

@@ -1,4 +1,4 @@
-# Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3
+# Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3
 
 This package contains functionality applicable when using Xunit v3 as your test framework.
 

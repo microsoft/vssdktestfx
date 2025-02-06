@@ -6,11 +6,11 @@
     <DefineConstants>$(DefineConstants);XUNIT_V3</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
+    <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
-    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.V3.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
