@@ -8,7 +8,7 @@
     <MicroBuildVersion>2.0.181</MicroBuildVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Microsoft.VisualStudio.Composition" Version="17.11.9" />
+    <PackageVersion Include="Microsoft.VisualStudio.Composition" Version="17.12.18" />
     <PackageVersion Include="Microsoft.VisualStudio.Interop" Version="17.11.39607" />
     <PackageVersion Include="Microsoft.VisualStudio.SDK.Analyzers" Version="17.7.41" />
     <PackageVersion Include="Microsoft.VisualStudio.Shell.15.0" Version="17.11.39607" />
