@@ -25,6 +25,16 @@ public abstract class LoggingTestBase : TestBase
     /// </summary>
     public ITestOutputHelper Logger { get; }
 
+    /// <summary>
+    /// Gets a <see cref="System.Threading.CancellationToken"/> for use by all tests.
+    /// </summary>
+    protected static CancellationToken CancellationToken =>
+#if XUNIT_V3
+        TestContext.Current.CancellationToken;
+#else
+    CancellationToken.None;
+#endif
+
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
     {

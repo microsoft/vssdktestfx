@@ -37,13 +37,6 @@ public class TestFrameworkTests : LoggingTestBase
         void Throw();
     }
 
-    private static CancellationToken CancellationToken =>
-#if XUNIT_V3
-        TestContext.Current.CancellationToken;
-#else
-        CancellationToken.None;
-#endif
-
     [Fact]
     public async Task OleServiceProviderIsService()
     {
