@@ -135,6 +135,14 @@ public class MefHosting
                 continue;
             }
 
+            string fileName = Path.GetFileName(file);
+            if (fileName.StartsWith("Mono.", StringComparison.OrdinalIgnoreCase) ||
+                fileName.StartsWith("Xunit.", StringComparison.OrdinalIgnoreCase))
+            {
+                // Xunit v3 brings in mono assemblies that fail to load and aren't meant for inclusion in the MEF catalog anyway.
+                continue;
+            }
+
             try
             {
                 var assemblyName = AssemblyName.GetAssemblyName(file);
@@ -171,33 +179,12 @@ public class MefHosting
     /// <returns>A task whose result is the <see cref="ComposableCatalog"/>.</returns>
     private async Task<ComposableCatalog> CreateProductCatalogAsync()
     {
-        IEnumerable<Assembly> assemblies = this.catalogAssemblyNames.Select(this.LoadAssembly);
+        IEnumerable<Assembly> assemblies = this.catalogAssemblyNames.Select(Assembly.Load);
         DiscoveredParts discoveredParts = await PartDiscoverer.CreatePartsAsync(assemblies);
         ComposableCatalog catalog = ComposableCatalog.Create(Resolver.DefaultInstance)
             .AddParts(discoveredParts)
             .WithCompositionService();
         return catalog;
-    }
-
-    private Assembly LoadAssembly(string name)
-    {
-        try
-        {
-            return Assembly.Load(name);
-        }
-        catch (FileNotFoundException)
-        {
-            // When using xUnit v3, some assemblies like `Mono.Cecil` and `xunit.abstractions`
-            // won't load using `Assembly.Load` even though the file exists in the AppDomain's
-            // base directory. For any assemblies that are not found, we'll try to load them
-            // by reading the file ourselves and loading them in memory.
-            if (DefaultAssemblyNamesToFileNames.TryGetValue(name, out string? fileName))
-            {
-                return Assembly.Load(File.ReadAllBytes(fileName));
-            }
-
-            throw;
-        }
     }
 
     private async Task<CompositionConfiguration> CreateConfigurationAsync()
