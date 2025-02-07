@@ -26,8 +26,8 @@ public class SdkTestUtilitiesTests : LoggingTestBase
     {
         SomePackage package = await SdkTestUtilities.LoadPackageAsync<SomePackage>(this.Logger.WriteLine);
 
-        Assert.NotNull(await package.GetServiceAsync<SomePackage.SVsPromotedService, object>());
-        Assert.NotNull(await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SomePackage.SVsPromotedService, object>());
+        Assert.NotNull(await package.GetServiceAsync<SomePackage.SVsPromotedService, object>(CancellationToken));
+        Assert.NotNull(await AsyncServiceProvider.GlobalProvider.GetServiceAsync<SomePackage.SVsPromotedService, object>(CancellationToken));
     }
 
     [Fact]
@@ -44,8 +44,8 @@ public class SdkTestUtilitiesTests : LoggingTestBase
     {
         SomePackage package = await SdkTestUtilities.LoadPackageAsync<SomePackage>(this.Logger.WriteLine);
 
-        object serviceOne = await package.GetServiceAsync<SomePackage.SVsNonPromotedService, object>();
-        object serviceTwo = await package.GetServiceAsync<SomePackage.SVsNonPromotedService, object>();
+        object serviceOne = await package.GetServiceAsync<SomePackage.SVsNonPromotedService, object>(CancellationToken);
+        object serviceTwo = await package.GetServiceAsync<SomePackage.SVsNonPromotedService, object>(CancellationToken);
         Assert.Same(serviceOne, serviceTwo);
     }
 

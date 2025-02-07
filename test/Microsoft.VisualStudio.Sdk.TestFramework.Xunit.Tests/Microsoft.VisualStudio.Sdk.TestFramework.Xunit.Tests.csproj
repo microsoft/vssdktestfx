@@ -17,4 +17,5 @@
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit" />
   </ItemGroup>
+  <Import Project="..\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared.projitems" Label="Shared" />
 </Project>
