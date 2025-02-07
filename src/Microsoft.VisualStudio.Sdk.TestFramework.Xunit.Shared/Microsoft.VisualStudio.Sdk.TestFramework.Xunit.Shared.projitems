@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>774b64a2-b1ab-4a09-8307-b87ea0d6d1d2</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContractTestBase`2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContractTestBase`4.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LoggingTestBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MefHostingFixture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Mocks\MockVsActivityLogXunitAdapter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XunitTraceListener.cs" />
+  </ItemGroup>
+</Project>

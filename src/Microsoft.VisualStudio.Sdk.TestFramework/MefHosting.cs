@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.IO;
@@ -18,6 +18,12 @@ public class MefHosting
     public static readonly PartDiscovery PartDiscoverer = PartDiscovery.Combine(
         new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true),
         new AttributedPartDiscoveryV1(Resolver.DefaultInstance));
+
+    /// <summary>
+    /// The lazily-created mapping of assembly names to file names of
+    /// all assembly files in the environment's current directory.
+    /// </summary>
+    private static readonly Dictionary<string, string> DefaultAssemblyNamesToFileNames = GetDefaultAssemblyNamesToFileNames();
 
     /// <summary>
     /// The names of the assemblies to include in the catalog.
@@ -45,7 +51,7 @@ public class MefHosting
     /// included in the MEF catalog.
     /// </summary>
     public MefHosting()
-        : this(GetDefaultAssemblyNames())
+        : this(DefaultAssemblyNamesToFileNames.Keys)
     {
     }
 
@@ -111,10 +117,17 @@ public class MefHosting
     /// <summary>
     /// Gets a reasonable guess at which assemblies to include in the MEF catalog.
     /// </summary>
-    /// <returns>The list of assembly names.</returns>
-    private static IEnumerable<string> GetDefaultAssemblyNames()
+    /// <returns>A mapping of assembly name to file name.</returns>
+    private static Dictionary<string, string> GetDefaultAssemblyNamesToFileNames()
     {
-        foreach (string file in Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll"))
+        Dictionary<string, string> map = new();
+
+        // Search for DLL and executable files because xUnit v3
+        // tests can be compiled to an executable instead of a library.
+        IEnumerable<string> dlls = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.dll");
+        IEnumerable<string> exes = Directory.EnumerateFiles(Environment.CurrentDirectory, "*.exe");
+
+        foreach (string file in dlls.Concat(exes))
         {
             if (file.EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase))
             {
@@ -122,13 +135,20 @@ public class MefHosting
                 continue;
             }
 
-            string? assemblyFullName = null;
+            string fileName = Path.GetFileName(file);
+            if (fileName.StartsWith("Mono.", StringComparison.OrdinalIgnoreCase) ||
+                fileName.StartsWith("Xunit.", StringComparison.OrdinalIgnoreCase))
+            {
+                // Xunit v3 brings in mono assemblies that fail to load and aren't meant for inclusion in the MEF catalog anyway.
+                continue;
+            }
+
             try
             {
                 var assemblyName = AssemblyName.GetAssemblyName(file);
                 if (assemblyName != null)
                 {
-                    assemblyFullName = assemblyName.FullName;
+                    map[assemblyName.FullName] = file;
                 }
             }
 #pragma warning disable CA1031 // Do not catch general exception types
@@ -136,12 +156,9 @@ public class MefHosting
 #pragma warning restore CA1031 // Do not catch general exception types
             {
             }
-
-            if (assemblyFullName != null)
-            {
-                yield return assemblyFullName;
-            }
         }
+
+        return map;
     }
 
     /// <summary>

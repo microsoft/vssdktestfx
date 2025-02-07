@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace />
+    <NoWarn>$(NoWarn);NU1603</NoWarn>
+    <OutputType>Exe</OutputType>
+    <DefineConstants>$(DefineConstants);XUNIT_V3</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework\Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
+    <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.VisualStudio.Utilities" ExcludeAssets="compile" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+  <Import Project="..\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared.projitems" Label="Shared" />
+</Project>
