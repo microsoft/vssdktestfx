@@ -17,7 +17,17 @@ public abstract class LoggingTestBase : TestBase
     public LoggingTestBase(ITestOutputHelper logger)
     {
         this.Logger = logger;
-        this.timeoutLoggerRegistration = this.TimeoutToken.Register(() => this.Logger.WriteLine($"TEST TIMEOUT: {nameof(TestBase)}.{nameof(this.TimeoutToken)} has been canceled due to the test exceeding the {this.UnexpectedTimeout} time limit."));
+        this.timeoutLoggerRegistration = this.TimeoutToken.Register(delegate
+        {
+            try
+            {
+                this.Logger.WriteLine($"TEST TIMEOUT: {nameof(TestBase)}.{nameof(this.TimeoutToken)} has been canceled due to the test exceeding the {this.UnexpectedTimeout} time limit.");
+            }
+            catch (InvalidOperationException)
+            {
+                // The test isn't running any more.
+            }
+        });
     }
 
     /// <summary>

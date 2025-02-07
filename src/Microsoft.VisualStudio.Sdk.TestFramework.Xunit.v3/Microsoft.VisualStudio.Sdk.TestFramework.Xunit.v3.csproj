@@ -9,6 +9,7 @@
     <Nullable>enable</Nullable>
     <IsTestProject>false</IsTestProject>
     <DefineConstants>$(DefineConstants);XUNIT_V3</DefineConstants>
+    <RuntimeIdentifiers>win-x64;win-arm64;win-x86</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
