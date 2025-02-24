@@ -8,6 +8,7 @@
     <MicroBuildVersion>2.0.187</MicroBuildVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="MessagePack" Version="2.5.192" />
     <PackageVersion Include="Microsoft.VisualStudio.Composition" Version="17.12.18" />
     <PackageVersion Include="Microsoft.VisualStudio.Interop" Version="17.12.40391" />
     <PackageVersion Include="Microsoft.VisualStudio.SDK.Analyzers" Version="17.7.47" />
