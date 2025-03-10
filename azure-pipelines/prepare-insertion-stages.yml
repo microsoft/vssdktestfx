@@ -7,7 +7,7 @@ parameters:
   type: boolean
 - name: PackagePush
   type: boolean
-  default: false # Switch to true to enable the push job below
+  default: true # Switch to true to enable the push job below
 
 stages:
 - ${{ if or(parameters.ArchiveSymbols, parameters.PackagePush) }}:
