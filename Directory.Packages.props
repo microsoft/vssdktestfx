@@ -19,14 +19,14 @@
     <PackageVersion Include="System.ComponentModel.Composition" Version="9.0.0" />
     <PackageVersion Include="Xunit.SkippableFact" Version="1.5.23" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.v3.assert" Version="3.1.0" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.1.0" />
+    <PackageVersion Include="xunit.v3.assert" Version="3.2.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup Label="Library.Template">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Internal.MicroBuild.NonShipping" Version="$(MicroBuildVersion)" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="xunit.v3" Version="3.1.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <!-- Put repo-specific GlobalPackageReference items in this group. -->
