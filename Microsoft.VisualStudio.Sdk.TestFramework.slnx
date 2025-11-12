@@ -1,0 +1,30 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="nuget.config" />
+    <File Path="README.md" />
+    <File Path="stylecop.json" />
+    <File Path="version.json" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path="src/.editorconfig" />
+    <File Path="src/Directory.Build.props" />
+    <File Path="src/Directory.Build.targets" />
+    <Project Path="src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Shared.shproj" />
+    <Project Path="src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.csproj" />
+    <Project Path="src/Microsoft.VisualStudio.Sdk.TestFramework.Xunit/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.csproj" />
+    <Project Path="src/Microsoft.VisualStudio.Sdk.TestFramework/Microsoft.VisualStudio.Sdk.TestFramework.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <File Path="test/.editorconfig" />
+    <File Path="test/Directory.Build.props" />
+    <File Path="test/Directory.Build.targets" />
+    <Project Path="test/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared.shproj" />
+    <Project Path="test/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.csproj" />
+    <Project Path="test/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests/Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj" />
+  </Folder>
+</Solution>
