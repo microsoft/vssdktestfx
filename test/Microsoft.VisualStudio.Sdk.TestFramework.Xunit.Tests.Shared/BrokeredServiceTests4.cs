@@ -1,10 +1,17 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Microsoft.ServiceHub.Framework;
+
 public class BrokeredServiceTests4 : BrokeredServiceContractTestBase<IGreet, GreetMock, ISayName, SayNameMock>
 {
     public BrokeredServiceTests4(ITestOutputHelper logger)
         : base(logger, Descriptors.Greet)
+    {
+    }
+
+    protected BrokeredServiceTests4(ITestOutputHelper logger, ServiceRpcDescriptor serviceRpcDescriptor)
+        : base(logger, serviceRpcDescriptor)
     {
     }
 

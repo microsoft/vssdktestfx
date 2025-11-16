@@ -119,6 +119,27 @@ public abstract class BrokeredServiceContractTestBase<TInterface, TServiceMock> 
                 .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
                 .ConstructRpcConnection(underlyingPipes.Item2);
         }
+        else if (this.Descriptor is ServiceJsonRpcPolyTypeDescriptor { MultiplexingStreamOptions: object } polyTypeDescriptor)
+        {
+            // This is a V3 descriptor, which sets up its own MultiplexingStream.
+            (IDuplexPipe, IDuplexPipe) underlyingPipes = FullDuplexStream.CreatePipePair();
+            clientConnection = polyTypeDescriptor
+                .WithMultiplexingStream(new MultiplexingStream.Options(polyTypeDescriptor.MultiplexingStreamOptions)
+                {
+                    TraceSource = traceSourceFactory("Client mxstream", this.MultiplexingLoggingVerbosity),
+                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Client mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
+                })
+                .WithTraceSource(traceSourceFactory("Client RPC", this.DescriptorLoggingVerbosity))
+                .ConstructRpcConnection(underlyingPipes.Item1);
+            serverConnection = polyTypeDescriptor
+                .WithMultiplexingStream(new MultiplexingStream.Options(polyTypeDescriptor.MultiplexingStreamOptions)
+                {
+                    TraceSource = traceSourceFactory("Server mxstream", this.MultiplexingLoggingVerbosity),
+                    DefaultChannelTraceSourceFactoryWithQualifier = (id, name) => traceSourceFactory($"Server mxstream {id} (\"{name}\")", this.MultiplexingLoggingVerbosity),
+                })
+                .WithTraceSource(traceSourceFactory("Server RPC", this.DescriptorLoggingVerbosity))
+                .ConstructRpcConnection(underlyingPipes.Item2);
+        }
         else
         {
             // This is an older descriptor that we have to set up the multiplexing stream ourselves for.

@@ -13,7 +13,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\ICalculator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\IGreet.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceContracts\ISayName.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests2PolyType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests4PolyType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests4.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChildServiceProviderTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MefHostingTests.cs" />
