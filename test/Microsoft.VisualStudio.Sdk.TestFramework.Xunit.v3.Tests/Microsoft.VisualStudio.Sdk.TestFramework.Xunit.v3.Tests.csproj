@@ -13,11 +13,9 @@
     <ProjectReference Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" ExcludeAssets="compile" />
     <PackageReference Include="NSubstitute" />
-    <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
   <Import Project="..\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.Shared.projitems" Label="Shared" />
 </Project>
