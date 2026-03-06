@@ -2,6 +2,7 @@
   <PropertyGroup>
     <RootNamespace />
     <NoWarn>$(NoWarn);NU1603</NoWarn>
+    <IsTestingPlatformApplication>false</IsTestingPlatformApplication>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\src\Microsoft.VisualStudio.Sdk.TestFramework.Xunit\contentFiles\MockedVS.cs" Link="MockedVS.cs" />
