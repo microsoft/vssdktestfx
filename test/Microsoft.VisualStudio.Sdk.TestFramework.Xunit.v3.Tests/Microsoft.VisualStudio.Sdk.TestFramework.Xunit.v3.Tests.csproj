@@ -3,6 +3,7 @@
     <RootNamespace />
     <NoWarn>$(NoWarn);NU1603</NoWarn>
     <OutputType>Exe</OutputType>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
     <DefineConstants>$(DefineConstants);XUNIT_V3</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

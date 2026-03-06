@@ -11,4 +11,20 @@
   </ItemGroup>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..))" />
+
+  <!--
+    Override MTP's _MTPBeforeVSTest to allow projects that set TestingPlatformDotnetTestSupport=true
+    to coexist with VSTest-based projects in dotnet test on .NET 10+.
+    Without this, MTP blocks any VSTest invocation on .NET 10 SDK even when the project opts into
+    the new dotnet test integration via TestingPlatformDotnetTestSupport.
+  -->
+  <Target Name="_MTPBeforeVSTest" BeforeTargets="VSTest">
+    <PropertyGroup>
+      <_SdkMajorVersion>$(NETCoreSdkVersion.Split('.')[0])</_SdkMajorVersion>
+      <_SupportsGlobalJsonTestRunner Condition="'$(NETCoreSdkVersion)' != '' AND '$(_SdkMajorVersion)' >= '10'">true</_SupportsGlobalJsonTestRunner>
+    </PropertyGroup>
+    <Error Text="Testing with VSTest target is no longer supported by Microsoft.Testing.Platform on .NET 10 SDK and later. If you use dotnet test, you should opt-in to the new dotnet test experience. For more information, see https://aka.ms/dotnet-test-mtp-error"
+           Condition="'$(IsTestingPlatformApplication)'=='true' AND '$(TargetFramework)'!='' AND '$(_SupportsGlobalJsonTestRunner)'=='true' AND '$(TestingPlatformDotnetTestSupport)' != 'true'" />
+    <CallTarget Condition="'$(VSTestNoBuild)' != 'true' AND '$(TargetFramework)'!=''" Targets="BuildProject" />
+  </Target>
 </Project>
