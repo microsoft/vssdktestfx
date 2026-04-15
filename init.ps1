@@ -37,6 +37,10 @@
     The environment is configured to build pseudo-loc for JPN only, but may be used to build
     all languages with shipping-style loc by using the `/p:loctype=full,loclanguages=vs`
     when building.
+.PARAMETER Setup
+    Install the MicroBuild setup plugin for building VSIXv3 packages.
+.PARAMETER OptProf
+    Install the MicroBuild OptProf plugin for building optimized assemblies on desktop machines.
 .PARAMETER Sbom
     Install the MicroBuild SBOM plugin.
 .PARAMETER AccessToken
@@ -62,6 +66,10 @@ Param (
     [switch]$Signing,
     [Parameter()]
     [switch]$Localization,
+    [Parameter()]
+    [switch]$Setup,
+    [Parameter()]
+    [switch]$OptProf,
     [Parameter()]
     [switch]$SBOM,
     [Parameter()]
@@ -118,29 +126,40 @@ try {
         }
     }
 
-    $InstallNuGetPkgScriptPath = "$PSScriptRoot\tools\Install-NuGetPackage.ps1"
+    $DownloadNuGetPkgScriptPath = "$PSScriptRoot\tools\Download-NuGetPackage.ps1"
     $nugetVerbosity = 'quiet'
     if ($Verbose) { $nugetVerbosity = 'normal' }
     $MicroBuildPackageSource = 'https://pkgs.dev.azure.com/devdiv/_packaging/MicroBuildToolset%40Local/nuget/v3/index.json'
     if ($Signing) {
         Write-Host "Installing MicroBuild signing plugin" -ForegroundColor $HeaderColor
-        & $InstallNuGetPkgScriptPath MicroBuild.Plugins.Signing -source $MicroBuildPackageSource -Verbosity $nugetVerbosity
+        & $DownloadNuGetPkgScriptPath -PackageId MicroBuild.Plugins.Signing -Source $MicroBuildPackageSource -Verbosity $nugetVerbosity
         $EnvVars['SignType'] = "Test"
+    }
+
+    if ($Setup) {
+        Write-Host "Installing MicroBuild SwixBuild plugin..." -ForegroundColor $HeaderColor
+        & $DownloadNuGetPkgScriptPath -PackageId Microsoft.VisualStudioEng.MicroBuild.Plugins.SwixBuild -Source $MicroBuildPackageSource -Verbosity $nugetVerbosity
+    }
+
+    if ($OptProf) {
+        Write-Host "Installing MicroBuild OptProf plugin" -ForegroundColor $HeaderColor
+        & $DownloadNuGetPkgScriptPath -PackageId MicroBuild.Plugins.OptProf -Source $MicroBuildPackageSource -Verbosity $nugetVerbosity
+        $EnvVars['OptProfEnabled'] = '1'
     }
 
     if ($Localization) {
         Write-Host "Installing MicroBuild localization plugin" -ForegroundColor $HeaderColor
-        & $InstallNuGetPkgScriptPath MicroBuild.Plugins.Localization -source $MicroBuildPackageSource -Verbosity $nugetVerbosity
+        & $DownloadNuGetPkgScriptPath -PackageId MicroBuild.Plugins.Localization -Source $MicroBuildPackageSource -Verbosity $nugetVerbosity
         $EnvVars['LocType'] = "Pseudo"
         $EnvVars['LocLanguages'] = "JPN"
     }
 
     if ($SBOM) {
         Write-Host "Installing MicroBuild SBOM plugin" -ForegroundColor $HeaderColor
-        & $InstallNuGetPkgScriptPath MicroBuild.Plugins.Sbom -source $MicroBuildPackageSource -Verbosity $nugetVerbosity
+        & $DownloadNuGetPkgScriptPath -PackageId MicroBuild.Plugins.Sbom -Source $MicroBuildPackageSource -Verbosity $nugetVerbosity
         # The feed with the latest versions of the tool is at 'https://1essharedassets.pkgs.visualstudio.com/1esPkgs/_packaging/SBOMTool/nuget/v3/index.json',
         # but we'll use the feed that the SBOM task itself uses to install the tool for consistency.
-        $PkgMicrosoft_ManifestTool_CrossPlatform = & $InstallNuGetPkgScriptPath Microsoft.ManifestTool.CrossPlatform -source $MicroBuildPackageSource -Verbosity $nugetVerbosity
+        $PkgMicrosoft_ManifestTool_CrossPlatform = & $DownloadNuGetPkgScriptPath -PackageId Microsoft.ManifestTool.CrossPlatform -Source $MicroBuildPackageSource -Verbosity $nugetVerbosity
         $EnvVars['GenerateSBOM'] = "true"
         $EnvVars['PkgMicrosoft_ManifestTool_CrossPlatform'] = $PkgMicrosoft_ManifestTool_CrossPlatform
     }
