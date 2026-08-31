@@ -19,7 +19,7 @@
     <PackageVersion Include="Microsoft.ServiceHub.Framework.Testing" Version="4.8.55" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />
     <PackageVersion Include="System.ComponentModel.Composition" Version="10.0.10" />
-    <PackageVersion Include="Xunit.SkippableFact" Version="1.5.61" />
+    <PackageVersion Include="Xunit.SkippableFact" Version="1.5.85" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.0" />
     <PackageVersion Include="xunit.v3.assert" Version="4.0.0" />
