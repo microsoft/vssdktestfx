@@ -112,11 +112,12 @@ if ($isMTP) {
         )
     }
 
+    # Allow instrumented discovery to finish before the first test-start event, as in the MTP path.
     & $dotnet test $RepoRoot `
         --no-build `
         -c $Configuration `
         --filter "TestCategory!=FailsInCloudTest" `
-        --blame-hang-timeout 60s `
+        --blame-hang-timeout 5m `
         --blame-crash `
         -bl:"$testBinLog" `
         --diag "$testDiagLog;TraceLevel=info" `

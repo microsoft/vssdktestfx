@@ -248,7 +248,9 @@ public class GlobalServiceProvider : IDisposable
             {
                 this.mainThreadSyncContext = new DispatcherSynchronizationContext();
                 SynchronizationContext.SetSynchronizationContext(this.mainThreadSyncContext);
-                _ = new Application(); // just creating this sets it to Application.Current, as required
+
+                // Closing a test window must not shut down the application shared by the collection.
+                _ = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
 
 #pragma warning disable VSSDK005 // Avoid instantiating JoinableTaskContext
                 this.joinableTaskContext = new JoinableTaskContext();
@@ -283,6 +285,11 @@ public class GlobalServiceProvider : IDisposable
 #pragma warning restore CA1031 // Do not catch general exception types
             {
                 this.mainThreadInitialized.TrySetException(ex);
+            }
+            finally
+            {
+                // Release WPF's apartment-affine resources before the owning STA exits.
+                Dispatcher.CurrentDispatcher.InvokeShutdown();
             }
         }
 

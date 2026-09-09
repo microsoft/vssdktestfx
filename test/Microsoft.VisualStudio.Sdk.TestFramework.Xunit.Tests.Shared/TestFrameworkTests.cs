@@ -4,6 +4,9 @@
 #if NETFRAMEWORK || WINDOWS
 
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
 using Microsoft;
 using Microsoft.ServiceHub.Framework;
 using Microsoft.ServiceHub.Framework.Services;
@@ -72,6 +75,43 @@ public class TestFrameworkTests : LoggingTestBase
         ThreadHelper.ThrowIfNotOnUIThread();
 #pragma warning restore VSTHRD109 // Switch instead of assert in async methods
         Assert.Throws<COMException>(() => ThreadHelper.ThrowIfOnUIThread());
+    }
+
+    /// <summary>
+    /// Verifies that test windows do not end the shared application lifetime.
+    /// </summary>
+    [Fact]
+    public async Task ClosingWindowPreservesApplication()
+    {
+        // Show and close successive text-input windows on the shared STA, verifying that one test's
+        // last window cannot shut down the application and dispatcher needed by subsequent tests.
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken);
+        Application application = Application.Current;
+        Assert.Equal(ShutdownMode.OnExplicitShutdown, application.ShutdownMode);
+
+        for (int i = 0; i < 2; i++)
+        {
+            var window = new Window
+            {
+                Content = new TextBox(),
+                Width = 200,
+                Height = 100,
+                ShowActivated = false,
+                ShowInTaskbar = false,
+            };
+            try
+            {
+                window.Show();
+                window.Close();
+                await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+                Assert.Same(application, Application.Current);
+                Assert.False(application.Dispatcher.HasShutdownStarted);
+            }
+            finally
+            {
+                window.Close();
+            }
+        }
     }
 
     [Fact]
