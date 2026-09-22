@@ -15,6 +15,8 @@
     The path to a 32-bit dotnet executable to use.
 .PARAMETER NoCoverage
     A switch to skip code coverage collection.
+.PARAMETER TargetFramework
+    The target framework to test.
 #>
 [CmdletBinding()]
 Param(
@@ -23,7 +25,8 @@ Param(
     [switch]$PublishResults,
     [switch]$x86,
     [string]$dotnet32,
-    [switch]$NoCoverage
+    [switch]$NoCoverage,
+    [string]$TargetFramework
 )
 
 $RepoRoot = (Resolve-Path "$PSScriptRoot/..").Path
@@ -54,6 +57,11 @@ $testLogs = Join-Path $ArtifactStagingFolder test_logs
 $globalJson = Get-Content $PSScriptRoot/../global.json | ConvertFrom-Json
 $isMTP = $globalJson.test.runner -eq 'Microsoft.Testing.Platform'
 $extraArgs = @()
+$targetFrameworkArgs = @()
+if ($TargetFramework) {
+    $targetFrameworkArgs = @('--framework', $TargetFramework)
+}
+
 $failedTests = 0
 
 if ($isMTP) {
@@ -93,6 +101,7 @@ if ($isMTP) {
     & $dotnet test $solutionPath `
         --no-build `
         -c $Configuration `
+        @targetFrameworkArgs `
         -bl:"$testBinLog" `
         -- `
         --filter-not-trait 'TestCategory=FailsInCloudTest' `
@@ -116,6 +125,7 @@ if ($isMTP) {
     & $dotnet test $RepoRoot `
         --no-build `
         -c $Configuration `
+        @targetFrameworkArgs `
         --filter "TestCategory!=FailsInCloudTest" `
         --blame-hang-timeout 5m `
         --blame-crash `
