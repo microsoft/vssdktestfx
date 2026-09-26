@@ -34,7 +34,11 @@ internal class MockLocalRegistry : ILocalRegistry
             try
             {
                 punk = Marshal.GetIUnknownForObject(service);
+#if NET
+                return Marshal.QueryInterface(punk, in riid, out ppvObj);
+#else
                 return Marshal.QueryInterface(punk, ref riid, out ppvObj);
+#endif
             }
             finally
             {
