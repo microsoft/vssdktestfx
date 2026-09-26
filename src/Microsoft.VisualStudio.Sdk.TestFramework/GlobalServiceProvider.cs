@@ -159,7 +159,11 @@ public class GlobalServiceProvider : IDisposable
                 }
 
                 pUnk = Marshal.GetIUnknownForObject(service);
+#if NET
+                return Marshal.QueryInterface(pUnk, in riid, out ppvObject);
+#else
                 return Marshal.QueryInterface(pUnk, ref riid, out ppvObject);
+#endif
             }
             finally
             {
