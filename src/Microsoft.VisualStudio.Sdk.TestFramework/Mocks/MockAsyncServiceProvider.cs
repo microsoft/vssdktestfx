@@ -6,10 +6,13 @@
 namespace Microsoft.VisualStudio.Sdk.TestFramework.Mocks;
 
 /// <summary>
-/// An implementation of <see cref="IAsyncServiceProvider2"/>
+/// An implementation of <see cref="IAsyncServiceProvider3"/>
 /// that simply returns services from <see cref="OLE.Interop.IServiceProvider"/>.
 /// </summary>
-internal class MockAsyncServiceProvider : IAsyncServiceProvider3, Shell.Interop.COMAsyncServiceProvider.IAsyncServiceProvider
+internal class MockAsyncServiceProvider :
+    IAsyncServiceProvider3,
+    IServiceProvider2,
+    Shell.Interop.COMAsyncServiceProvider.IAsyncServiceProvider
 {
     private readonly OLE.Interop.IServiceProvider serviceProvider;
     private readonly IVsTaskSchedulerService taskSchedulerService;
@@ -40,6 +43,18 @@ internal class MockAsyncServiceProvider : IAsyncServiceProvider3, Shell.Interop.
     }
 
     /// <inheritdoc />
+    object? IServiceProvider.GetService(Type serviceType)
+    {
+        Requires.NotNull(serviceType, nameof(serviceType));
+        return this.serviceProvider.QueryService(serviceType.GUID);
+    }
+
+    /// <inheritdoc />
+    TInterface? IServiceProvider2.GetService<TService, TInterface>(bool throwOnFailure)
+        where TInterface : class
+        => this.GetService<TService, TInterface>(throwOnFailure);
+
+    /// <inheritdoc />
     public Task<TInterface?> GetServiceAsync<TService, TInterface>(bool throwOnFailure, CancellationToken cancellationToken)
         where TInterface : class
     {
@@ -48,19 +63,7 @@ internal class MockAsyncServiceProvider : IAsyncServiceProvider3, Shell.Interop.
             return Task.FromCanceled<TInterface?>(cancellationToken);
         }
 
-        var service = this.serviceProvider.QueryService(typeof(TService).GUID);
-
-        if (service is not TInterface @interface)
-        {
-            if (throwOnFailure)
-            {
-                throw new ServiceUnavailableException(service is null ? typeof(TService) : typeof(TInterface));
-            }
-
-            return Task.FromResult<TInterface?>(null);
-        }
-
-        return Task.FromResult<TInterface?>(@interface);
+        return Task.FromResult(this.GetService<TService, TInterface>(throwOnFailure));
     }
 
     /// <inheritdoc />
@@ -79,6 +82,24 @@ internal class MockAsyncServiceProvider : IAsyncServiceProvider3, Shell.Interop.
         }
 
         return completionSource.Task;
+    }
+
+    private TInterface? GetService<TService, TInterface>(bool throwOnFailure)
+        where TInterface : class
+    {
+        object? service = this.serviceProvider.QueryService(typeof(TService).GUID);
+
+        if (service is not TInterface @interface)
+        {
+            if (throwOnFailure)
+            {
+                throw new ServiceUnavailableException(service is null ? typeof(TService) : typeof(TInterface));
+            }
+
+            return null;
+        }
+
+        return @interface;
     }
 }
 
