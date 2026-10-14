@@ -58,8 +58,6 @@ The `ConfigureNativeAOTTestFeatures` target disables those features only in the 
 It preserves all other runtime feature options, including invariant globalization, so native compilation and linking use consistent settings.
 Test builds use invariant globalization and retain only English satellite resources; RID-specific builds are self-contained.
 Shipping libraries targeting .NET opt into NativeAOT compatibility analysis with `IsAotCompatible`.
-The `test/AotCompatibilityTest` project complements those analyzers by rooting the shipping assembly and passing it through the NativeAOT compiler during every traversal publish.
-Add each shipping assembly that must be validated as a `TrimmerRootAssembly`, and keep this project publishable in `test/dirs.proj`.
 Root `Directory.Build.props` supplies project-reference defaults for both traversal and SDK projects that remove the `_IsPublishing` global property for managed dependencies, avoiding duplicate project instances that write to the same outputs during parallel publishing.
 
 ## Releases
