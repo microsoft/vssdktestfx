@@ -85,12 +85,12 @@ Sign in with `gh auth login` and
 `az login --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 --allow-no-subscriptions` first.
 The signed-in identities need repository administration and permission to manage the app's
 federated credentials. Use `-WhatIf` to preview without making changes.
-The script discovers the calling repository, trusts only its default branch and any additional
-branches explicitly supplied, and can be rerun without duplicating credentials.
-Use `-Branches microbuild,release` to add other trusted branches. It removes this repository's
-legacy pull-request credential because PR code must not receive federated trust. The script
-reports each created, reused, or removed credential.
-Credential names identify the owner, repository, and branch context, for example
+The script discovers the calling repository, trusts pull requests plus its default branch,
+and can be rerun without duplicating credentials or removing existing credentials.
+Use `-Branches microbuild,release` to add other trusted branches; the default branch
+and PR context are always included. The script reports each created or reused credential.
+Credential names identify the owner, repository, and PR or branch context, for example
+`github-AArnott-Library.Template-pull-request` and
 `github-AArnott-Library.Template-branch-main`. Names requiring punctuation replacement
 or truncation include a short hash suffix to preserve uniqueness within Entra's name limits.
 
@@ -98,10 +98,11 @@ This changes OIDC subjects for **all workflows** in the repository. Update any o
 trust policies (including environment subjects) before running it; existing Entra credentials
 are preserved. The script does not configure Azure DevOps feed permissions.
 
-Authentication is enabled only for trusted non-PR runs of repositories owned by the
+Authentication is enabled for branch runs and same-repository PRs of repositories owned by the
 `microsoft` organization, because this Entra tenant requires enterprise-issued GitHub assertions.
-Pull-request validation never receives `id-token: write` and restores anonymously, including
-same-repository dependency update PRs and fork PRs;
+Same-repository dependency update PRs, including Renovate and Dependabot, authenticate
+using the job's explicit `id-token: write` permission.
+Fork PRs run in a separate job without OIDC permission and restore anonymously;
 new upstream dependencies may still need to be ingested by a trusted run first.
 Do not switch this workflow to `pull_request_target` to give untrusted PR code credentials.
 Repositories based on this template must configure their own trusted subjects and, if necessary,

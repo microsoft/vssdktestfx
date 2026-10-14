@@ -4,7 +4,19 @@ $ErrorActionPreference = 'Stop'
 $workflow = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\..\.github\workflows\docs_validate.yml') -Raw
 $pullRequestJob = [regex]::Match($workflow, '(?ms)^  build:\r?\n(?<job>.*?)(?=^  build-trusted:)')
 if (!$pullRequestJob.Success -or $pullRequestJob.Groups['job'].Value -match 'id-token:\s*write|azure/login') {
-    throw 'Pull-request documentation validation must not have OIDC permissions or Azure login.'
+    throw 'Fork pull-request documentation validation must not have OIDC permissions or Azure login.'
+}
+
+$forkCondition = "if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository"
+$trustedCondition = "if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository"
+if (!$pullRequestJob.Groups['job'].Value.Contains($forkCondition) -or
+    !$workflow.Contains($trustedCondition)) {
+    throw 'Same-repository PRs must use authenticated validation while fork PRs use anonymous validation.'
+}
+
+$trustedJob = [regex]::Match($workflow, '(?ms)^  build-trusted:\r?\n(?<job>.*)$').Groups['job'].Value
+if ($trustedJob -notmatch 'id-token:\s*write' -or $trustedJob -notmatch 'uses: azure/login@') {
+    throw 'Same-repository PR validation must have OIDC permission and Azure login.'
 }
 
 $credentialMatches = [regex]::Matches($workflow, '(?ms)      - name: Configure Azure Artifacts credentials\r?\n.*?        run: \|\r?\n(?<script>.*?)(?=      - name:)')

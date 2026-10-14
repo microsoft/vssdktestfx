@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
     name: 📚 Doc validation
     runs-on: ubuntu-26.04
     permissions:
@@ -32,8 +32,8 @@ jobs:
         run: dotnet docfx docfx/docfx.json --warningsAsErrors --disableGitFeatures
 
   build-trusted:
-    if: github.event_name != 'pull_request'
-    name: 📚 Doc validation (trusted ref)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    name: 📚 Doc validation
     runs-on: ubuntu-26.04
     permissions:
       contents: read

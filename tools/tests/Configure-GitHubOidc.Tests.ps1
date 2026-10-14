@@ -21,7 +21,6 @@ function Reset-State {
         Failure = ''
         BadVerification = $false
         MissingCreatedCredentials = $false
-        FailedDelete = $false
         Prefix = $prefix
     }
     $global:ConfigureGitHubOidcTestState = $script:state
@@ -72,19 +71,6 @@ function az {
         return (ConvertTo-Json -InputObject @($state.Credentials) -Depth 10)
     }
 
-    if ($args[3] -eq 'delete') {
-        Assert-True ($args[6] -eq '--federated-credential-id') 'Incorrect delete argument.'
-        $state.Writes += 'az-delete'
-        if ($state.FailedDelete) {
-            $global:LASTEXITCODE = 1
-            return
-        }
-
-        $credentialName = $args[7]
-        $state.Credentials = @($state.Credentials | Where-Object { $_.name -ne $credentialName })
-        return
-    }
-
     Assert-True ($args[3] -eq 'create') 'Unexpected Azure mutation.'
     $state.Writes += 'az-create'
     if ($state.Failure -eq 'az-create') {
@@ -116,13 +102,14 @@ function Assert-Fails([string]$Pattern, [hashtable]$Parameters = @{}) {
 Reset-State
 & $target -WarningAction SilentlyContinue
 $subjects = @($script:state.Credentials.subject)
-Assert-True ($subjects.Count -eq 1) 'Expected only the default-branch credential.'
+Assert-True ($subjects.Count -eq 2) 'Expected pull-request and default-branch credentials.'
 Assert-True ($subjects -cnotcontains "${prefix}:ref:refs/heads/microbuild") 'microbuild must not be trusted by default.'
-foreach ($context in @('ref:refs/heads/trunk')) {
+foreach ($context in @('pull_request', 'ref:refs/heads/trunk')) {
     Assert-True ($subjects -ccontains "${prefix}:$context") "Missing subject: $context"
 }
-Assert-True (($script:state.Writes -join ',') -eq 'az-create,gh-put') 'Azure trust must be created before GitHub settings change.'
-Assert-True (@($script:state.Credentials.name | Select-Object -Unique).Count -eq 1) 'Credential names must be unique.'
+Assert-True (($script:state.Writes -join ',') -eq 'az-create,az-create,gh-put') 'Azure trust must be created before GitHub settings change.'
+Assert-True (@($script:state.Credentials.name | Select-Object -Unique).Count -eq 2) 'Credential names must be unique.'
+Assert-True ($script:state.Credentials.name -ccontains 'github-ExampleOrg-ExampleRepo-pull-request') 'PR credential name must be human-readable.'
 Assert-True ($script:state.Credentials.name -ccontains 'github-ExampleOrg-ExampleRepo-branch-trunk') 'Branch credential name must be human-readable.'
 $firstCredentialName = $script:state.Credentials[0].name
 
@@ -136,24 +123,24 @@ Assert-True ($script:state.Writes.Count -eq 0) 'WhatIf must not mutate either se
 
 Reset-State
 & $target -Branches @('release', 'release') -WarningAction SilentlyContinue
-Assert-True ($script:state.Credentials.Count -eq 2) 'Duplicate branches must be deduplicated while retaining the default branch.'
+Assert-True ($script:state.Credentials.Count -eq 3) 'Duplicate branches must be deduplicated while retaining the default branch and PR trust.'
 Assert-True ($script:state.Credentials.subject -ccontains "${prefix}:ref:refs/heads/release") 'Custom branch subject missing.'
 Assert-True ($script:state.Credentials.subject -ccontains "${prefix}:ref:refs/heads/trunk") 'Explicit branches must not replace the default branch.'
 
 Reset-State
 & $target -Branches microbuild -WarningAction SilentlyContinue
-Assert-True ($script:state.Credentials.Count -eq 2) 'A single additional branch must produce default and additional branch credentials.'
+Assert-True ($script:state.Credentials.Count -eq 3) 'A single additional branch must produce PR, default, and additional branch credentials.'
 Assert-True ($script:state.Credentials.subject -ccontains "${prefix}:ref:refs/heads/microbuild") 'Single-string branch argument must be trusted.'
 Assert-True ($script:state.Credentials.subject -ccontains "${prefix}:ref:refs/heads/trunk") 'Default branch must be retained with a single-string argument.'
 
 Reset-State
 & $target -Branches trunk -WarningAction SilentlyContinue
-Assert-True ($script:state.Credentials.Count -eq 1) 'Explicit default branch must not duplicate default trust.'
+Assert-True ($script:state.Credentials.Count -eq 2) 'Explicit default branch must not duplicate default trust.'
 
 Reset-State
 & $target -Branches @('feature/widget', 'feature-widget', ('long-' + ('x' * 150))) -WarningAction SilentlyContinue
 $names = @($script:state.Credentials.name)
-Assert-True (($names | Select-Object -Unique).Count -eq 4) 'Sanitized branch names must remain unique.'
+Assert-True (($names | Select-Object -Unique).Count -eq 5) 'Sanitized branch names must remain unique.'
 foreach ($name in $names) {
     Assert-True ($name.Length -le 120 -and $name -cmatch '^[A-Za-z0-9._-]+$') 'Credential names must satisfy Entra limits.'
     Assert-True ($name.StartsWith('github-ExampleOrg-ExampleRepo-')) 'Sanitized names must retain repository names.'
@@ -166,7 +153,7 @@ Assert-True ($script:state.Writes.Count -eq 0) 'Sanitized names must remain idem
 Reset-State
 $script:state.Credentials = @(@{ name = 'unrelated'; issuer = 'other'; subject = 'other'; audiences = @('other') })
 & $target -WarningAction SilentlyContinue
-Assert-True ($script:state.Credentials[0].name -eq 'unrelated' -and $script:state.Credentials.Count -eq 2) 'Unrelated trust must be preserved.'
+Assert-True ($script:state.Credentials[0].name -eq 'unrelated' -and $script:state.Credentials.Count -eq 3) 'Unrelated trust must be preserved.'
 
 Reset-State
 $script:state.Credentials = @(
@@ -175,8 +162,11 @@ $script:state.Credentials = @(
     @{ name = 'unrelated'; issuer = 'https://token.actions.githubusercontent.com'; subject = 'repo:OtherOrg/OtherRepo:pull_request'; audiences = @('api://AzureADTokenExchange') }
 )
 & $target -WarningAction SilentlyContinue
-Assert-True ($script:state.Credentials.name -ccontains 'unrelated' -and $script:state.Credentials.Count -eq 2) "Migration must remove only this repository pull-request trust: $($script:state.Credentials | ConvertTo-Json -Compress)"
-Assert-True (($script:state.Writes -join ',') -eq 'az-delete,az-delete,az-create,gh-put') 'Pull-request trust must be removed before enabling immutable subject format.'
+Assert-True ($script:state.Credentials.Count -eq 4) 'Existing PR credentials must be preserved while adding default-branch trust.'
+foreach ($name in @('immutable-pr', 'legacy-pr', 'unrelated')) {
+    Assert-True ($script:state.Credentials.name -ccontains $name) "Existing credential '$name' must be preserved."
+}
+Assert-True (($script:state.Writes -join ',') -eq 'az-create,gh-put') 'Existing immutable PR trust must be reused without mutations.'
 
 Reset-State
 $script:state.Credentials = @(@{ name = 'immutable-pr'; issuer = 'https://token.actions.githubusercontent.com'; subject = "${prefix}:pull_request"; audiences = @('api://AzureADTokenExchange') })
