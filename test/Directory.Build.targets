@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+  <PropertyGroup>
+    <!-- Test projects don't need an app host unless they're RID-specific, NativeAOT, or use MTP's dotnet test integration.
+         This lives here rather than in Directory.Build.props so that a RuntimeIdentifier set in the project file itself is seen.
+         Otherwise a self-contained, RID-specific test project would get UseAppHost=false and fail with NETSDK1067. -->
+    <UseAppHost Condition="'$(RuntimeIdentifier)' == '' and '$(NativeAOT)' != 'true' and '$(TestingPlatformDotnetTestSupport)' != 'true'">false</UseAppHost>
+  </PropertyGroup>
+
+  <Import Project="AOT.props"
+          Condition="'$(IsTestProject)' == 'true' and '$(PublishNativeAOTTests)' == 'true' and '$(TargetFramework)' != '' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))" />
+
+  <PropertyGroup Condition="'$(NativeAOT)' == 'true' and '$(PublishNativeAOTTests)' == 'true'">
+    <NoWarn>$(NoWarn);IL2104;IL3053</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup Condition="'$(IsTestProject)' != 'false'">
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Microsoft.Testing.Extensions.CrashDump" />
@@ -9,7 +23,6 @@
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('xunit.runner.json')" />
   </ItemGroup>
-
   <Import Project="$([MSBuild]::GetPathOfFileAbove($(MSBuildThisFile), $(MSBuildThisFileDirectory)..))" />
 
   <!--
@@ -26,5 +39,35 @@
     <Error Text="Testing with VSTest target is no longer supported by Microsoft.Testing.Platform on .NET 10 SDK and later. If you use dotnet test, you should opt-in to the new dotnet test experience. For more information, see https://aka.ms/dotnet-test-mtp-error"
            Condition="'$(IsTestingPlatformApplication)'=='true' AND '$(TargetFramework)'!='' AND '$(_SupportsGlobalJsonTestRunner)'=='true' AND '$(TestingPlatformDotnetTestSupport)' != 'true'" />
     <CallTarget Condition="'$(VSTestNoBuild)' != 'true' AND '$(TargetFramework)'!=''" Targets="BuildProject" />
+  </Target>
+
+  <Target Name="GetNativeAOTTestVariants" Returns="@(_NativeAOTTest)"
+          Condition="'$(IsTestProject)' == 'true' and '$(PublishNativeAOTTests)' == 'true'">
+    <ItemGroup Condition="'$(TargetFramework)' == ''">
+      <_TestFramework Include="$(TargetFrameworks)" />
+    </ItemGroup>
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="GetNativeAOTTestVariants"
+             Properties="TargetFramework=%(_TestFramework.Identity)"
+             Condition="'$(TargetFramework)' == ''" BuildInParallel="true">
+      <Output TaskParameter="TargetOutputs" ItemName="_NativeAOTTest" />
+    </MSBuild>
+    <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="GetNativeAOTTestExecutable"
+             Properties="NativeAOT=true"
+             Condition="'$(TargetFramework)' != '' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+      <Output TaskParameter="TargetOutputs" ItemName="_NativeAOTTest" />
+    </MSBuild>
+  </Target>
+
+  <Target Name="GetNativeAOTTestExecutable" Returns="@(_NativeAOTTestExecutable)">
+    <PropertyGroup>
+      <_NativeExecutableExtension Condition="$([MSBuild]::IsOsPlatform('Windows'))">.exe</_NativeExecutableExtension>
+    </PropertyGroup>
+    <ItemGroup>
+      <_NativeAOTTestExecutable Include="$(MSBuildProjectFullPath)">
+        <ProjectName>$(MSBuildProjectName)</ProjectName>
+        <TargetFramework>$(TargetFramework)</TargetFramework>
+        <ExecutablePath>$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)', '$(PublishDir)', '$(AssemblyName)$(_NativeExecutableExtension)'))</ExecutablePath>
+      </_NativeAOTTestExecutable>
+    </ItemGroup>
   </Target>
 </Project>
