@@ -45,19 +45,7 @@ You can use `dotnet test` to build and/or test the repo.
 
 There may be tests that are known to be unstable or have special requirements. These can be avoided by running tests using the [dotnet-test-cloud.ps1](tools/dotnet-test-cloud.ps1) script *after* running `dotnet build`.
 
-To build both managed and NativeAOT tests, run `dotnet publish test -c Release`.
-Then run `./tools/dotnet-test-cloud.ps1 -Configuration Release -IncludeNativeAOT`.
-The traversal project publishes each eligible test framework targeting .NET.
-Keep test projects in the solution as well: managed test runs still use the solution, while NativeAOT runs use the traversal's evaluated executable paths.
-Test projects can opt out of NativeAOT publishing with `<PublishNativeAOTTests>false</PublishNativeAOTTests>`.
-One restore includes all test target frameworks, runtime identifiers, and NativeAOT compiler dependencies.
-Managed builds are RID-neutral by default; NativeAOT builds use the SDK's runtime-specific output directories.
-For a specified RID, managed execution and native publishing can share the same build outputs.
-Test builds keep dynamic code, startup hooks, and event tracing enabled for managed code coverage.
-The `ConfigureNativeAOTTestFeatures` target disables those features only in the native compiler's publish-time inputs, without rewriting the managed runtime configuration.
-It preserves all other runtime feature options, including invariant globalization, so native compilation and linking use consistent settings.
-Test builds use invariant globalization and retain only English satellite resources; RID-specific builds are self-contained.
-Shipping libraries targeting .NET opt into NativeAOT compatibility analysis with `IsAotCompatible`.
+Test projects run as managed tests by default. NativeAOT test publishing is not enabled for this repository.
 Root `Directory.Build.props` supplies project-reference defaults for both traversal and SDK projects that remove the `_IsPublishing` global property for managed dependencies, avoiding duplicate project instances that write to the same outputs during parallel publishing.
 
 ## Releases
@@ -97,12 +85,12 @@ Sign in with `gh auth login` and
 `az login --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 --allow-no-subscriptions` first.
 The signed-in identities need repository administration and permission to manage the app's
 federated credentials. Use `-WhatIf` to preview without making changes.
-The script discovers the calling repository, trusts pull requests plus its default branch,
-and can be rerun without duplicating credentials.
-Use `-Branches microbuild,release` to add other trusted branches; the default branch
-and PR context are always included. The script reports each created or reused credential.
-Credential names identify the owner, repository, and PR or branch context, for example
-`github-AArnott-Library.Template-pull-request` and
+The script discovers the calling repository, trusts only its default branch and any additional
+branches explicitly supplied, and can be rerun without duplicating credentials.
+Use `-Branches microbuild,release` to add other trusted branches. It removes this repository's
+legacy pull-request credential because PR code must not receive federated trust. The script
+reports each created, reused, or removed credential.
+Credential names identify the owner, repository, and branch context, for example
 `github-AArnott-Library.Template-branch-main`. Names requiring punctuation replacement
 or truncation include a short hash suffix to preserve uniqueness within Entra's name limits.
 
@@ -110,12 +98,10 @@ This changes OIDC subjects for **all workflows** in the repository. Update any o
 trust policies (including environment subjects) before running it; existing Entra credentials
 are preserved. The script does not configure Azure DevOps feed permissions.
 
-Authentication is enabled only for repositories owned by the `microsoft` organization,
-because this Entra tenant requires enterprise-issued GitHub assertions.
-Same-repository dependency update PRs, including Renovate and Dependabot, authenticate
-using the job's explicit `id-token: write` permission.
-Repositories owned by non-microsoft accounts and fork PRs
-skip authentication and retain anonymous restore behavior;
+Authentication is enabled only for trusted non-PR runs of repositories owned by the
+`microsoft` organization, because this Entra tenant requires enterprise-issued GitHub assertions.
+Pull-request validation never receives `id-token: write` and restores anonymously, including
+same-repository dependency update PRs and fork PRs;
 new upstream dependencies may still need to be ingested by a trusted run first.
 Do not switch this workflow to `pull_request_target` to give untrusted PR code credentials.
 Repositories based on this template must configure their own trusted subjects and, if necessary,

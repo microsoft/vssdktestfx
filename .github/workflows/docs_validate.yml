@@ -10,11 +10,11 @@ on:
 
 jobs:
   build:
+    if: github.event_name == 'pull_request'
     name: 📚 Doc validation
     runs-on: ubuntu-26.04
     permissions:
       contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -23,11 +23,32 @@ jobs:
         uses: becheran/mlc@b0d0d353e04fcbcfd1d86716103d78a61e5b25dd # v1.2.2
         with:
           args: --do-not-warn-for-redirect-to https://learn.microsoft.com*,https://dotnet.microsoft.com/*,https://dev.azure.com/*,https://app.codecov.io/* -p docfx -i https://aka.ms/onboardsupport,https://aka.ms/spot,https://msrc.microsoft.com/*,https://www.microsoft.com/msrc*,https://microsoft.com/msrc*,https://www.npmjs.com/package/*,https://get.dot.net/
+      - name: ⚙ Install prerequisites
+        run: |
+          ./init.ps1 -UpgradePrerequisites
+          dotnet --info
+        shell: pwsh
+      - name: 📚 Verify docfx build
+        run: dotnet docfx docfx/docfx.json --warningsAsErrors --disableGitFeatures
+
+  build-trusted:
+    if: github.event_name != 'pull_request'
+    name: 📚 Doc validation (trusted ref)
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: 🔗 Markup Link Checker (mlc)
+        uses: becheran/mlc@b0d0d353e04fcbcfd1d86716103d78a61e5b25dd # v1.2.2
+        with:
+          args: --do-not-warn-for-redirect-to https://learn.microsoft.com*,https://dotnet.microsoft.com/*,https://dev.azure.com/*,https://app.codecov.io/* -p docfx -i https://aka.ms/onboardsupport,https://aka.ms/spot,https://msrc.microsoft.com/*,https://www.microsoft.com/msrc*,https://microsoft.com/msrc*,https://www.npmjs.com/package/*,https://get.dot.net/
       - name: Authenticate to Azure with GitHub OIDC
         id: azure-login
-        # This tenant requires enterprise-issued assertions. Other owners restore anonymously.
-        # Same-repository dependency update PRs authenticate; fork PRs do not.
-        if: github.repository_owner == 'microsoft' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        if: github.repository_owner == 'microsoft'
         uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
         with:
           client-id: 2799af29-63f3-404f-bdcf-67ff9c70abc9

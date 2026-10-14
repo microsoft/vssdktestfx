@@ -4,13 +4,12 @@
 
   <PropertyGroup>
     <IsTestProject>true</IsTestProject>
-    <PublishNativeAOTTests>true</PublishNativeAOTTests>
+    <PublishNativeAOTTests>false</PublishNativeAOTTests>
     <IsPackable>false</IsPackable>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <UseWPF Condition="'$(TargetFramework)'!='net8.0'">true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <PublishNativeAOTTests Condition="'$(UseWPF)' == 'true'">false</PublishNativeAOTTests>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(NativeAOT)' == 'true' and '$(PublishNativeAOTTests)' == 'true'">

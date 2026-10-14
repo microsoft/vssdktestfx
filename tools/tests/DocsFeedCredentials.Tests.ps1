@@ -2,7 +2,13 @@
 
 $ErrorActionPreference = 'Stop'
 $workflow = Get-Content -LiteralPath (Join-Path $PSScriptRoot '..\..\.github\workflows\docs_validate.yml') -Raw
-$match = [regex]::Match($workflow, '(?ms)      - name: Configure Azure Artifacts credentials\r?\n.*?        run: \|\r?\n(?<script>.*?)(?=      - name:)')
+$pullRequestJob = [regex]::Match($workflow, '(?ms)^  build:\r?\n(?<job>.*?)(?=^  build-trusted:)')
+if (!$pullRequestJob.Success -or $pullRequestJob.Groups['job'].Value -match 'id-token:\s*write|azure/login') {
+    throw 'Pull-request documentation validation must not have OIDC permissions or Azure login.'
+}
+
+$credentialMatches = [regex]::Matches($workflow, '(?ms)      - name: Configure Azure Artifacts credentials\r?\n.*?        run: \|\r?\n(?<script>.*?)(?=      - name:)')
+$match = $credentialMatches | Select-Object -Last 1
 if (!$match.Success) {
     throw 'Credential setup step not found.'
 }
@@ -44,7 +50,7 @@ try {
 
     foreach ($name in @('msft_consumption', 'msft_consumption_public', 'legacy')) {
         if ($lines -cnotcontains "NuGetPackageSourceCredentials_${name}=Username=ado;Password=test-access-token;ValidAuthenticationTypes=Basic") {
-            throw "Credentials missing for '$name'."
+            throw "Credentials missing for '$name': $($lines -join ', ')."
         }
     }
 

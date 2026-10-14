@@ -16,8 +16,7 @@
     The tenant in which the application is registered. The active az account must
     belong to this tenant.
 .PARAMETER Branches
-    Additional branches to trust. Pull requests and the repository's default
-    branch are always included.
+    Additional branches to trust. The repository's default branch is always included.
 .EXAMPLE
     ./tools/Configure-GitHubOidc.ps1 -WhatIf
 .EXAMPLE
@@ -91,7 +90,7 @@ if ($PSBoundParameters.ContainsKey('Branches')) {
     $trustedBranches += $Branches
 }
 
-$contexts = @('pull_request')
+$contexts = @()
 foreach ($branch in $trustedBranches) {
     if ([string]::IsNullOrWhiteSpace($branch)) {
         throw 'Branch names must not be empty or whitespace.'
@@ -101,6 +100,13 @@ foreach ($branch in $trustedBranches) {
 }
 
 $existing = @(Invoke-CheckedCommand az @('ad', 'app', 'federated-credential', 'list', '--id', $ApplicationId.ToString(), '--output', 'json') | ConvertFrom-Json)
+$pullRequestSubjects = @(
+    "${prefix}:pull_request"
+    "repo:$($repo.owner.login)/$($repo.name):pull_request"
+)
+$obsoletePullRequestCredentials = @($existing | Where-Object {
+    $_.issuer -ceq $issuer -and $_.subject -cin $pullRequestSubjects
+})
 $missing = @()
 foreach ($context in ($contexts | Select-Object -Unique)) {
     $subject = "${prefix}:$context"
@@ -114,11 +120,7 @@ foreach ($context in ($contexts | Select-Object -Unique)) {
         continue
     }
 
-    $contextName = if ($context -eq 'pull_request') {
-        'pull-request'
-    } else {
-        "branch-$($context.Substring('ref:refs/heads/'.Length).Replace('%3A', ':'))"
-    }
+    $contextName = "branch-$($context.Substring('ref:refs/heads/'.Length).Replace('%3A', ':'))"
     $readableName = "github-$($repo.owner.login)-$($repo.name)-$contextName"
     $name = $readableName -creplace '[^A-Za-z0-9._-]', '-'
     # Entra names must be URL-friendly and at most 120 characters. Preserve uniqueness
@@ -150,14 +152,20 @@ foreach ($context in ($contexts | Select-Object -Unique)) {
 }
 
 $settingsMatch = $currentSettings.use_default -eq $true -and $currentSettings.use_immutable_subject -eq $true -and $currentSettings.sub_claim_prefix -ceq $prefix
-if ($missing.Count -eq 0 -and $settingsMatch) {
+if ($missing.Count -eq 0 -and $obsoletePullRequestCredentials.Count -eq 0 -and $settingsMatch) {
     Write-Host "Immutable OIDC subjects and federated credentials are already configured for $($repo.full_name)."
     return
 }
 
 Write-Warning 'Changing the repository OIDC subject format affects every workflow, including existing environment and other cloud trust policies.'
-if (!$PSCmdlet.ShouldProcess("$($repo.full_name) and Entra application $ApplicationId", "Ensure $($missing.Count) federated credentials and enable immutable default OIDC subjects")) {
+$action = "Ensure $($missing.Count) branch federated credentials, remove $($obsoletePullRequestCredentials.Count) pull-request credentials, and enable immutable default OIDC subjects"
+if (!$PSCmdlet.ShouldProcess("$($repo.full_name) and Entra application $ApplicationId", $action)) {
     return
+}
+
+foreach ($credential in $obsoletePullRequestCredentials) {
+    Invoke-CheckedCommand az @('ad', 'app', 'federated-credential', 'delete', '--id', $ApplicationId.ToString(), '--federated-credential-id', $credential.name) | Out-Null
+    Write-Host "Removed pull-request federated credential '$($credential.name)'."
 }
 
 foreach ($credential in $missing) {
