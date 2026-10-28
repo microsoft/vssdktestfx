@@ -56,6 +56,13 @@ public class TestFrameworkTests : LoggingTestBase
     }
 
     [Fact]
+    public void ServicesObtainableViaSynchronousServiceProvider()
+    {
+        IVsActivityLog activityLog = ServiceProvider.GetGlobalService<SVsActivityLog, IVsActivityLog>();
+        Assert.NotNull(activityLog);
+    }
+
+    [Fact]
     public async Task MainThreadHandling()
     {
         if (ThreadHelper.JoinableTaskContext.MainThread == Thread.CurrentThread)
