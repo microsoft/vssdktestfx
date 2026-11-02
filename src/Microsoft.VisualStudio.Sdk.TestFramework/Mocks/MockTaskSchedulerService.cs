@@ -43,9 +43,9 @@ internal sealed class MockTaskSchedulerService : IVsTaskSchedulerService, IVsTas
     public IVsTaskCompletionSource CreateTaskCompletionSource() => this.CreateTaskCompletionSourceEx(0, null);
 
     /// <inheritdoc />
-    public IVsTaskCompletionSource CreateTaskCompletionSourceEx(uint options, object? asyncState)
+    public IVsTaskCompletionSource CreateTaskCompletionSourceEx(uint options, object? AsyncState)
     {
-        return new MockVSTaskCompletionSource(this, asyncState);
+        return new MockVSTaskCompletionSource(this, AsyncState);
     }
 
     /// <inheritdoc />

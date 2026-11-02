@@ -19,18 +19,18 @@ internal class MockLocalRegistry : ILocalRegistry
     internal Func<Guid, object>? Factory { get; set; }
 
     /// <inheritdoc/>
-    public int CreateInstance(Guid clsid, object punkOuter, ref Guid riid, uint dwFlags, out IntPtr ppvObj)
+    public int CreateInstance(Guid clsid, object punkOuter, ref Guid riid, uint dwFlags, out nint ppvObj)
     {
         if (punkOuter is object || (CLSCTX)dwFlags != CLSCTX.CLSCTX_INPROC_SERVER)
         {
             // These are arguments we do not support.
-            ppvObj = IntPtr.Zero;
+            ppvObj = default;
             return VSConstants.E_NOTIMPL;
         }
 
         if (this.Factory?.Invoke(clsid) is object service)
         {
-            IntPtr punk = IntPtr.Zero;
+            nint punk = default;
             try
             {
                 punk = Marshal.GetIUnknownForObject(service);
@@ -38,7 +38,7 @@ internal class MockLocalRegistry : ILocalRegistry
             }
             finally
             {
-                if (punk != IntPtr.Zero)
+                if (punk != default)
                 {
                     Marshal.Release(punk);
                 }
@@ -46,15 +46,15 @@ internal class MockLocalRegistry : ILocalRegistry
         }
         else
         {
-            ppvObj = IntPtr.Zero;
+            ppvObj = default;
             return VSConstants.E_INVALIDARG;
         }
     }
 
     /// <inheritdoc/>
-    public int GetClassObjectOfClsid(ref Guid clsid, uint dwFlags, IntPtr lpReserved, ref Guid riid, out IntPtr ppvClassObject)
+    public int GetClassObjectOfClsid(ref Guid clsid, uint dwFlags, nint lpReserved, ref Guid riid, out nint ppvClassObject)
     {
-        ppvClassObject = IntPtr.Zero;
+        ppvClassObject = default;
         return VSConstants.E_NOTIMPL;
     }
 
