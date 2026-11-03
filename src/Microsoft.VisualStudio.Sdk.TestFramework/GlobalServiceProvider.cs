@@ -135,15 +135,15 @@ public class GlobalServiceProvider : IDisposable
         }
 
         /// <inheritdoc />
-        int OLE.Interop.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
+        int OLE.Interop.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out nint ppvObject)
         {
             if (!this.services.TryGetValue(guidService, out object? serviceOrFactory))
             {
-                ppvObject = IntPtr.Zero;
+                ppvObject = default;
                 return VSConstants.E_INVALIDARG;
             }
 
-            IntPtr pUnk = IntPtr.Zero;
+            nint pUnk = default;
             try
             {
                 object? service = serviceOrFactory switch
@@ -154,7 +154,7 @@ public class GlobalServiceProvider : IDisposable
 
                 if (service is null)
                 {
-                    ppvObject = IntPtr.Zero;
+                    ppvObject = default;
                     return VSConstants.E_NOINTERFACE;
                 }
 
@@ -163,7 +163,7 @@ public class GlobalServiceProvider : IDisposable
             }
             finally
             {
-                if (pUnk != IntPtr.Zero)
+                if (pUnk != default)
                 {
                     Marshal.Release(pUnk);
                 }
