@@ -270,7 +270,7 @@ jobs:
         RunTests: ${{ parameters.RunTests }}
         BuildRequiresAccessToken: ${{ parameters.RealSign }} # Real signing on non-Windows machines requires passing through access token to build steps that sign
         # Microsoft.NET.Test.Sdk supports net472 only on Windows.
-        TargetFramework: net8.0
+        TargetFramework: net10.0
     - ${{ if parameters.EnableDotNetFormatCheck }}:
       - script: dotnet format --verify-no-changes
         displayName: 💅 Verify formatted code
@@ -316,7 +316,7 @@ jobs:
         RunTests: ${{ parameters.RunTests }}
         BuildRequiresAccessToken: ${{ parameters.RealSign }} # Real signing on non-Windows machines requires passing through access token to build steps that sign
         # Microsoft.NET.Test.Sdk supports net472 only on Windows.
-        TargetFramework: net8.0
+        TargetFramework: net10.0
   
 - job: WrapUp
   dependsOn:

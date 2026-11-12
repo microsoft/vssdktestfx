@@ -6,7 +6,7 @@
 
       Xunit v3 test projects should consume via the Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3 package.</Description>
     <Product>Microsoft VisualStudio SDK Test Framework</Product>
-    <UseWPF Condition="'$(TargetFramework)'!='net8.0'">true</UseWPF>
+    <UseWPF Condition="'$(TargetFramework)'!='net10.0'">true</UseWPF>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <NoWarn>$(NoWarn);NU1701</NoWarn>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.ServiceHub.Framework.Testing" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" />
     <PackageReference Include="Microsoft.VisualStudio.Interop" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Condition="'$(TargetFramework)'!='net8.0'" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Condition="'$(TargetFramework)'!='net10.0'" />
     <PackageReference Include="Microsoft.VisualStudio.Utilities" />
     <PackageReference Include="System.ComponentModel.Composition" />
   </ItemGroup>
