@@ -36,10 +36,14 @@ public class MefHostingTests : LoggingTestBase
     }
 
 #if NETFRAMEWORK || WINDOWS
-    [Fact]
-    public async Task SynchronousDisposalJoinsAsyncParts()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task SynchronousDisposalJoinsAsyncParts(bool useExplicitParts)
     {
-        ExportProvider provider = await this.mefHosting.CreateExportProviderAsync();
+        ExportProvider provider = useExplicitParts
+            ? await MefHosting.CreateExportProviderAsync(typeof(AsyncDisposablePart))
+            : await this.mefHosting.CreateExportProviderAsync();
         AsyncDisposablePart part = provider.GetExportedValue<AsyncDisposablePart>();
         await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken);
         provider.Dispose();
