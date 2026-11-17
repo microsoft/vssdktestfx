@@ -55,6 +55,20 @@ public class TestFrameworkTests : LoggingTestBase
         Assert.IsAssignableFrom<IVsActivityLog>(activityLog);
     }
 
+#if NETFRAMEWORK || WINDOWS10_0_19041_0_OR_GREATER
+    [Fact]
+    public void ServicesObtainableViaSynchronousServiceProvider()
+    {
+        IServiceProvider2 provider = Assert.IsAssignableFrom<IServiceProvider2>(ServiceProvider.GlobalProvider.GetService(typeof(SAsyncServiceProvider)));
+        Assert.IsAssignableFrom<IVsActivityLog>(((IServiceProvider)provider).GetService(typeof(SVsActivityLog)));
+        Assert.Throws<ArgumentNullException>(() => ((IServiceProvider)provider).GetService(null!));
+        Assert.IsAssignableFrom<IVsActivityLog>(provider.GetService<SVsActivityLog, IVsActivityLog>(throwOnFailure: true));
+        Assert.Null(provider.GetService<SVsActivityLog, ITestService>(throwOnFailure: false));
+        Exception exception = Assert.ThrowsAny<Exception>(() => provider.GetService<SVsActivityLog, ITestService>(throwOnFailure: true));
+        Assert.Equal("Microsoft.VisualStudio.Shell.ServiceUnavailableException", exception.GetType().FullName);
+    }
+#endif
+
     [Fact]
     public async Task MainThreadHandling()
     {
@@ -121,6 +135,7 @@ public class TestFrameworkTests : LoggingTestBase
         Assert.NotNull(ep.GetExportedValue<SomeMefExport>());
     }
 
+#pragma warning disable VSTHRD001 // These tests intentionally exercise the legacy APIs.
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -199,6 +214,7 @@ public class TestFrameworkTests : LoggingTestBase
         await t;
         Assert.True(delegateExecuted);
     }
+#pragma warning restore VSTHRD001
 
     [Fact]
     public async Task VsTaskScheduler_UISchedulersWork()

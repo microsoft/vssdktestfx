@@ -48,7 +48,7 @@ The two test projects share their test sources but use different runners:
 * `test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.csproj` uses xUnit v2 and VSTest.
 * `test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj` uses xUnit v3 and Microsoft.Testing.Platform (MTP v2).
 
-Both projects target `net472`, `net10.0`, and `net10.0-windows8.0`.
+Both projects target `net472`, `net10.0`, `net10.0-windows8.0`, and `net10.0-windows10.0.19041`.
 After building with `dotnet build -c Release`, use the appropriate filter for the runner:
 
 ```powershell
