@@ -9,7 +9,7 @@ The two test projects share their test sources but use different runners:
 * `test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests` uses xUnit v2 and VSTest.
 * `test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests` uses xUnit v3 and Microsoft.Testing.Platform (MTP v2).
 
-Both projects target `net472`, `net10.0`, and `net10.0-windows8.0`.
+Both projects target `net472`, `net10.0`, `net10.0-windows8.0`, and `net10.0-windows10.0.19041`.
 
 ## Running Tests
 

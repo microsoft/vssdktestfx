@@ -31,6 +31,11 @@ public class MefHosting
     private readonly ImmutableArray<string> catalogAssemblyNames;
 
     /// <summary>
+    /// The factory used to join asynchronous disposal on the main thread.
+    /// </summary>
+    private readonly JoinableTaskFactory? joinableTaskFactory;
+
+    /// <summary>
     /// The lazily-created catalog.
     /// </summary>
     private AsyncLazy<ComposableCatalog> catalog;
@@ -63,13 +68,9 @@ public class MefHosting
     {
         Requires.NotNull(assemblyNames, nameof(assemblyNames));
 
-#if NETFRAMEWORK || WINDOWS
-        JoinableTaskFactory? joinableTaskFactory = ThreadHelper.JoinableTaskFactory;
-#else
-        JoinableTaskFactory? joinableTaskFactory = null;
-#endif
-
+        JoinableTaskFactory? joinableTaskFactory = GetJoinableTaskFactory();
         this.catalogAssemblyNames = ImmutableArray.CreateRange(assemblyNames);
+        this.joinableTaskFactory = joinableTaskFactory;
         this.catalog = new AsyncLazy<ComposableCatalog>(this.CreateProductCatalogAsync, joinableTaskFactory);
         this.configuration = new AsyncLazy<CompositionConfiguration>(this.CreateConfigurationAsync, joinableTaskFactory);
         this.exportProviderFactory = new AsyncLazy<IExportProviderFactory>(
@@ -84,10 +85,11 @@ public class MefHosting
     /// <returns>An <see cref="ExportProvider"/>.</returns>
     public static async Task<ExportProvider> CreateExportProviderAsync(params Type[] partTypes)
     {
+        JoinableTaskFactory? joinableTaskFactory = GetJoinableTaskFactory();
         DiscoveredParts parts = await PartDiscoverer.CreatePartsAsync(partTypes);
         ComposableCatalog catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts);
         CompositionConfiguration configuration = CompositionConfiguration.Create(catalog);
-        IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory();
+        IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory(joinableTaskFactory);
         return exportProviderFactory.CreateExportProvider();
     }
 
@@ -112,6 +114,15 @@ public class MefHosting
     {
         IExportProviderFactory exportProviderFactory = await this.exportProviderFactory.GetValueAsync();
         return exportProviderFactory.CreateExportProvider();
+    }
+
+    private static JoinableTaskFactory? GetJoinableTaskFactory()
+    {
+#if NETFRAMEWORK || WINDOWS
+        return ThreadHelper.JoinableTaskFactory;
+#else
+        return null;
+#endif
     }
 
     /// <summary>
@@ -169,7 +180,7 @@ public class MefHosting
     private async Task<IExportProviderFactory> CreateExportProviderFactoryAsync()
     {
         CompositionConfiguration configuration = await this.configuration.GetValueAsync();
-        IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory();
+        IExportProviderFactory exportProviderFactory = configuration.CreateExportProviderFactory(this.joinableTaskFactory);
         return exportProviderFactory;
     }
 

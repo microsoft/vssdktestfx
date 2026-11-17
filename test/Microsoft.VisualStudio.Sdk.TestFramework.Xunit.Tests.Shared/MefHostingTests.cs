@@ -5,11 +5,12 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Composition;
 
 [Collection(MockedVS.Collection)]
-public class MefHostingTests
+public class MefHostingTests : LoggingTestBase
 {
     private readonly MefHostingFixture mefHosting;
 
-    public MefHostingTests(MefHostingFixture mefHosting)
+    public MefHostingTests(MefHostingFixture mefHosting, ITestOutputHelper logger)
+        : base(logger)
     {
         this.mefHosting = mefHosting;
     }
@@ -33,6 +34,36 @@ public class MefHostingTests
     {
         Assert.NotNull(await this.mefHosting.GetCatalogAsync());
     }
+
+#if NETFRAMEWORK || WINDOWS
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task SynchronousDisposalJoinsAsyncParts(bool useExplicitParts)
+    {
+        ExportProvider provider = useExplicitParts
+            ? await MefHosting.CreateExportProviderAsync(typeof(AsyncDisposablePart))
+            : await this.mefHosting.CreateExportProviderAsync();
+        AsyncDisposablePart part = provider.GetExportedValue<AsyncDisposablePart>();
+        await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(CancellationToken);
+        provider.Dispose();
+        Assert.True(part.Disposed);
+    }
+
+    [Export]
+    private class AsyncDisposablePart : System.IAsyncDisposable
+    {
+        public bool Disposed { get; private set; }
+
+        public async ValueTask DisposeAsync()
+        {
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await TaskScheduler.Default;
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(timeout.Token);
+            this.Disposed = true;
+        }
+    }
+#endif
 
     [Export]
     [PartNotDiscoverable]
