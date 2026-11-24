@@ -19,26 +19,30 @@ internal class MockLocalRegistry : ILocalRegistry
     internal Func<Guid, object>? Factory { get; set; }
 
     /// <inheritdoc/>
-    public int CreateInstance(Guid clsid, object punkOuter, ref Guid riid, uint dwFlags, out IntPtr ppvObj)
+    public int CreateInstance(Guid clsid, object punkOuter, ref Guid riid, uint dwFlags, out nint ppvObj)
     {
         if (punkOuter is object || (CLSCTX)dwFlags != CLSCTX.CLSCTX_INPROC_SERVER)
         {
             // These are arguments we do not support.
-            ppvObj = IntPtr.Zero;
+            ppvObj = 0;
             return VSConstants.E_NOTIMPL;
         }
 
         if (this.Factory?.Invoke(clsid) is object service)
         {
-            IntPtr punk = IntPtr.Zero;
+            nint punk = 0;
             try
             {
                 punk = Marshal.GetIUnknownForObject(service);
+#if NETFRAMEWORK
                 return Marshal.QueryInterface(punk, ref riid, out ppvObj);
+#else
+                return Marshal.QueryInterface(punk, in riid, out ppvObj);
+#endif
             }
             finally
             {
-                if (punk != IntPtr.Zero)
+                if (punk != 0)
                 {
                     Marshal.Release(punk);
                 }
@@ -46,15 +50,15 @@ internal class MockLocalRegistry : ILocalRegistry
         }
         else
         {
-            ppvObj = IntPtr.Zero;
+            ppvObj = 0;
             return VSConstants.E_INVALIDARG;
         }
     }
 
     /// <inheritdoc/>
-    public int GetClassObjectOfClsid(ref Guid clsid, uint dwFlags, IntPtr lpReserved, ref Guid riid, out IntPtr ppvClassObject)
+    public int GetClassObjectOfClsid(ref Guid clsid, uint dwFlags, nint lpReserved, ref Guid riid, out nint ppvClassObject)
     {
-        ppvClassObject = IntPtr.Zero;
+        ppvClassObject = 0;
         return VSConstants.E_NOTIMPL;
     }
 

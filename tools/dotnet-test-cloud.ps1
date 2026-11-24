@@ -48,86 +48,84 @@ if ($x86) {
   }
 }
 
-$testBinLog = Join-Path $ArtifactStagingFolder (Join-Path build_logs test.binlog)
-$testLogs = Join-Path $ArtifactStagingFolder test_logs
+$runId = [guid]::NewGuid().ToString('N')
+$testLogs = Join-Path (Join-Path $ArtifactStagingFolder test_logs) $runId
+$buildLogs = Join-Path $ArtifactStagingFolder build_logs
+New-Item $testLogs -ItemType Directory -Force | Out-Null
+New-Item $buildLogs -ItemType Directory -Force | Out-Null
 
-$globalJson = Get-Content $PSScriptRoot/../global.json | ConvertFrom-Json
-$isMTP = $globalJson.test.runner -eq 'Microsoft.Testing.Platform'
 $extraArgs = @()
 $failedTests = 0
 
-if ($isMTP) {
-    if ($OnCI) { $extraArgs += '--no-progress' }
-
-    $dumpSwitches = @(
-        ,'--hangdump'
-        ,'--hangdump-timeout','5m'
-        ,'--crashdump'
-        ,'--crashdump-type','Heap'
-        # The native crash report accompanies the dump and is often the only way to identify the
-        # faulting thread and instruction when a test host dies of an access violation on Linux.
-        ,'--crash-report-if-supported'
+$testDiagLog = Join-Path $testLogs diag.log
+$coverageArgs = @()
+if (-not $NoCoverage) {
+    $coverageArgs = @(
+        '--collect'
+        'Code Coverage;Format=cobertura'
+        '--settings'
+        "$PSScriptRoot/test.runsettings"
     )
-    $mtpArgs = @(
-        ,'--diagnostic'
-        ,'--diagnostic-output-directory',$testLogs
-        ,'--diagnostic-verbosity','Information'
-        ,'--results-directory',$testLogs
-        ,'--report-trx'
-    )
-
-    if (-not $NoCoverage) {
-        $mtpArgs += @(
-            ,'--coverage'
-            ,'--coverage-output-format','cobertura'
-            ,'--coverage-settings',"$PSScriptRoot/test.runsettings"
-        )
-    }
-
-    $solutionFiles = @(Get-ChildItem -LiteralPath $RepoRoot -File | Where-Object { $_.Extension -in '.sln', '.slnx' })
-    if ($solutionFiles.Count -ne 1) {
-        throw "Expected exactly one solution file in $RepoRoot, but found $($solutionFiles.Count)."
-    }
-
-    $solutionPath = $solutionFiles[0].FullName
-    & $dotnet test $solutionPath `
-        --no-build `
-        -c $Configuration `
-        -bl:"$testBinLog" `
-        -- `
-        --filter-not-trait 'TestCategory=FailsInCloudTest' `
-        @mtpArgs `
-        @dumpSwitches `
-        @extraArgs
-    if ($LASTEXITCODE -ne 0) { $failedTests += 1 }
-
-    $trxFiles = Get-ChildItem -Recurse -Path $testLogs\*.trx
-} else {
-    $testDiagLog = Join-Path $ArtifactStagingFolder (Join-Path test_logs diag.log)
-    $coverageArgs = @()
-    if (-not $NoCoverage) {
-        $coverageArgs = @(
-            ,'--collect','Code Coverage;Format=cobertura'
-            ,'--settings',"$PSScriptRoot/test.runsettings"
-        )
-    }
-
-    & $dotnet test $RepoRoot `
-        --no-build `
-        -c $Configuration `
-        --filter "TestCategory!=FailsInCloudTest" `
-        --blame-hang-timeout 60s `
-        --blame-crash `
-        -bl:"$testBinLog" `
-        --diag "$testDiagLog;TraceLevel=info" `
-        --logger trx `
-        @coverageArgs `
-        @extraArgs
-    if ($LASTEXITCODE -ne 0) { $failedTests += 1 }
-
-    $trxFiles = Get-ChildItem -Recurse -Path $RepoRoot\test\*.trx
 }
 
+# The solution contains both VSTest and MTP projects; their runner arguments are incompatible.
+$v2Project = Join-Path $RepoRoot 'test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.csproj'
+$v2BinLog = "-bl:$(Join-Path $buildLogs "test-v2-$runId.binlog")"
+& $dotnet test $v2Project `
+    --no-build `
+    -c $Configuration `
+    --filter "TestCategory!=FailsInCloudTest" `
+    --blame-hang-timeout 60s `
+    --blame-crash `
+    $v2BinLog `
+    --diag "$testDiagLog;TraceLevel=info" `
+    --results-directory $testLogs `
+    --logger trx `
+    @coverageArgs
+if ($LASTEXITCODE -ne 0) { $failedTests += 1 }
+
+if ($OnCI) { $extraArgs += '--no-progress' }
+$mtpArgs = @(
+    '--filter-not-trait'
+    'TestCategory=FailsInCloudTest'
+    '--diagnostic'
+    '--diagnostic-output-directory'
+    $testLogs
+    '--diagnostic-verbosity'
+    'Information'
+    '--results-directory'
+    $testLogs
+    '--report-trx'
+    '--hangdump'
+    '--hangdump-timeout'
+    '5m'
+    '--crashdump'
+    '--crashdump-type'
+    'Heap'
+    '--crash-report-if-supported'
+)
+if (-not $NoCoverage) {
+    $mtpArgs += @(
+        '--coverage'
+        '--coverage-output-format'
+        'cobertura'
+        '--coverage-settings'
+        "$PSScriptRoot/test.runsettings"
+    )
+}
+
+$v3Project = Join-Path $RepoRoot 'test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj'
+$v3BinLog = "-bl:$(Join-Path $buildLogs "test-v3-$runId.binlog")"
+& $dotnet test $v3Project `
+    --no-build `
+    -c $Configuration `
+    $v3BinLog `
+    -- `
+    @mtpArgs `
+    @extraArgs
+if ($LASTEXITCODE -ne 0) { $failedTests += 1 }
+
+$trxFiles = Get-ChildItem -Recurse -Path $testLogs\*.trx
 $unknownCounter = 0
 $trxFiles |% {
   New-Item $testLogs -ItemType Directory -Force | Out-Null
