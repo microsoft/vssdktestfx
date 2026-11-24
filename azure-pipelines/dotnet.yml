@@ -5,6 +5,9 @@ parameters:
 - name: BuildRequiresAccessToken
   type: boolean
   default: false
+- name: TargetFramework
+  type: string
+  default: ''
 
 steps:
 
@@ -14,7 +17,7 @@ steps:
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-- powershell: tools/dotnet-test-cloud.ps1 -Configuration $(BuildConfiguration) -Agent $(Agent.JobName) -PublishResults
+- powershell: tools/dotnet-test-cloud.ps1 -Configuration $(BuildConfiguration) -Agent $(Agent.JobName) -PublishResults -TargetFramework '${{ parameters.TargetFramework }}'
   displayName: 🧪 dotnet test
   condition: and(succeeded(), ${{ parameters.RunTests }})
 

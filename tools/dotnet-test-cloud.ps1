@@ -15,6 +15,8 @@
     The path to a 32-bit dotnet executable to use.
 .PARAMETER NoCoverage
     A switch to skip code coverage collection.
+.PARAMETER TargetFramework
+    The target framework to test.
 #>
 [CmdletBinding()]
 Param(
@@ -23,7 +25,8 @@ Param(
     [switch]$PublishResults,
     [switch]$x86,
     [string]$dotnet32,
-    [switch]$NoCoverage
+    [switch]$NoCoverage,
+    [string]$TargetFramework
 )
 
 $RepoRoot = (Resolve-Path "$PSScriptRoot/..").Path
@@ -55,6 +58,11 @@ New-Item $testLogs -ItemType Directory -Force | Out-Null
 New-Item $buildLogs -ItemType Directory -Force | Out-Null
 
 $extraArgs = @()
+$targetFrameworkArgs = @()
+if ($TargetFramework) {
+    $targetFrameworkArgs = @('--framework', $TargetFramework)
+}
+
 $failedTests = 0
 
 $testDiagLog = Join-Path $testLogs diag.log
@@ -74,8 +82,9 @@ $v2BinLog = "-bl:$(Join-Path $buildLogs "test-v2-$runId.binlog")"
 & $dotnet test $v2Project `
     --no-build `
     -c $Configuration `
+    @targetFrameworkArgs `
     --filter "TestCategory!=FailsInCloudTest" `
-    --blame-hang-timeout 60s `
+    --blame-hang-timeout 5m `
     --blame-crash `
     $v2BinLog `
     --diag "$testDiagLog;TraceLevel=info" `
@@ -119,6 +128,7 @@ $v3BinLog = "-bl:$(Join-Path $buildLogs "test-v3-$runId.binlog")"
 & $dotnet test $v3Project `
     --no-build `
     -c $Configuration `
+    @targetFrameworkArgs `
     $v3BinLog `
     -- `
     @mtpArgs `

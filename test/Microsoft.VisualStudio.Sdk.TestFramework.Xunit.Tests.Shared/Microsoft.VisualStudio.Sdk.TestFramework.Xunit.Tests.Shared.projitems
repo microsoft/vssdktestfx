@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests2.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BrokeredServiceTests4.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChildServiceProviderTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalServiceProviderTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MefHostingTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mocks\CalculatorMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Mocks\GreetMock.cs" />

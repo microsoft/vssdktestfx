@@ -4,44 +4,46 @@ description: Provides guidance and instructions for writing, running and filteri
 user-invocable: false
 ---
 
-**IMPORTANT**: This repository has xUnit v2 tests using VSTest and xUnit v3 tests using Microsoft.Testing.Platform (MTP v2). Their filtering options are different.
+The two test projects share their test sources but use different runners:
 
-* There should generally be one test project (under the `test` directory) per shipping project (under the `src` directory). Test projects are named after the project being tested with a `.Tests` suffix.
-* Run each test project separately when passing runner-specific options. VSTest filters do not filter the xUnit v3 MTP project.
+* `test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests` uses xUnit v2 and VSTest.
+* `test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests` uses xUnit v3 and Microsoft.Testing.Platform (MTP v2).
+
+Both projects target `net472`, `net10.0`, and `net10.0-windows8.0`.
+Run each project separately when passing runner-specific options: VSTest filters do not filter the xUnit v3 MTP project.
 
 ## Running Tests
 
-There *may* be unstable tests that are attributed as such.
-Running the [dotnet-test-cloud.ps1](../../../tools/dotnet-test-cloud.ps1) script will execute all previously built tests except the unstable ones.
-The commands below do not automatically exclude unstable tests. Use the appropriate runner-specific exclusion shown below.
+Build first, then run [dotnet-test-cloud.ps1](../../../tools/dotnet-test-cloud.ps1) to exclude tests marked `FailsInCloudTest`:
 
-**Run all tests** (from the root of the repository):
-```bash
-dotnet test --no-build -c Release
+```powershell
+dotnet build -c Release
+.\tools\dotnet-test-cloud.ps1 -Configuration Release
 ```
 
-To run a specific test project, change to that project's directory first.
+To run all tests, including any unstable tests:
 
-**Run tests for a specific test project** (within that test project's directory):
-```bash
+```powershell
 dotnet test --no-build -c Release
 ```
 
 ### xUnit v2 (VSTest)
 
-Run tests in a class or exclude the unstable trait:
-```bash
-dotnet test --no-build -c Release --filter "FullyQualifiedName~ClassName"
-dotnet test --no-build -c Release --filter "TestCategory!=FailsInCloudTest"
+Run a test or exclude the unstable trait:
+
+```powershell
+dotnet test test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.csproj --no-build -c Release --framework net10.0 --filter "FullyQualifiedName~ClassName.MethodName"
+dotnet test test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.Tests.csproj --no-build -c Release --framework net10.0 --filter "TestCategory!=FailsInCloudTest"
 ```
 
 ### xUnit v3 (MTP)
 
-Pass runner arguments after `--`:
-```bash
-dotnet test --no-build -c Release -- --filter-method "*ClassName.MethodName"
-dotnet test --no-build -c Release -- --filter-class "*ClassName"
-dotnet test --no-build -c Release -- --filter-not-trait "TestCategory=FailsInCloudTest"
+Pass xUnit's MTP options to its executable, after `--`:
+
+```powershell
+dotnet run --project test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj --no-build -c Release --framework net10.0 -- --filter-method "*ClassName.MethodName"
+dotnet run --project test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj --no-build -c Release --framework net10.0 -- --filter-class "*ClassName"
+dotnet run --project test\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests\Microsoft.VisualStudio.Sdk.TestFramework.Xunit.v3.Tests.csproj --no-build -c Release --framework net10.0 -- --filter-not-trait "TestCategory=FailsInCloudTest"
 ```
 
-Use `--framework` to select a target framework. Wildcards are supported at the beginning and/or end of xUnit v3 filter values.
+Use `--framework` to select a target framework. Wildcards are supported at the beginning and/or end of xUnit v3 filter values. The commands above do not automatically exclude unstable tests.
