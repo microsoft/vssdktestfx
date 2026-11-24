@@ -28,8 +28,10 @@ try {
     foreach ($iteration in 1..2) {
         $result = & (Join-Path $artifactScripts 'coverageResults.ps1')
         $reports = @($result[$logs])
-        if ($reports.Count -ne 4 -or $result[$directory].Count -ne 0) {
-            throw "Expected four reports from test logs and none from the root; got $($reports.Count) and $($result[$directory].Count)."
+        $rootEntry = @($result.GetEnumerator() | Where-Object { $_.Key.ToString() -eq $directory })
+        $rootReports = if ($rootEntry.Count -eq 1) { @($rootEntry[0].Value) } else { @() }
+        if ($reports.Count -ne 4 -or $rootEntry.Count -ne 1 -or $rootReports.Count -ne 0) {
+            throw "Expected four reports from test logs and none from the root; got $($reports.Count), $($rootReports.Count), and $($rootEntry.Count) root entries."
         }
 
         foreach ($relativePath in @('run1\report.cobertura.xml', 'run1\result\In\host\unique.cobertura.xml', 'run1\result\In\other\report.cobertura.xml', 'run2\result\In\host\report.cobertura.xml')) {
