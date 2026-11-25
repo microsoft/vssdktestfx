@@ -139,11 +139,11 @@ public class GlobalServiceProvider : IDisposable
         {
             if (!this.services.TryGetValue(guidService, out object? serviceOrFactory))
             {
-                ppvObject = default;
+                ppvObject = 0;
                 return VSConstants.E_INVALIDARG;
             }
 
-            nint pUnk = default;
+            nint pUnk = 0;
             try
             {
                 object? service = serviceOrFactory switch
@@ -154,7 +154,7 @@ public class GlobalServiceProvider : IDisposable
 
                 if (service is null)
                 {
-                    ppvObject = default;
+                    ppvObject = 0;
                     return VSConstants.E_NOINTERFACE;
                 }
 
@@ -167,7 +167,7 @@ public class GlobalServiceProvider : IDisposable
             }
             finally
             {
-                if (pUnk != default)
+                if (pUnk != 0)
                 {
                     Marshal.Release(pUnk);
                 }

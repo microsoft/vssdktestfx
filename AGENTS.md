@@ -11,6 +11,12 @@
 * Design APIs to be highly testable, and all functionality should be tested.
 * Avoid introducing binary breaking changes in public APIs of projects under `src` unless their project files have `IsPackable` set to `false`.
 
+## Testing
+
+* Keep one test project per shipping project where practical.
+* The test suite uses xUnit v2 with VSTest and xUnit v3 with Microsoft.Testing.Platform. Use the runner-specific options in `.agents/skills/testing/SKILL.md`.
+* Skip tests marked `FailsInCloudTest` when running the suite; `tools/dotnet-test-cloud.ps1` applies the appropriate filter.
+
 ## Coding style
 
 * Honor StyleCop rules and fix any reported build warnings *after* getting tests to pass.

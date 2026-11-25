@@ -24,13 +24,13 @@ internal class MockLocalRegistry : ILocalRegistry
         if (punkOuter is object || (CLSCTX)dwFlags != CLSCTX.CLSCTX_INPROC_SERVER)
         {
             // These are arguments we do not support.
-            ppvObj = default;
+            ppvObj = 0;
             return VSConstants.E_NOTIMPL;
         }
 
         if (this.Factory?.Invoke(clsid) is object service)
         {
-            nint punk = default;
+            nint punk = 0;
             try
             {
                 punk = Marshal.GetIUnknownForObject(service);
@@ -42,7 +42,7 @@ internal class MockLocalRegistry : ILocalRegistry
             }
             finally
             {
-                if (punk != default)
+                if (punk != 0)
                 {
                     Marshal.Release(punk);
                 }
@@ -50,7 +50,7 @@ internal class MockLocalRegistry : ILocalRegistry
         }
         else
         {
-            ppvObj = default;
+            ppvObj = 0;
             return VSConstants.E_INVALIDARG;
         }
     }
@@ -58,7 +58,7 @@ internal class MockLocalRegistry : ILocalRegistry
     /// <inheritdoc/>
     public int GetClassObjectOfClsid(ref Guid clsid, uint dwFlags, nint lpReserved, ref Guid riid, out nint ppvClassObject)
     {
-        ppvClassObject = default;
+        ppvClassObject = 0;
         return VSConstants.E_NOTIMPL;
     }
 
